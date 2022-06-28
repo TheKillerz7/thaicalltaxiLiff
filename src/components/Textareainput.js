@@ -1,0 +1,43 @@
+import { useEffect, useRef, useState } from 'react';
+
+const Textareainput = ({ between, title, top, register, setValue, errors, rendercount, isReset }) => {
+    const [focus, setFocus] = useState(false)
+    const [isFilled, setFilled] = useState(false)
+    const [height, setHeight] = useState(0)
+    const [reTitle, setReTitle] = useState("")
+    const iniHeight = useRef(null)
+    const input = useRef(null)
+
+    useEffect(() => {
+        !isFilled ? setReTitle(errors?.[register.name]?.message) : setReTitle(null)
+    }, [rendercount])
+
+    useEffect(() => {
+        if (!input?.current?.value) return
+        input.current.value = ""
+        setFilled(false)
+        setFocus(false)
+        setReTitle("")
+    }, [isReset])
+
+    useEffect(() => {
+        setHeight(iniHeight.current.offsetHeight)
+    }, [])
+
+    const handleChanges = (item) => {
+        setValue(register.name, item.target.value)
+        item.target.value === "" ? setFilled(false) : setFilled(true)
+        item.target.style.height = item.target.scrollHeight + "px"
+    }
+
+    return(
+        <div ref={iniHeight} className={'bg-transparent px-4 pb-0.5 transition-all border-2 border-white ' + (focus ? !reTitle ? "border-b-blue-500" : "border-b-red-400" : (between || top) && "border-b-gray-100")}>
+            <div style={{ height: height }} className="absolute w-3/12 pointer-events-none -mt-0.5">
+                <div className={'absolute transition-all top-1/2 -translate-y-1/2 pointer-events-none ' + ((focus || isFilled) ? `-translate-y-5 text-xs ${focus ? !reTitle ? "text-blue-400" : "text-red-400" : !reTitle ? "text-gray-400" : "text-red-400"}` : !reTitle ? "text-gray-400" : "text-red-400")}>{reTitle || title}{errors?.[register.name]?.message && !reTitle && <span className='text-red-400'>*</span>}</div>
+            </div>
+            <textarea ref={input} rows={1} onChange={(item) => handleChanges(item)} onClick={() => setFocus(true)} onBlur={() => setFocus(false)} type="text" className="outline-none w-full pt-6 resize-none"></textarea>
+        </div>
+    )
+}
+
+export default Textareainput
