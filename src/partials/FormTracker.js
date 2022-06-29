@@ -1,13 +1,13 @@
 import { useState } from "react"
 
-
+//Form components with steps
 const FormTracker = ({ steps, currentStep, body }) => {
     const [stateee, s] = useState("")
 
     return (
         <div>
-            <div className="h-8 w-10/12 mx-auto relative flex justify-between">
-                <div style={{ aspectRatio: 1 }} className="bg-orange-600 h-full rounded-full grid place-items-center">
+            <div className="h-8 w-10/12 mx-auto relative flex justify-between mb-10">
+                <div style={{ aspectRatio: 1 }} className="bg-blue-900 h-full rounded-full grid place-items-center">
                     <div className="text-white font-medium">1</div>
                 </div>
                 <div style={{ aspectRatio: 1 }} className={"h-full rounded-full grid place-items-center p-1 " + (currentStep >= 2 ? "bg-orange-600" : "bg-gray-200")}>
@@ -19,7 +19,10 @@ const FormTracker = ({ steps, currentStep, body }) => {
                     <div style={{ zIndex: -1 }} className={"absolute h-1 w-1/2 right-0 " + (currentStep >= 3 ? "bg-orange-600" : "bg-gray-200")}></div>
                 </div>
             </div>
-            {body}
+            <div className="w-10/12 mx-auto">
+                
+                {body[currentStep]}
+            </div>
         </div>
     )
 }

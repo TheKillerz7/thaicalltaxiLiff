@@ -36,13 +36,13 @@ const Datepicker = ({ between, top, register, setValue, isReset, title }) => {
     }
 
     return(
-        <div className={'relative bg-transparent px-4 pb-4 transition-all border-2 border-white h-full ' + (focus ? "border-b-blue-500" : (top || between) && "border-b-gray-100")}>
-            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs ' + (focus ? "text-blue-400" : "text-gray-400")}>{title}</div>
-            <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full h-full pt-4 cursor-pointer translate-y-2">{reTitle}</div>
+        <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-xl border-2 h-full ' + (focus ? "border-blue-900" : "border-gray-300")}>
+            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium pl-8 ' + (focus ? "text-blue-900" : "text-gray-400")}>{title}</div>
+            <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
             <div style={{boxShadow: "4px 4px 30px rgba(0, 0, 0, 0.20)"}} className={'absolute z-10 transition top-full bg-white translate-y-1 w-full right-0 flex justify-center ' + (focus ? "opacity-1" : "opacity-0 pointer-events-none")}>
                 <Calendar className="border-none" onChange={handleChanges} value={value} view="month" locale="US" />
             </div>
-            <div className="absolute transition-all top-1/2 -translate-y-1/2 right-3 pointer-events-none"><FontAwesomeIcon icon={faCalendarDay} className={"transition mr-1 text-2xl " + (focus ? "text-blue-500" : "text-gray-500")} /></div>
+            <div className="absolute transition-all top-1/2 -translate-y-1/2 left-3 pointer-events-none"><FontAwesomeIcon icon={faCalendarDay} className={"transition mr-1 text-2xl " + (focus ? "text-blue-900" : "text-gray-500")} /></div>
         </div>
     )
 }
