@@ -23,7 +23,6 @@ const Booking = () => {
 
   const runApp = () => {
     const idToken = liff.getIDToken();
-    setIdToken(idToken);
     liff.getProfile().then(profile => {
       console.log(profile);
     }).catch(err => console.error(err));
