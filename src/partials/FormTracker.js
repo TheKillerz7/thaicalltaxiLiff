@@ -2,8 +2,6 @@ import { useState } from "react"
 
 //Form components with steps
 const FormTracker = ({ steps, currentStep, body }) => {
-    const [stateee, s] = useState("")
-
     return (
         <div>
             <div className="h-8 w-10/12 mx-auto relative flex justify-around mb-14">

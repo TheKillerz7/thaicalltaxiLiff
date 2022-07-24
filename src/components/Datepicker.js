@@ -12,12 +12,12 @@ const Datepicker = ({ between, top, register, setValue, isReset, title }) => {
     const [value, onChange] = useState(new Date());
 
     useEffect(() => {
-        setReTitle(moment().format('MMMM DD, yyyy'))
+        setReTitle(moment().format('DD/mm/yyyy'))
         setFocus(false)
     }, [isReset])
 
     useEffect(() => {
-        setValue(register.name, moment().format('MMMM DD, yyyy'))
+        setValue(register.name, moment().format('DD/mm/yyyy'))
         const handleClick = (e) => {
             if(e.path[0] !== input?.current && e.path[1] !== input?.current?.nextSibling) {
                 if(!e.path[0].className.includes("navigation")) setFocus(false)
@@ -28,7 +28,7 @@ const Datepicker = ({ between, top, register, setValue, isReset, title }) => {
     }, [])
 
     const handleChanges = (dateObj) => {
-        const formatDate = moment(dateObj).format('MMMM DD, yyyy')
+        const formatDate = moment(dateObj).format('dd/mm/yyyy')
         onChange(dateObj)
         setReTitle(formatDate)
         setFocus(false)
@@ -38,7 +38,7 @@ const Datepicker = ({ between, top, register, setValue, isReset, title }) => {
     return(
         <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-xl border-2 h-full ' + (focus ? "border-blue-900" : "border-gray-300")}>
             <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium pl-8 ' + (focus ? "text-blue-900" : "text-gray-400")}>{title}</div>
-            <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
+            <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left text-sm font-medium h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
             <div style={{boxShadow: "4px 4px 30px rgba(0, 0, 0, 0.20)"}} className={'absolute z-10 transition top-full bg-white translate-y-1 w-full right-0 flex justify-center ' + (focus ? "opacity-1" : "opacity-0 pointer-events-none")}>
                 <Calendar className="border-none" onChange={handleChanges} value={value} view="month" locale="US" />
             </div>
