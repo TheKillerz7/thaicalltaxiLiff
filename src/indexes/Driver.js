@@ -7,8 +7,9 @@ import Numberinput from "../components/Numberinput";
 import Textareainput from "../components/Textareainput";
 import liff from '@line/liff';
 import axios from 'axios'
+import Dropdown from "../components/Dropdown";
 
-const Booking = () => {
+const Driver = () => {
   const [currentStep, setStep] = useState(0)
   const [bookData, setBookData] = useState({})
   const { register, setValue, handleSubmit } = useForm()
@@ -47,14 +48,14 @@ const Booking = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("localhost:5000/booking", bookData)
+    axios.post("https://1b64-2405-9800-b650-586-e5e9-1a44-99f5-fa69.ngrok.io/driver", bookData)
     // console.log(bookData)
   }
 
   return (
     <div className="grid pt-20 h-screen w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
-            <div className="text-4xl font-semibold mb-10">Booking Form</div>
+            <div className="text-4xl font-semibold mb-10">Register Form</div>
             <FormTracker currentStep={currentStep} body={[
               <PickupInfoForm setStep={setStep} register={register} setValue={setValue} />,
               <ConfirmInfoForm setStep={setStep} register={register} setValue={setValue} />
@@ -71,29 +72,22 @@ const Booking = () => {
   );
 }
 
-export default Booking;
+export default Driver;
 
 //first page of the booking form
 const PickupInfoForm = ({ setStep, register, setValue }) => {
-
   return (
     <div>
-      <div className="text-xl font-medium text-left mb-3">Pick-up Information</div>
-      <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Datepicker register={register("pickupDate")} title="Pickup Date" setValue={setValue} /></div>
-        <div className="mb-3"><Datepicker register={register("pickupTime")} title="Pickup Time" setValue={setValue} /></div>
+      <div className="text-xl font-medium text-left mb-3"></div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("name")} title="Full name" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("from")} title="From" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("phone")} title="Phone number" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("to")} title="To" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("carType")} title="Car type" options={["Economy", "Sedan", "Family", "Minibus/Van", "VIP Van"]} setValue={setValue} />
       </div>
-      <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Numberinput register={register("passenger")} title="Passenger" setValue={setValue} /></div>
-        <div className="mb-3"><Numberinput register={register("luggage")} title="Lugggage" setValue={setValue} /></div>
-      </div>
-      <div className="mb-3"><Textareainput register={register("message")} title="Message to drivers" setValue={setValue} /></div>
     </div>
   )
 }
@@ -106,14 +100,14 @@ const ConfirmInfoForm = ({ setStep, register, setValue }) => {
 
   return (
     <div>
-      <div className="text-xl font-medium text-left mb-3">Confirmation</div>
+      {/* <div className="text-xl font-medium text-left mb-3">Confirmation</div>
       <div className="mb-3"><Datepicker register={register("pickupDate")} title="Pickup Date" setValue={setValue} /></div>
       <div className="mb-3"><Textinput register={register("pickupDate")} title="From" setValue={setValue} /></div>
       <div className="mb-3"><Textinput register={register("pickupDate")} title="To" setValue={setValue} /></div>
       <div className="grid grid-cols-2 gap-x-2">
         <div className="mb-3"><Numberinput register={register("pickupDate")} title="Passenger" setValue={setValue} /></div>
         <div className="mb-3"><Numberinput register={register("pickupDate")} title="Lugggage" setValue={setValue} /></div>
-      </div>
+      </div> */}
     </div>
   )
 }
