@@ -7,6 +7,7 @@ import Numberinput from "../components/Numberinput";
 import Textareainput from "../components/Textareainput";
 import liff from '@line/liff';
 import axios from 'axios'
+import Timepicker from "../components/Timepicker";
 
 const Booking = () => {
   const [currentStep, setStep] = useState(0)
@@ -47,7 +48,7 @@ const Booking = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("localhost:5000/booking", bookData)
+    axios.post("https://d3bf-2405-9800-b650-586-f45e-ac49-d489-cc41.ngrok.io/booking", bookData)
     // console.log(bookData)
   }
 
@@ -75,13 +76,15 @@ export default Booking;
 
 //first page of the booking form
 const PickupInfoForm = ({ setStep, register, setValue }) => {
+  const [time, setTime] = useState(new Date())
+  const [asap, setAsap] = useState(false)
 
   return (
     <div>
       <div className="text-xl font-medium text-left mb-3">Pick-up Information</div>
       <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Datepicker register={register("pickupDate")} title="Pickup Date" setValue={setValue} /></div>
-        <div className="mb-3"><Datepicker register={register("pickupTime")} title="Pickup Time" setValue={setValue} /></div>
+        <div className="mb-3"><Datepicker register={register("pickupDate")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Date" setValue={setValue} /></div>
+        <div className="mb-3"><Timepicker register={register("pickupTime")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Time" setValue={setValue} /></div>
       </div>
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("from")} title="From" setValue={setValue} />

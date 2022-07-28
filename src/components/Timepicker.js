@@ -5,18 +5,18 @@ import { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-mobile-datepicker';
 import 'react-calendar/dist/Calendar.css';
 
-const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset, title }) => {
+const Timepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset, title }) => {
     const [focus, setFocus] = useState(false)
     const [reTitle, setReTitle] = useState("")
     const input = useRef(null)
 
     useEffect(() => {
-        setReTitle(moment().format('DD/mm/yyyy'))
+        setReTitle(moment(time).format('HH:mm'))
         setFocus(false)
     }, [isReset])
 
     useEffect(() => {
-        setValue(register.name, moment().format('DD/mm/yyyy'))
+        setValue(register.name, moment(time).format('HH:mm'))
         const handleClick = (e) => {
             if(e.path[0] !== input?.current && e.path[1] !== input?.current?.nextSibling) {
                 if(!e.path[0].className.includes("navigation")) setFocus(false)
@@ -28,32 +28,28 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
 
     const handleChange = (time) => {
         setTime(time);
-        const formatDate = moment(time).format('DD/MM/yyyy')
         setAsap(false)
+        console.log(time)
+        const formatDate = moment(time).format('HH:mm')
         setReTitle(formatDate)
         setValue(register.name, formatDate)
       };
 
     const config = {
-        'date': {
-            format: 'DD',
-            caption: 'Day',
+        'hour': {
+            format: 'hh',
+            caption: 'Hour',
             step: 1,
         },
-        'month': {
-            format: 'MM',
-            caption: 'Mon',
+        'minute': {
+            format: 'mm',
+            caption: 'Min',
             step: 1,
         },
-        'year': {
-            format: 'YYYY',
-            caption: 'Year',
-            step: 1,
-        }        
     }
 
     useEffect(() => {
-        const formatDate = moment(time).format('DD/MM/yyyy')
+        const formatDate = moment(time).format('HH:mm')
         setReTitle(asap ? "ASAP" : formatDate)
         setValue(register.name, asap ? "As soon as possible" : formatDate)
     }, [asap])
@@ -64,7 +60,7 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
             <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left text-sm font-medium h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
             <DatePicker
                 dateConfig={config}
-                headerFormat="DD/MM/YYYY"
+                headerFormat="hh:mm"
                 min={new Date()}
                 isPopup={true}
                 theme="ios"
@@ -80,4 +76,4 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
     )
 }
 
-export default Datepicker
+export default Timepicker
