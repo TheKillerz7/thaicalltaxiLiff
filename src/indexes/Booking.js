@@ -48,7 +48,7 @@ const Booking = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("https://d3bf-2405-9800-b650-586-f45e-ac49-d489-cc41.ngrok.io/booking", bookData)
+    axios.post("https://thaicalltaxibackend.herokuapp.com/booking", bookData)
     // console.log(bookData)
   }
 
