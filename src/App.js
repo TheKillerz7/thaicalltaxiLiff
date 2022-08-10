@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App overflow-x-hidden">
+    <div className="App">
       <BrowserRouter>
         <Routes>
           <Route path="/booking" element={<Booking />} />

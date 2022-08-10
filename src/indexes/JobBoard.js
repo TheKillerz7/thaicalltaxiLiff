@@ -7,11 +7,13 @@ import DataTable from "../components/DataTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignRight, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import Textinput from "../components/Textinput";
+import JobPage from "../partials/JobPage";
 
 const JobBoard = () => {
-  const [currentStep, setStep] = useState(0)
-  const [bookData, setBookData] = useState({})
-  const { register, setValue, handleSubmit } = useForm()
+  const [bookingData, setBookingData] = useState({})
+  const [isJobOpen, setJobOpen] = useState(false)
+  const [jobData, setJobData] = useState({})
+  const [search, setSearch] = useState("")
 
   const initLine = () => {
     liff.init({ liffId: '1657246657-jMPaJLl0' }, () => {
@@ -34,28 +36,25 @@ const JobBoard = () => {
     // initLine();
   }, []);
 
-  const onSubmit = (data) => {
-    setStep(currentStep + 1)
-    setBookData(data)
-    console.log(data)
-  }
-
-  const onConfirm = async () => {
-    axios.post("https://d3bf-2405-9800-b650-586-f45e-ac49-d489-cc41.ngrok.io/driver", bookData)
-    // console.log(bookData)
+  const handleJobViewed = (e, data) => {
+    setJobData(data)
+    setJobOpen(true)
   }
 
   return (
-    <div className="grid w-full pt-16">
+    <div>
+      <div id="job" className="pt-16 grid w-full">
         <div className="text-3xl font-semibold text-center mb-10">Job Board</div>
         <div className="px-3 flex justify-between mb-5">
             <div className="w-full mr-3 w-full border-2 border-gray-300 h-full rounded-md px-3 flex items-center">
                 <FontAwesomeIcon className="text-blue-900 mr-2" icon={faMagnifyingGlass} />
-                <input placeholder="Search" className="w-full outline-none" />
+                <input onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="w-full outline-none" />
             </div>
             <div style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 grid place-items-center"><FontAwesomeIcon icon={faAlignRight} /></div>
         </div>
-        <DataTable />
+        <DataTable onClick={handleJobViewed} search={search} />
+      </div>
+      <JobPage onClick={() => setJobOpen(false)} bookingData={jobData} isOpen={isJobOpen} />
     </div>
   );
 }
