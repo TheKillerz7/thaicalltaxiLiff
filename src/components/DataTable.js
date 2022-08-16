@@ -8,6 +8,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
 
     data = [
         {
+            bookingId: "12105621",
             from: "Kingbap Thailand",
             to: "Marriotte Thailand",
             pickupDate: "25/10/23",
@@ -16,6 +17,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
             luggage: "6 luggages"
         },
         {
+            bookingId: "12105621",
             from: "Kingbap Thailand",
             to: "Marriotte Thailand",
             pickupDate: "25/10/23",
@@ -24,6 +26,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
             luggage: "6 luggages"
         },
         {
+            bookingId: "12105621",
             from: "Kingbap Thailand",
             to: "Marriotte Thailand",
             pickupDate: "25/10/23",
@@ -32,6 +35,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
             luggage: "6 luggages"
         },
         {
+            bookingId: "12105621",
             from: "Kingbap Thailand",
             to: "Marriotte Thailand",
             pickupDate: "25/10/23",
@@ -40,6 +44,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
             luggage: "6 luggages"
         },
         {
+            bookingId: "12105621",
             from: "Kingbap Thailand",
             to: "Marriottess Thailand",
             pickupDate: "25/10/23",

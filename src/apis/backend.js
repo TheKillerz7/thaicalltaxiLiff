@@ -11,6 +11,6 @@ export const getBookingById = () => {
 
 
 //post
-export const registerToBooking = () => {
-
+export const driverRegisterToBooking = (data) => {
+    axios.post("/")
 }

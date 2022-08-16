@@ -2,6 +2,10 @@ import { faArrowDown, faArrowLeft, faArrowRight, faBriefcase, faCalendar, faCale
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
+import NumberInput from "../components/Numberinput"
+import { useForm } from "react-hook-form";
+import Textinput from "../components/Textinput";
+import axios from "axios";
 
 const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
     const [applyProcess, setApplyProcess] = useState("")
@@ -33,34 +37,27 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
         }
     ]
 
-    // bookingData = {
-    //     bookingId: "10262648",
-    //     from: "Kingbap Thailand",
-    //     to: "Mariotte Thailand",
-    //     pickupDate: "27/02/2546",
-    //     pickupTime: "19:50",
-    //     passenger: "8 people",
-    //     luggage: "4 luggages"
-    // }
-
     useEffect(() => {
         const JobBoard = document.querySelector('#job')
-        if(isOpen) disableBodyScroll(JobBoard)
-        else enableBodyScroll(JobBoard)
-        return () => clearAllBodyScrollLocks()
-    }, [isOpen])
+        if (!isOpen) return enableBodyScroll(JobBoard)
 
-    useEffect(() => {
-        if (!isOpen) return
         const el = document.querySelector("#headJob")
         const observer = new IntersectionObserver( 
             ([e]) => e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
             { threshold: [1] }
         );
-
         observer.observe(el);
-        return () => observer.disconnect()
-    }, [])
+
+        disableBodyScroll(JobBoard)
+        return () => {
+            clearAllBodyScrollLocks()
+            observer.disconnect()
+        }
+    }, [isOpen])
+
+    useEffect(() => {
+        
+    }, [isOpen])
 
     return (
         <div style={{ transitionTimingFunction: "cubic-bezier(.3,.18,.34,1)", transitionDuration: "350ms", overflowY: "scroll" }} className={"fixed bg-white h-screen w-full top-0 transition " + (!isOpen && "translate-x-full")}>
@@ -116,39 +113,107 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
                     </div>
                     <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium text-lg w-full py-2 grid place-items-center mb-10">Apply Now</div>
                 </div>
-                <div className={"fixed top-0 left-0 flex flex-col items-center justify-center bg-black bg-opacity-40 w-full h-screen transition " + (applyProcess ? "opacity-100" : "opacity-0 pointer-events-none")}>
-                    {applyProcess === "confirmation" && 
-                        <div>
-                            <div className="bg-white w-10/12 mx-auto rounded-t-md py-6 px-5">
-                                <div className="text-xl font-semibold mb-3">Confirmation</div>
-                                <div>
-                                    Please confirm that you are willing to apply for this job and you will take responsibility for this job.
-                                </div>
-                            </div>
-                            <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
-                                <div onClick={() => setApplyProcess("")} className="cursor-pointer text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">Cancel</div>
-                                <div onClick={() => setApplyProcess("offering")} className="cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">Confirm</div>
-                            </div>
-                        </div>
-                    }
-                    {applyProcess === "offering" && 
-                        <div>
-                            <div className="bg-white w-10/12 mx-auto rounded-t-md py-6 px-5">
-                                <div className="text-xl font-semibold mb-3">Offering</div>
-                                <div>
-                                    Please confirm that you are willing to apply for this job and you will take responsibility for this job.
-                                </div>
-                            </div>
-                            <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
-                                <div onClick={() => setApplyProcess("")} className="text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">Cancel</div>
-                                <div onClick={() => setApplyProcess("offering")} className="text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">Confirm</div>
-                            </div>
-                        </div>
-                    }
-                </div>
+                <JobApplication applyProcess={applyProcess} setApplyProcess={setApplyProcess} bookingData={bookingData} />
             </div>
         </div>
     )
 }
 
 export default JobPage
+
+const JobApplication = ({ applyProcess, setApplyProcess, bookingData }) => {
+    const [total, setTotal] = useState(0)
+    const [extraCount, setExtraCount] = useState(1)
+    const [prices, setPrices] = useState([0, 0, [0]])
+    const [loading, setLoading] = useState(false)
+
+    const { register, setValue, handleSubmit, unregister } = useForm()
+
+    useEffect(() => {
+        let extraTotalPrices = 0
+        for (let i = 0; i < prices[2].length; i++) {
+            extraTotalPrices += prices[2][i];
+        }
+        setTotal(prices[0] + prices[1] + extraTotalPrices)
+    }, [prices])
+
+    const handleExtraPricesIncrementation = (isIncrement) => {
+        let extraPrice = prices[2]
+        if (isIncrement) {
+            if (extraCount === 5) return
+            setExtraCount(count => count + 1 )
+            extraPrice.push(0)
+            setPrices([prices[0], prices[1], [...extraPrice]])
+        }
+        else {
+            if (extraCount === 1) return
+            setExtraCount(count => count - 1)
+            extraPrice.pop()
+            unregister(`extra.[${extraCount - 1}]`)
+            setPrices([prices[0], prices[1], [...extraPrice]])
+        }
+    }
+
+    const onSubmit = async (data) => {
+        setLoading(true)
+        data.bookingId = bookingData.bookingId
+        data.driverId = "15525156666"
+        console.log(data)
+        await axios.post('/jobBoard', data)
+        setLoading(false)
+    }
+
+    return (
+        <div className={"fixed top-0 left-0 flex flex-col items-center justify-center bg-black bg-opacity-40 w-full h-screen transition " + (applyProcess ? "opacity-100" : "opacity-0 pointer-events-none")}>
+            {applyProcess === "confirmation" && 
+                <>
+                    <div className="bg-white w-10/12 mx-auto rounded-t-md py-6 px-5">
+                        <div className="text-xl font-semibold mb-3">Confirmation</div>
+                        <div>
+                            Please confirm that you are willing to apply for this job and you will take responsibility for this job.
+                        </div>
+                    </div>
+                    <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
+                        <div onClick={() => setApplyProcess("")} className="cursor-pointer text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">Cancel</div>
+                        <div onClick={() => setApplyProcess("offering")} className="cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">Confirm</div>
+                    </div>
+                </>
+            }
+            {applyProcess === "offering" && 
+                <>
+                    <form onSubmit={handleSubmit(onSubmit)} className="bg-white w-11/12 mx-auto rounded-md py-6 px-5">
+                        <div className="text-lg font-semibold mb-2">Price Offer</div>
+                        <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("trip")} setValue={setValue} title="Trip price" />
+                        <div className="my-3"></div>
+                        <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway")} setValue={setValue} title="Toll way" />
+                        <div className="flex mb-2 mt-5 ">
+                            <div className="text-lg font-semibold mr-3">Extras</div>
+                            <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md">
+                                <div onClick={() => handleExtraPricesIncrementation(false)} className="px-2 cursor-pointer">-</div>
+                                <div onClick={() => handleExtraPricesIncrementation(true)} className="px-2 cursor-pointer">+</div>
+                            </div>
+                        </div>
+                        {[...Array(extraCount)].map((count, index) => {
+                            const pricesHandle = (value) => {
+                                const temp = prices[2]
+                                temp.fill(parseInt(value), index, index+1)
+                                setPrices([prices[0], prices[1], [...temp]])
+                            }
+                    
+                            return (
+                                <div key={index} className="mb-3">
+                                    <div className="grid grid-cols-2 gap-x-2">
+                                        <Textinput onChange={() => {}} register={register(`extra.[${index}].title`)} setValue={setValue} title="Title" />
+                                        <NumberInput onChange={pricesHandle} register={register(`extra.[${index}].price`)} setValue={setValue} title="Price" />
+                                    </div>
+                                </div>
+                            )
+                        })}
+                        <div className="mt-7 mb-2 font-medium text-lg">Total: {total}</div>
+                        <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "Confirm Offer"}</button>
+                    </form>
+                </>
+            }
+        </div>
+    )
+}

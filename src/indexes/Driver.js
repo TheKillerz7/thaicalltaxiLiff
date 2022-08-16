@@ -14,12 +14,6 @@ const Driver = () => {
   const [bookData, setBookData] = useState({})
   const { register, setValue, handleSubmit } = useForm()
 
-  // googles autocomplete init
-  // const { isLoaded } = useLoadScript({
-  //   googleMapsApiKey: "AIzaSyAyRniSWIgVCvj30C2q7d9YlMnN06ZzT_M",
-  //   libraries: ["places"],
-  // });
-
   const initLine = () => {
     liff.init({ liffId: '1657246657-jMPaJLl0' }, () => {
       if (liff.isLoggedIn()) {
@@ -48,7 +42,7 @@ const Driver = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("https://d3bf-2405-9800-b650-586-f45e-ac49-d489-cc41.ngrok.io/driver", bookData)
+    axios.post("/driver", bookData)
     // console.log(bookData)
   }
 

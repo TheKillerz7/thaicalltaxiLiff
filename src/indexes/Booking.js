@@ -48,7 +48,10 @@ const Booking = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("https://thaicalltaxibackend.herokuapp.com/booking", bookData)
+    const dataTemp = bookData
+    dataTemp.bookingId = "1233123"
+    dataTemp.userId = "U2330f4924d1d5faa190c556e978bee23"
+    axios.post("/booking", bookData)
     // console.log(bookData)
   }
 
@@ -93,8 +96,8 @@ const PickupInfoForm = ({ setStep, register, setValue }) => {
         <Textinput onChange={() => {}} register={register("to")} title="To" setValue={setValue} />
       </div>
       <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Numberinput register={register("passenger")} title="Passenger" setValue={setValue} /></div>
-        <div className="mb-3"><Numberinput register={register("luggage")} title="Lugggage" setValue={setValue} /></div>
+        <div className="mb-3"><Numberinput onChange={() => {}} register={register("passenger")} title="Passenger" setValue={setValue} /></div>
+        <div className="mb-3"><Numberinput onChange={() => {}} register={register("luggage")} title="Lugggage" setValue={setValue} /></div>
       </div>
       <div className="mb-3"><Textareainput register={register("message")} title="Message to drivers" setValue={setValue} /></div>
     </div>

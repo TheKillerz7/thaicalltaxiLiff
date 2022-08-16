@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const Numberinput = ({ between, title, top, register, setValue, errors, rendercount, isReset }) => {
+const Numberinput = ({ between, title, top, register, setValue, errors, rendercount, isReset, onChange }) => {
     const [focus, setFocus] = useState(false)
     const [isFilled, setFilled] = useState(false)
     const [height, setHeight] = useState(0)
@@ -21,6 +21,7 @@ const Numberinput = ({ between, title, top, register, setValue, errors, renderco
     }, [isReset])
 
     const handleChanges = (item) => {
+        onChange(item.target.value)
         setValue(register.name, item.target.value)
         item.target.value === "" ? setFilled(false) : setFilled(true)
     }
