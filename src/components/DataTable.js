@@ -6,53 +6,9 @@ import { matchSorter } from 'match-sorter'
 const DataTable = ({ filter, search, onClick, data }) => {
     const [jobs, setJobs] = useState([])
 
-    data = [
-        {
-            bookingId: "12105621",
-            from: "Kingbap Thailand",
-            to: "Marriotte Thailand",
-            pickupDate: "25/10/23",
-            pickupTime: "11:30",
-            passenger: "8 people",
-            luggage: "6 luggages"
-        },
-        {
-            bookingId: "12105621",
-            from: "Kingbap Thailand",
-            to: "Marriotte Thailand",
-            pickupDate: "25/10/23",
-            pickupTime: "11:30",
-            passenger: "8 people",
-            luggage: "6 luggages"
-        },
-        {
-            bookingId: "12105621",
-            from: "Kingbap Thailand",
-            to: "Marriotte Thailand",
-            pickupDate: "25/10/23",
-            pickupTime: "11:30",
-            passenger: "8 people",
-            luggage: "6 luggages"
-        },
-        {
-            bookingId: "12105621",
-            from: "Kingbap Thailand",
-            to: "Marriotte Thailand",
-            pickupDate: "25/10/23",
-            pickupTime: "11:30",
-            passenger: "8 people",
-            luggage: "6 luggages"
-        },
-        {
-            bookingId: "12105621",
-            from: "Kingbap Thailand",
-            to: "Marriottess Thailand",
-            pickupDate: "25/10/23",
-            pickupTime: "11:30",
-            passenger: "8 people",
-            luggage: "6 luggages"
-        },
-    ]
+    useEffect(() => {
+
+    }, [])
 
     useEffect(() => {
         let temp = data.map((item, index) => {
@@ -78,9 +34,10 @@ const DataTable = ({ filter, search, onClick, data }) => {
             })
             if (obj) return obj
         })
+        console.log(temp)
         if (search) temp = matchSorter(temp, search, {keys: ["from", "to", "passenger", "luggage"]})
         setJobs(temp)
-    }, [filter, search])
+    }, [filter, search, data])
 
     return (
         <div className="px-3">
@@ -99,8 +56,8 @@ const DataTable = ({ filter, search, onClick, data }) => {
                             <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faClock} />{job.pickupTime}</div>
                         </div>
                         <div style={{ gridTemplateColumns: "1fr 1fr 0.5fr" }} className="grid text-sm">
-                            <div className="mr-5"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faUser} />{job.passenger}</div>
-                            <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faBriefcase} />{job.luggage}</div>
+                            <div className="mr-5"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faUser} />{job.passenger} people</div>
+                            <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faBriefcase} />{job.luggage} luggages</div>
                         </div>
                     </div>
                 )

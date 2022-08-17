@@ -12,10 +12,11 @@ import Dropdown from "../components/Dropdown";
 const Driver = () => {
   const [currentStep, setStep] = useState(0)
   const [bookData, setBookData] = useState({})
+  const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit } = useForm()
 
   const initLine = () => {
-    liff.init({ liffId: '1657246657-jMPaJLl0' }, () => {
+    liff.init({ liffId: '1657246657-4pdxrLem' }, () => {
       if (liff.isLoggedIn()) {
         runApp();
       } else {
@@ -42,7 +43,9 @@ const Driver = () => {
   }
 
   const onConfirm = async () => {
-    axios.post("/driver", bookData)
+    let dataTemp = bookData
+    dataTemp.driverId = userId || "U2330f4924d1d5faa190c556e978bee23"
+    axios.post("/driver/register", bookData)
     // console.log(bookData)
   }
 

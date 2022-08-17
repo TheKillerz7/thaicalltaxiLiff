@@ -12,6 +12,7 @@ import Timepicker from "../components/Timepicker";
 const Booking = () => {
   const [currentStep, setStep] = useState(0)
   const [bookData, setBookData] = useState({})
+  const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit } = useForm()
 
   // googles autocomplete init
@@ -33,7 +34,7 @@ const Booking = () => {
   const runApp = () => {
     const idToken = liff.getIDToken();
     liff.getProfile().then(profile => {
-      console.log(profile);
+      setUserId(profile.userId)
     }).catch(err => console.error(err));
   }
 
@@ -44,15 +45,12 @@ const Booking = () => {
   const onSubmit = (data) => {
     setStep(currentStep + 1)
     setBookData(data)
-    console.log(data)
   }
 
   const onConfirm = async () => {
-    const dataTemp = bookData
-    dataTemp.bookingId = "1233123"
-    dataTemp.userId = "U2330f4924d1d5faa190c556e978bee23"
-    axios.post("/booking", bookData)
-    // console.log(bookData)
+    let dataTemp = bookData
+    dataTemp.userId = userId || "U2330f4924d1d5faa190c556e978bee23"
+    axios.post("/booking", dataTemp)
   }
 
   return (

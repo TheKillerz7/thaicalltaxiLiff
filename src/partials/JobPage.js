@@ -6,8 +6,9 @@ import NumberInput from "../components/Numberinput"
 import { useForm } from "react-hook-form";
 import Textinput from "../components/Textinput";
 import axios from "axios";
+import { driverRegisterToBooking } from "../apis/backend";
 
-const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
+const JobPage = ({ bookingData, currentJobs, isOpen, onClick, driverId }) => {
     const [applyProcess, setApplyProcess] = useState("")
     
     const { distance, travelTime } = {
@@ -80,8 +81,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
                                 <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faClock} />{bookingData.pickupTime}</div>
                             </div>
                             <div style={{ gridTemplateColumns: "1fr 1fr" }} className="grid text-lg font-medium">
-                                <div className="mr-5"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faUser} />{bookingData.passenger}</div>
-                                <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faBriefcase} />{bookingData.luggage}</div>
+                                <div className="mr-5"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faUser} />{bookingData.passenger} people</div>
+                                <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faBriefcase} />{bookingData.luggage} luggages</div>
                             </div>
                         </div>
                     </div>
@@ -113,7 +114,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
                     </div>
                     <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium text-lg w-full py-2 grid place-items-center mb-10">Apply Now</div>
                 </div>
-                <JobApplication applyProcess={applyProcess} setApplyProcess={setApplyProcess} bookingData={bookingData} />
+                <JobApplication applyProcess={applyProcess} setApplyProcess={setApplyProcess} bookingData={bookingData} driverId={driverId} />
             </div>
         </div>
     )
@@ -121,7 +122,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick }) => {
 
 export default JobPage
 
-const JobApplication = ({ applyProcess, setApplyProcess, bookingData }) => {
+const JobApplication = ({ applyProcess, setApplyProcess, bookingData, driverId }) => {
     const [total, setTotal] = useState(0)
     const [extraCount, setExtraCount] = useState(1)
     const [prices, setPrices] = useState([0, 0, [0]])
@@ -155,11 +156,11 @@ const JobApplication = ({ applyProcess, setApplyProcess, bookingData }) => {
     }
 
     const onSubmit = async (data) => {
-        setLoading(true)
+        // setLoading(true)
         data.bookingId = bookingData.bookingId
-        data.driverId = "15525156666"
+        data.driverId = driverId || "U2330f4924d1d5faa190c556e978bee23"
         console.log(data)
-        await axios.post('/jobBoard', data)
+        await driverRegisterToBooking(data)
         setLoading(false)
     }
 
