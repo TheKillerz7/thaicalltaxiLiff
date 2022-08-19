@@ -131,6 +131,10 @@ const JobApplication = ({ applyProcess, setApplyProcess, bookingData, driverId }
     const { register, setValue, handleSubmit, unregister } = useForm()
 
     useEffect(() => {
+        setLoading(false)
+    }, [])
+
+    useEffect(() => {
         let extraTotalPrices = 0
         for (let i = 0; i < prices[2].length; i++) {
             extraTotalPrices += prices[2][i];
@@ -156,12 +160,10 @@ const JobApplication = ({ applyProcess, setApplyProcess, bookingData, driverId }
     }
 
     const onSubmit = async (data) => {
-        // setLoading(true)
         data.bookingId = bookingData.bookingId
         data.driverId = driverId || "U2330f4924d1d5faa190c556e978bee23"
-        console.log(data)
-        await driverRegisterToBooking(data)
-        setLoading(false)
+        const res = await driverRegisterToBooking(data)
+        alert(res.data)
     }
 
     return (

@@ -29,11 +29,12 @@ const Driver = () => {
     const idToken = liff.getIDToken();
     liff.getProfile().then(profile => {
       console.log(profile);
+      setUserId(profile.userId)
     }).catch(err => console.error(err));
   }
 
   useEffect(() => {
-    // initLine();
+    initLine();
   }, []);
 
   const onSubmit = (data) => {
