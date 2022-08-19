@@ -39,7 +39,7 @@ const Booking = () => {
   }
 
   useEffect(() => {
-    // initLine();
+    initLine();
   }, []);
 
   const onSubmit = (data) => {
