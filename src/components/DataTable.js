@@ -34,15 +34,14 @@ const DataTable = ({ filter, search, onClick, data }) => {
             })
             if (obj) return obj
         })
-        console.log(temp)
         if (search) temp = matchSorter(temp, search, {keys: ["from", "to", "passenger", "luggage"]})
         setJobs(temp)
     }, [filter, search, data])
 
     return (
         <div className="px-3">
-            {!data && <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job yet.</div>}
-            {data && jobs.map((job, index) => {
+            {!data?.length && <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job yet.</div>}
+            {data?.length > 0 && jobs.map((job, index) => {
                 return (
                     <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 py-3 mb-5 rounded-lg">
                         <div className="flex justify-between align-bottom">

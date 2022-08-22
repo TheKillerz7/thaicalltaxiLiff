@@ -39,7 +39,7 @@ const Booking = () => {
   }
 
   useEffect(() => {
-    initLine();
+    // initLine();
   }, []);
 
   const onSubmit = (data) => {
@@ -110,14 +110,14 @@ const ConfirmInfoForm = ({ setStep, register, setValue }) => {
 
   return (
     <div>
-      <div className="text-xl font-medium text-left mb-3">Confirmation</div>
+      {/* <div className="text-xl font-medium text-left mb-3">Confirmation</div>
       <div className="mb-3"><Datepicker register={register("pickupDate")} title="Pickup Date" setValue={setValue} /></div>
       <div className="mb-3"><Textinput register={register("pickupDate")} title="From" setValue={setValue} /></div>
       <div className="mb-3"><Textinput register={register("pickupDate")} title="To" setValue={setValue} /></div>
       <div className="grid grid-cols-2 gap-x-2">
         <div className="mb-3"><Numberinput register={register("pickupDate")} title="Passenger" setValue={setValue} /></div>
         <div className="mb-3"><Numberinput register={register("pickupDate")} title="Lugggage" setValue={setValue} /></div>
-      </div>
+      </div> */}
     </div>
   )
 }

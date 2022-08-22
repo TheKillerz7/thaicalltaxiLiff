@@ -38,7 +38,7 @@ const JobBoard = () => {
   useEffect(() => {
     const callback = async () => {
       const driver = await getDriverById(userId || "U2330f4924d1d5faa190c556e978bee23")
-      if (!driver) return 
+      if (!driver.length) return 
       const jobs = await getBookingWithStatus("waiting")
       console.log(jobs)
       setJobList(jobs.data)

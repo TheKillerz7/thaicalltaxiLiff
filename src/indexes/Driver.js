@@ -34,7 +34,7 @@ const Driver = () => {
   }
 
   useEffect(() => {
-    initLine();
+    // initLine();
   }, []);
 
   const onSubmit = (data) => {
@@ -46,7 +46,7 @@ const Driver = () => {
   const onConfirm = async () => {
     let dataTemp = bookData
     dataTemp.driverId = userId || "U2330f4924d1d5faa190c556e978bee23"
-    axios.post("/driver/register", bookData)
+    axios.post("/driver", bookData)
     // console.log(bookData)
   }
 
