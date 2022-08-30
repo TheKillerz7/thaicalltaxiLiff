@@ -34,7 +34,7 @@ const Driver = () => {
   }
 
   useEffect(() => {
-    // initLine();
+    initLine();
   }, []);
 
   const onSubmit = (data) => {

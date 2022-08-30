@@ -42,7 +42,7 @@ const JobBoard = () => {
       const jobs = await getBookingWithStatus("waiting")
       console.log(jobs)
       setJobList(jobs.data)
-      // initLine();
+      initLine();
     }
     callback()
   }, []);
