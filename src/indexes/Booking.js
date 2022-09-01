@@ -50,7 +50,8 @@ const Booking = () => {
   const onConfirm = async () => {
     let dataTemp = bookData
     dataTemp.userId = userId || "U2330f4924d1d5faa190c556e978bee23"
-    axios.post("/booking", dataTemp)
+    await axios.post("/booking", dataTemp)
+    liff.closeWindow()
   }
 
   return (

@@ -1,8 +1,8 @@
 import axios from "axios"
 
 //get
-export const getBookingWithStatus = (status) => {
-    return axios.get(`/booking/${status}`)
+export const getBookingByStatusWithoutDriverId = (status, driverId) => {
+    return axios.get(`/jobBoard/${status}/${driverId}`)
 }
 
 export const getBookingById = (id) => {

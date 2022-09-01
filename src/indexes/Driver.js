@@ -46,7 +46,8 @@ const Driver = () => {
   const onConfirm = async () => {
     let dataTemp = bookData
     dataTemp.driverId = userId || "U2330f4924d1d5faa190c556e978bee23"
-    axios.post("/driver", bookData)
+    await axios.post("/driver", bookData)
+    liff.closeWindow()
     // console.log(bookData)
   }
 
@@ -58,7 +59,7 @@ const Driver = () => {
               <PickupInfoForm setStep={setStep} register={register} setValue={setValue} />,
               <ConfirmInfoForm setStep={setStep} register={register} setValue={setValue} />
             ]} />
-            {currentStep === 0 && <input type="submit" value="Next" className="py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-10" />}
+            {currentStep === 0 && <input type="submit" value="Next" className="py-2 mb-14 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-10" />}
             {currentStep === 1 &&
               <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
                 <div onClick={() => setStep(currentStep - 1)} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Back</div>
@@ -85,6 +86,12 @@ const PickupInfoForm = ({ setStep, register, setValue }) => {
       </div>
       <div className={"mb-3 " }>
         <Dropdown onChange={() => {}} register={register("carType")} title="Car type" options={["Economy", "Sedan", "Family", "Minibus/Van", "VIP Van"]} setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("carModel")} title="Car model" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Numberinput onChange={() => {}} register={register("carAge")} title="Car age" setValue={setValue} />
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignRight, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import Textinput from "../components/Textinput";
 import JobPage from "../partials/JobPage";
-import { getBookingWithStatus, getDriverById } from "../apis/backend";
+import { getBookingByStatusWithoutDriverId, getBookingWithStatus, getDriverById } from "../apis/backend";
 
 const JobBoard = () => {
   const [isJobOpen, setJobOpen] = useState(false)
@@ -37,9 +37,9 @@ const JobBoard = () => {
 
   useEffect(() => {
     const callback = async () => {
-      const driver = await getDriverById(userId || "U2330f4924d1d5faa190c556e978bee23")
+      const driver = (await getDriverById(userId || "U2330f4924d1d5faa190c556e978bee23")).data
       if (!driver.length) return 
-      const jobs = await getBookingWithStatus("waiting")
+      const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
       console.log(jobs)
       setJobList(jobs.data)
       initLine();
