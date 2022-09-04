@@ -2,7 +2,7 @@ import axios from "axios"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
-    return axios.get(`/jobBoard/${status}/${driverId}`)
+    return axios.get(`/driver/jobBoard/${status}/${driverId}`)
 }
 
 export const getBookingById = (id) => {

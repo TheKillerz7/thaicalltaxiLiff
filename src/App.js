@@ -4,6 +4,7 @@ import Driver from './indexes/Driver';
 import JobBoard from './indexes/JobBoard';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ChatRoom from './indexes/ChatRoom';
+import Dashboard from './indexes/Dashboard';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route exact path="/chat" element={<ChatRoom />} />
           <Route path="/chat/:page/:roomId" element={<ChatRoom />} />
           <Route path="/chat/:page" element={<ChatRoom />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </div>

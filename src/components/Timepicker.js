@@ -51,7 +51,7 @@ const Timepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
     useEffect(() => {
         const formatDate = moment(time).format('HH:mm')
         setReTitle(asap ? "ASAP" : formatDate)
-        setValue(register.name, asap ? "As soon as possible" : formatDate)
+        setValue(register.name, asap ? "ASAP" : formatDate)
     }, [asap])
 
     return(

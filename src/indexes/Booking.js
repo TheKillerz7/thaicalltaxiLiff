@@ -12,6 +12,7 @@ import Timepicker from "../components/Timepicker";
 const Booking = () => {
   const [currentStep, setStep] = useState(0)
   const [bookData, setBookData] = useState({})
+  const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit } = useForm()
 
@@ -48,6 +49,7 @@ const Booking = () => {
   }
 
   const onConfirm = async () => {
+    setLoading(true)
     let dataTemp = bookData
     dataTemp.userId = userId || "U2330f4924d1d5faa190c556e978bee23"
     await axios.post("/booking", dataTemp)
@@ -66,7 +68,7 @@ const Booking = () => {
             {currentStep === 1 &&
               <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
                 <div onClick={() => setStep(currentStep - 1)} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Back</div>
-                <div onClick={onConfirm} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Confirm</div>
+                <div onClick={onConfirm} className={"py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10 transition " + (!loading ? "opacity-100" : "opacity-80 pointer-events-none")}>Confirm</div>
               </div>
             }
         </form>

@@ -30,22 +30,24 @@ const JobBoard = () => {
   const runApp = () => {
     const idToken = liff.getIDToken();
     liff.getProfile().then(profile => {
-      console.log(profile);
       setUserId(profile.userId)
     }).catch(err => console.error(err));
   }
 
   useEffect(() => {
+    initLine();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return
     const callback = async () => {
-      const driver = (await getDriverById(userId || "U2330f4924d1d5faa190c556e978bee23")).data
+      const driver = (await getDriverById(userId)).data
       if (!driver.length) return 
       const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
-      console.log(jobs)
       setJobList(jobs.data)
-      initLine();
     }
     callback()
-  }, []);
+  }, [userId, isJobOpen]);
 
   const handleJobViewed = (e, data) => {
     setJobData(data)
@@ -65,7 +67,7 @@ const JobBoard = () => {
         </div>
         <DataTable onClick={handleJobViewed} search={search} data={jobList} />
       </div>
-      <JobPage onClick={() => setJobOpen(false)} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
+      <JobPage onClick={() => setJobOpen(false)} setJobOpen={setJobOpen} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
     </div>
   );
 }
