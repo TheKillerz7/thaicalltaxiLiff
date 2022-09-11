@@ -14,9 +14,8 @@ function App() {
           <Route path="/booking" element={<Booking />} />
           <Route path="/driver" element={<Driver />} />
           <Route path="/jobBoard" element={<JobBoard />} />
-          <Route exact path="/chat" element={<ChatRoom />} />
-          <Route path="/chat/:page/:roomId" element={<ChatRoom />} />
-          <Route path="/chat/:page" element={<ChatRoom />} />
+          <Route path="/chat/:userType/:page/:roomId" element={<ChatRoom />} />
+          <Route path="/chat/:userType/:page" element={<ChatRoom />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>

@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
-axios.defaults.baseURL = process.env.BASE_URL || "https://ff45-2405-9800-b650-586-3cb6-d4e-b94d-247d.ap.ngrok.io"
+axios.defaults.baseURL = process.env.BASE_URL || "https://d608-2405-9800-bc00-a226-6515-c78d-df20-12f0.ap.ngrok.io"
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

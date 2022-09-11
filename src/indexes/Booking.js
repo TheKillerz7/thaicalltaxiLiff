@@ -16,12 +16,6 @@ const Booking = () => {
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit } = useForm()
 
-  // googles autocomplete init
-  // const { isLoaded } = useLoadScript({
-  //   googleMapsApiKey: "AIzaSyAyRniSWIgVCvj30C2q7d9YlMnN06ZzT_M",
-  //   libraries: ["places"],
-  // });
-
   const initLine = () => {
     liff.init({ liffId: '1657246657-jMPaJLl0' }, () => {
       if (liff.isLoggedIn()) {
@@ -113,14 +107,10 @@ const ConfirmInfoForm = ({ setStep, register, setValue }) => {
 
   return (
     <div>
-      {/* <div className="text-xl font-medium text-left mb-3">Confirmation</div>
-      <div className="mb-3"><Datepicker register={register("pickupDate")} title="Pickup Date" setValue={setValue} /></div>
-      <div className="mb-3"><Textinput register={register("pickupDate")} title="From" setValue={setValue} /></div>
-      <div className="mb-3"><Textinput register={register("pickupDate")} title="To" setValue={setValue} /></div>
-      <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Numberinput register={register("pickupDate")} title="Passenger" setValue={setValue} /></div>
-        <div className="mb-3"><Numberinput register={register("pickupDate")} title="Lugggage" setValue={setValue} /></div>
-      </div> */}
+      <div className="text-xl font-medium text-left mb-3">Confirmation</div>
+      <div className="mb-3"><Textinput register={register("name")} title="Name" setValue={setValue} /></div>
+      <div className="mb-3"><Textinput register={register("flight")} title="Flight No.(optional)" setValue={setValue} /></div>
+      <div className="mb-3"><Textareainput register={register("meetingPlace")} title="Meeting place info" setValue={setValue} /></div>
     </div>
   )
 }
