@@ -29,9 +29,13 @@ const ChatRoom = () => {
       initLine();
     }, []);
 
+    useEffect(() => {
+      console.log(userId)
+    }, [userId]);
+
     return (
         <div>
-            <ChattingRoom userId={userId} />
+            {userId && <ChattingRoom userId={userId} />}
         </div>
     )
 }

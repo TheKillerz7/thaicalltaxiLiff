@@ -3,26 +3,35 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from 'react-router-dom';
-import io from 'socket.io-client';
-import { getRoomsByUserId, readChatMessages } from "../apis/backend";
+import {io} from 'socket.io-client';
+import { getChattingMessages, getRoomsByUserId, readChatMessages } from "../apis/backend";
 
 const connectionOptions =  {
     withCredentials: true,
-    forceNew: true,
-    reconnectionAttempts: "Infinity",
-    timeout: 10000,
     transports: ['websocket']
   };
 
-const socket = io("https://d608-2405-9800-bc00-a226-6515-c78d-df20-12f0.ap.ngrok.io", connectionOptions)
-
-
 const ChattingRoom = ({ userId }) => {
     const { page, roomId, userType  } = useParams();
+    
+    return (
+        <div>
+            {page === "inbox" ?
+                <RoomsPage userType={userType} userId={userId}  />
+                :
+                <ChatPage userType={userType} roomId={roomId} userId={userId}  />
+            }
+        </div>
+    )
+}
+
+export default ChattingRoom
+
+const RoomsPage = ({ userId, userType }) => {
     const [rooms, setRooms] = useState([])
 
     useEffect(() => {
-        if (!userId) return
+        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             console.log('connect')
             const res = await getRoomsByUserId(userId, userType)
@@ -31,9 +40,7 @@ const ChattingRoom = ({ userId }) => {
                 console.log(room)
                 return room.roomId
             })
-            console.log(roomId)
-            if (roomId) socket.emit("join", roomId)
-            else if (roomIds?.length) socket.emit("join", [...roomIds])
+            if (roomIds?.length) socket.emit("join", [...roomIds])
         });
         socket.on('disconnect', () => {
 
@@ -43,29 +50,15 @@ const ChattingRoom = ({ userId }) => {
             socket.off('connect');
             socket.off('disconnect');
           };
-    }, [userId])
+    }, [])
 
-    return (
-        <div>
-            {page === "inbox" ?
-                <RoomsPage userType={userType} userId={userId} rooms={rooms} />
-                :
-                <ChatPage userType={userType} roomId={roomId} userId={userId} />
-            }
-        </div>
-    )
-}
-
-export default ChattingRoom
-
-const RoomsPage = ({ userId, rooms, userType }) => {
     return (
         <div>
             <div className="flex justify-between items-center pt-12 pb-5 px-5 bg-gray-100">
                 <div className="text-3xl font-semibold">Chats</div>
             </div>
             <div className="w-full py-4">
-                {typeof rooms !== "string" && rooms.length ?
+                {typeof rooms !== "string" && rooms?.length ?
                     rooms.map((room, index) => {
                         var now = moment(new Date()); //todays date
                         var end = moment(room.messages.latestMessage?.[0]?.createdDate || room.createdDate); // another date
@@ -84,7 +77,7 @@ const RoomsPage = ({ userId, rooms, userType }) => {
                                             {!room.latestMessage && <div className="text-gray-500">No message yet.</div>}
                                         </div>
                                     </div>
-                                    <div className="text-right text-sm text-gray-400 pt-0.5">{days}</div>
+                                    {/* <div className="text-right text-sm text-gray-400 pt-0.5">{days}</div> */}
                                 </div>
                             </Link>
                         )
@@ -105,19 +98,39 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        readChatMessages(roomId)
+        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
         let messageStorage = []
+        const getMessage = async () => {
+            const messages = await getChattingMessages(roomId)
+            messageStorage = [...messages.data.reverse()]
+            setMessages([...messageStorage])
+        }
+        getMessage()
+        readChatMessages(roomId, userId)
+        socket.on('connect', async () => {
+            console.log('connect')
+            if (roomId) socket.emit("join", roomId)
+        });
         socket.on('message', (message) => {
             messageStorage.push(message)
             setMessages([...messageStorage])
         });
+        socket.on('disconnect', () => {
 
-        document.querySelector('html').scrollIntoView({ block: "end" });
+        });
+        return () => {
+            socket.disconnect()
+            socket.off('message')
+            socket.off('connect');
+            socket.off('disconnect');
+          };
     }, [])
 
     const sendMessageHandle = () => {
         if (inputValue.replace(/\s/g, '') == "") return
+        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
         input.current.value = ""
+        setInputValue("")
         socket.emit('message', {
             roomId,
             inputValue,
@@ -128,13 +141,14 @@ const ChatPage = ({ roomId, userType, userId }) => {
 
     useEffect(() => {
         console.log(messages)
+        document.querySelector('html').scrollIntoView({ block: "end" });
     }, [messages])
 
     return (
         <div>
             <div style={{  }} className="py-6 px-5 flex items-center justify-between bg-blue-50 mb-5 sticky top-0">
                 <div className="flex items-center">
-                    <Link to={`/chat/${userType}/inboxes`}><div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div></Link>
+                    <Link to={`/chat/${userType}/inbox`}><div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div></Link>
                     <div className="flex">
                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
                         <div>
@@ -170,7 +184,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
                 <div className="bg-gray-200 rounded-full py-2 w-full flex justify-between items-center">
                     <div className="px-5 w-full"><input ref={input} onChange={(e) => setInputValue(e.target.value)} placeholder="Type here..." className="bg-transparent font-medium text-lg w-full outline-none" /></div>
                     <div className="flex items-center w-max pr-3">
-                        <div><FontAwesomeIcon className="text-2xl rotate-45 mr-3 cursor-pointer" icon={faPaperclip} /></div>
+                        {/* <div><FontAwesomeIcon className="text-2xl rotate-45 mr-3 cursor-pointer" icon={faPaperclip} /></div> */}
                         <div onClick={sendMessageHandle} style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full w-9 grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-white" icon={faPaperPlane} /></div>
                     </div>
                 </div>
