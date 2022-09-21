@@ -1,4 +1,4 @@
-import { faChevronLeft, faPaperclip, faPaperPlane, faPhone, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faCircleInfo, faPaperclip, faPaperPlane, faPhone, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
@@ -30,23 +30,35 @@ export default ChattingRoom
 const RoomsPage = ({ userId, userType }) => {
     const [rooms, setRooms] = useState([])
 
+    const getRoomsHandle = async () => {
+        const res = await getRoomsByUserId(userId, userType)
+        setRooms([...res.data])
+        return res
+    }
+
     useEffect(() => {
-        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
+        let rooms = []
+        const socket = io("https://ec10-2405-9800-b650-586-d891-24f-7d2e-7ce5.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             console.log('connect')
-            const res = await getRoomsByUserId(userId, userType)
-            setRooms(res.data)
+            const res = await getRoomsHandle()
             const roomIds = typeof res.data !== "string" && res?.data?.map((room, index) => {
-                console.log(room)
                 return room.roomId
             })
+            rooms = [...roomIds]
             if (roomIds?.length) socket.emit("join", [...roomIds])
+        });
+        socket.on('message', (message) => {
+            console.log(message)
+            getRoomsHandle()
         });
         socket.on('disconnect', () => {
 
         });
         return () => {
-            socket.disconnect()
+            console.log(rooms)
+            socket.emit("leave", [...rooms]);
+            socket.off('message');
             socket.off('connect');
             socket.off('disconnect');
           };
@@ -61,9 +73,10 @@ const RoomsPage = ({ userId, userType }) => {
                 {typeof rooms !== "string" && rooms?.length ?
                     rooms.map((room, index) => {
                         var now = moment(new Date()); //todays date
-                        var end = moment(room.messages.latestMessage?.[0]?.createdDate || room.createdDate); // another date
+                        var end = moment(room.messages.latestMessage?.createdDate || room.createdDate); // another date
                         var duration = moment.duration(now.diff(end));
-                        var days = duration.asDays() <= 1 ? end.format("HH.mm") : duration.asDays() >= 2 ? end : "yesterday";
+                        var days = duration.asDays() <= 1 ? duration.asMinutes() <= 30 ? duration.humanize() + " ago" : end.format("HH.mm") : duration.asDays() >= 2 ? end.format("DD/MM/yyyy") : "yesterday";
+                        const messages = room.messages
 
                         return (
                             <Link key={index} to={`/chat/${userType}/room/${room.roomId}`}>
@@ -72,12 +85,12 @@ const RoomsPage = ({ userId, userType }) => {
                                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
                                         <div className="">
                                             <div className="font-medium">{room.name || "Mr.doter onssa"}</div>
-                                            {room.latestMessage && <div className="text-gray-500">{room.messages.latestMessage}</div>}
-                                            {room.unreadMessages && <div className="font-semibold">{room.messages.unreadMessages.length > 1 ? room.messages.unreadMessages.length + " new messages" : room.messages.unreadMessages}</div>}
-                                            {!room.latestMessage && <div className="text-gray-500">No message yet.</div>}
+                                            {!messages.unreadMessages.length > 0 && <span className="text-gray-500">{messages?.latestMessage?.message}</span>}
+                                            {messages.unreadMessages.length > 0 && <span className="font-semibold">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</span>}
+                                            {!messages.latestMessage && <span className="text-gray-500">No message yet.</span>}
+                                            <span className="text-right font-medium text-sm text-gray-400 pt-0.5 ml-3">{days}</span>
                                         </div>
                                     </div>
-                                    {/* <div className="text-right text-sm text-gray-400 pt-0.5">{days}</div> */}
                                 </div>
                             </Link>
                         )
@@ -89,24 +102,23 @@ const RoomsPage = ({ userId, userType }) => {
         </div>
     )
 }
-
+let socket
 const ChatPage = ({ roomId, userType, userId }) => {
     const [receiverInfo, setReceiverInfo] = useState()
     const [inputValue, setInputValue] = useState("")
     const [messages, setMessages] = useState([])
-
     const input = useRef()
 
     useEffect(() => {
-        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
+        socket = io("https://ec10-2405-9800-b650-586-d891-24f-7d2e-7ce5.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
+            await readChatMessages(roomId, userType)
             const messages = await getChattingMessages(roomId)
             messageStorage = [...messages.data.reverse()]
             setMessages([...messageStorage])
         }
         getMessage()
-        readChatMessages(roomId, userId)
         socket.on('connect', async () => {
             console.log('connect')
             if (roomId) socket.emit("join", roomId)
@@ -128,7 +140,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
 
     const sendMessageHandle = () => {
         if (inputValue.replace(/\s/g, '') == "") return
-        const socket = io("https://a924-2405-9800-b650-586-d8ac-eac5-c3d8-7ee5.ap.ngrok.io", connectionOptions)
         input.current.value = ""
         setInputValue("")
         socket.emit('message', {
@@ -153,11 +164,12 @@ const ChatPage = ({ roomId, userType, userId }) => {
                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
                         <div>
                             <div className="font-medium text-lg leading-snug">{receiverInfo?.name || "BoomBeem GIiik"}</div>
-                            <div>{receiverInfo?.status || "Offline"}</div>
+                            {/* <div>{receiverInfo?.status || "Offline"}</div> */}
                         </div>
                     </div>
                 </div>
                 <div className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-2xl" icon={faPhone} /></div>
+                <div className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-3xl" icon={faCircleInfo} /></div>
             </div>
             <div className="pb-24 px-3">
                 {messages.map((message, index) => {
@@ -171,11 +183,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
                                     <p className="break-normal font-medium">{message.message}</p>
                                 </div>
                             </div>
-                            {messages.length === index + 1 && messageSide === "right" ? 
-                                message.status === "read" ? 
-                                <div className="text-right text-sm -mt-3 text-gray-500">Read yesterday</div> 
-                                : <div className="text-right text-sm -mt-3 text-gray-500">Sent 1m ago</div>
-                            : null}
                         </div>
                     )
                 })}

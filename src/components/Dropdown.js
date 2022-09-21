@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 
 const Dropdown = ({ between, top, register, setValue, isReset, options, title }) => {
     const [focus, setFocus] = useState(false)
-    const [reTitle, setReTitle] = useState("Select here")
+    const [reTitle, setReTitle] = useState("Select")
     const input = useRef(null)
 
     useEffect(() => {
-        setReTitle("Select here")
+        setReTitle("Select")
         if (!input?.current?.value) return
         input.current.value = ""
         setFocus(false)

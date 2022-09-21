@@ -2,23 +2,27 @@ import { useEffect, useState } from "react";
 import Textinput from "../components/Textinput";
 import FormTracker from "../partials/FormTracker";
 import { useForm } from "react-hook-form"
-import Datepicker from "../components/Datepicker";
-import Numberinput from "../components/Numberinput";
-import Textareainput from "../components/Textareainput";
 import liff from '@line/liff';
-import axios from 'axios'
-import Timepicker from "../components/Timepicker";
 import { updateBooking } from "../apis/backend";
-import { useParams } from "react-router-dom";
+import Numberinput from "../components/Numberinput";
+import Dropdown from "../components/Dropdown";
 
 const PrivateInfo = () => {
   const [currentStep, setStep] = useState(0)
   const [bookData, setBookData] = useState({})
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState("")
-
+  const catagory = [
+    {
+      title: "Booking for me / my group",
+      detail: "It is a long established fact that a reader will be distracted by the readable content of a page when looking"
+    },
+    {
+      title: "Booking for other person",
+      detail: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    }
+  ]
   const { register, setValue, handleSubmit } = useForm()
-  const { bookingId } = useParams()
 
   const initLine = () => {
     liff.init({ liffId: '1657246657-9zmMqva5' }, () => {
@@ -41,33 +45,38 @@ const PrivateInfo = () => {
     initLine();
   }, []);
 
+  useEffect(() => {
+    
+  }, [currentStep]);
+
   const onSubmit = (data) => {
-    setStep(currentStep + 1)
+    // setStep(currentStep + 1)
+    console.log(data)
     setBookData(data)
   }
 
   const onConfirm = async () => {
+    const params = new URLSearchParams(window.location.search)
     setLoading(true)
     let dataTemp = bookData
-    await updateBooking(bookingId, dataTemp)
+    await updateBooking(params.get("bookingId"), userId, dataTemp)
     liff.closeWindow()
   }
 
   return (
     <div className="grid pt-20 h-screen w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
-            <div className="text-4xl font-semibold mb-10">Private Form</div>
-            <FormTracker currentStep={currentStep} body={[
-              <PickupInfoForm setStep={setStep} register={register} setValue={setValue} />,
-              <ConfirmInfoForm setStep={setStep} register={register} setValue={setValue} />
-            ]} />
-            {currentStep === 0 && <input type="submit" value="Next" className="py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-10" />}
-            {currentStep === 1 &&
-              <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
-                <div onClick={() => setStep(currentStep - 1)} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Back</div>
-                <div onClick={onConfirm} className={"py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10 transition " + (!loading ? "opacity-100" : "opacity-80 pointer-events-none")}>Confirm</div>
-              </div>
-            }
+          <div className="flex w-10/12 mx-auto mb-5">
+            <div onClick={() => currentStep === 1 && setStep(currentStep - 1)} className={"py-2 text-lg w-full rounded-l-lg " + (currentStep === 0 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>For me</div>
+            <div onClick={() => currentStep === 0 && setStep(currentStep + 1)} className={"py-2 text-lg w-full rounded-r-lg " + (currentStep === 1 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>For others</div>
+          </div>
+          <div className="text-xl font-semibold w-10/12 mx-auto mb-3">{catagory[currentStep].title}</div>
+          <div className="w-10/12 mx-auto mb-5">{catagory[currentStep].detail}</div>
+          <FormTracker currentStep={currentStep} body={[
+            <ForMeForm setStep={setStep} register={register} setValue={setValue} />,
+            <AgentForm setStep={setStep} register={register} setValue={setValue} />
+          ]} />
+          <input type="submit" value="Send" className="py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-8 mb-14" />
         </form>
     </div>
   );
@@ -76,32 +85,52 @@ const PrivateInfo = () => {
 export default PrivateInfo;
 
 //first page of the booking form
-const PickupInfoForm = ({ register, setValue }) => {
+const ForMeForm = ({ register, setValue }) => {
   return (
     <div>
+      <div className={"mb-3" }>
+        <Dropdown onChange={() => {}} register={register("customerName")} options={["Mr.", "Ms."]} title="Title" setValue={setValue} />
+      </div>
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("name")} title="Name" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("phone")} title="Phone" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("phone")} title="Mobile Number" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("flight")} title="Flight No." setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("flight")} title="Other contact for urgent (Optional)" setValue={setValue} />
       </div>
     </div>
   )
 }
 
 //last page of the booking form
-const ConfirmInfoForm = ({ setStep, register, setValue }) => {
+const AgentForm = ({ setStep, register, setValue }) => {
   useEffect(() => {
     
   }, [])
 
   return (
     <div>
-      <div className="text-xl font-medium text-left mb-3">Confirmation</div>
-      
+      <div className={"mb-3" }>
+        <Dropdown onChange={() => {}} register={register("customerName")} options={["Mr.", "Ms."]} title="Title" setValue={setValue} />
+      </div>
+      <div className={"mb-3" }>
+        <Textinput onChange={() => {}} register={register("customerName")} title="Meeting Name (English)" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("customerPhone")} title="Customer Contact Info (Mobile, App)" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("agentName")} title="Agent/Your Name (English)" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("agentPhone")} title="Agent/Your Contact Info" setValue={setValue} />
+      </div>
+      <div className="text-left mt-2">
+        <input {...register("meetingName")} className="mr-3" type="checkbox" id="agent" name="agent" value={true} />
+        <label for="agent">Use agent's name for meeting?</label><br></br>
+      </div>
     </div>
   )
 }

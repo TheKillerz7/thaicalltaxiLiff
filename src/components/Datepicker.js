@@ -66,6 +66,7 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
                 dateConfig={config}
                 headerFormat="DD/MM/YYYY"
                 min={new Date()}
+                // max={new Date((new Date()) + 1000 * 60 * 60 * 24 * 3)}
                 isPopup={true}
                 theme="ios"
                 value={time}

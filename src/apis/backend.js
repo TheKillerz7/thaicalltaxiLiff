@@ -27,10 +27,10 @@ export const driverRegisterToBooking = (data) => {
 }
 
 //patch
-export const updateBooking = (bookingId, data) => {
-    return axios.patch('/booking', {bookingId, data})
+export const updateBooking = (bookingId, userId, data) => {
+    return axios.patch('/booking', {bookingId, userId, data})
 }
 
-export const readChatMessages = (roomId, userId) => {
-    return axios.patch('/chat/message', {roomId, userId})
+export const readChatMessages = (roomId, userType) => {
+    return axios.patch('/chat/message', {roomId, userType})
 }
