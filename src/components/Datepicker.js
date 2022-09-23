@@ -11,12 +11,12 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
     const input = useRef(null)
 
     useEffect(() => {
-        setReTitle(moment().format('DD/mm/yyyy'))
+        setReTitle(moment().format('DD/MM/yyyy'))
         setFocus(false)
     }, [isReset])
 
     useEffect(() => {
-        setValue(register.name, moment().format('DD/mm/yyyy'))
+        setValue(register.name, moment().format('DD/MM/yyyy'))
         const handleClick = (e) => {
             if(e.path[0] !== input?.current && e.path[1] !== input?.current?.nextSibling) {
                 if(!e.path[0].className.includes("navigation")) setFocus(false)
@@ -41,7 +41,7 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
             step: 1,
         },
         'month': {
-            format: 'MM',
+            format: 'mm',
             caption: 'Mon',
             step: 1,
         },
@@ -59,7 +59,7 @@ const Datepicker = ({ time, setTime, asap, setAsap, register, setValue, isReset,
     }, [asap])
 
     return(
-        <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-xl border-2 h-full ' + (focus ? "border-blue-900" : "border-gray-300")}>
+        <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 h-full ' + (focus ? "border-blue-900" : "border-gray-300")}>
             <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium pl-8 ' + (focus ? "text-blue-900" : "text-gray-400")}>{title}</div>
             <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left text-sm font-medium h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
             <DatePicker

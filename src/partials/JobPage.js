@@ -84,7 +84,14 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, driverId, setJobOp
                 </div>
                 <div className="px-5">
                     <div className="mb-10">
-                        <div style={{ aspectRatio: "7 / 5" }} className="bg-gray-500 rounded-md w-full text-white grid place-items-center mb-3">Map</div>
+                        <div style={{ aspectRatio: "7 / 5" }} className="bg-gray-500 rounded-md w-full text-white grid place-items-center mb-3">
+                            <iframe
+                                height="250"
+                                className="w-full rounded-md"
+                                src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyBbjxIWcwiaWvTlPuPn9lzOMhJCEwYAhu0&origin=Oslo+Norway&destination=Telemark+Norway"
+                            >
+                            </iframe>
+                        </div>
                         <div>
                             <div className="text-lg font-medium mb-1">{bookingData.from} to {bookingData.to}</div>
                             <div>Distance: {distance}</div>

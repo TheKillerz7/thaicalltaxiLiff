@@ -4,7 +4,7 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from 'react-router-dom';
 import {io} from 'socket.io-client';
-import { getChattingMessages, getRoomsByUserId, readChatMessages } from "../apis/backend";
+import { getChattingMessages, getDriverById, getRoomsByUserId, readChatMessages } from "../apis/backend";
 
 const connectionOptions =  {
     withCredentials: true,
@@ -38,7 +38,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://ec10-2405-9800-b650-586-d891-24f-7d2e-7ce5.ap.ngrok.io", connectionOptions)
+        const socket = io("https://d13b-2405-9800-b650-586-3c04-d0f-1ff1-baa7.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             console.log('connect')
             const res = await getRoomsHandle()
@@ -110,9 +110,10 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://ec10-2405-9800-b650-586-d891-24f-7d2e-7ce5.ap.ngrok.io", connectionOptions)
+        socket = io("https://d13b-2405-9800-b650-586-3c04-d0f-1ff1-baa7.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
+            // const chatOpponent = userType === "user" ? await getBook() : await getDriverById
             await readChatMessages(roomId, userType)
             const messages = await getChattingMessages(roomId)
             messageStorage = [...messages.data.reverse()]
@@ -163,13 +164,15 @@ const ChatPage = ({ roomId, userType, userId }) => {
                     <div className="flex">
                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
                         <div>
-                            <div className="font-medium text-lg leading-snug">{receiverInfo?.name || "BoomBeem GIiik"}</div>
+                            <div className="font-medium text-lg">{receiverInfo?.name || "BoomBeem GIiik"}</div>
                             {/* <div>{receiverInfo?.status || "Offline"}</div> */}
                         </div>
                     </div>
                 </div>
-                <div className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-2xl" icon={faPhone} /></div>
-                <div className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-3xl" icon={faCircleInfo} /></div>
+                <div className="flex">
+                    <div className="grid place-items-center cursor-pointer mr-5"><FontAwesomeIcon className="text-blue-900 text-xl" icon={faPhone} /></div>
+                    <div className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-2xl" icon={faCircleInfo} /></div>
+                </div>
             </div>
             <div className="pb-24 px-3">
                 {messages.map((message, index) => {
@@ -180,7 +183,10 @@ const ChatPage = ({ roomId, userType, userId }) => {
                             <div className={"flex mb-5 " + (messageSide === "right" ? "justify-end" : "justify-start")}>
                                 {messageSide === "left" && <div className="w-8 mr-3"><div className="bg-blue-900 text-white grid place-items-center rounded-full w-8 h-8"><FontAwesomeIcon icon={faUser} /></div></div>}
                                 <div className={"max-w-xs px-3 py-2 rounded-md " + (messageSide === "left" ? "bg-blue-900 text-white" : "bg-gray-100")}>
-                                    <p className="break-normal font-medium">{message.message}</p>
+                                    <div className="break-normal font-medium">
+                                        {messageSide === "left" && <div className="mb-1">{message.translated || "No translated yet"}</div>}
+                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

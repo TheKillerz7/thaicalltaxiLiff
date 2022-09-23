@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 const Imageinput = ({ register, setValue, errors, rendercount, isReset, require }) => {
   const [file, setFile] = useState([])
-  const [message, setMessage] = useState("Drop/Paste profile picture")
+  const [message, setMessage] = useState("Upload Image")
   const [focus, setFocus] = useState(false)
   const input = useRef(null)
 
@@ -13,7 +13,7 @@ const Imageinput = ({ register, setValue, errors, rendercount, isReset, require 
   }, [rendercount])
 
   useEffect(() => {
-    !file?.[0]?.name && !message && setMessage("Drop/Paste profile picture")
+    !file?.[0]?.name && !message && setMessage("Upload Image")
   }, [file])
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Imageinput = ({ register, setValue, errors, rendercount, isReset, require 
       else {
         focusin = false
         setFocus(false)
-        setMessage("Drop/Paste profile picture")
+        setMessage("Upload Image")
       }
     }
     image.addEventListener('click', focusHandler)
@@ -62,7 +62,7 @@ const Imageinput = ({ register, setValue, errors, rendercount, isReset, require 
 
   useEffect(() => {
     if (!file.length) return
-    setMessage("Drop/Paste profile picture")
+    setMessage("Upload Image")
     setFile([])
 }, [isReset])
 
@@ -86,11 +86,11 @@ const Imageinput = ({ register, setValue, errors, rendercount, isReset, require 
   
   return(
     <div className='bg-transparent flex'>
-        <div {...getRootProps()} className={'image relative transition w-9/12 px-4 py-3 mr-5 border-2 border-white h-full overflow-hidden cursor-pointer ' + (file?.length ? "text-gray-800 "  : message == "Drop/Paste profile picture" || message == "Paste profile picture" ? isDragAccept || focus ? "bg-blue-100 border-blue-300 text-blue-400" : "text-gray-400" : isDragAccept ? "bg-blue-100 border-blue-300 text-blue-400" : "text-red-400")} style={{boxShadow: "4px 4px 30px rgba(0, 0, 0, 0.10)"}}>
-          {file?.[0]?.name || message}{require && message === "Drop/Paste profile picture" && <span className='text-red-400'>*</span>}
+        <div {...getRootProps()} className={'image relative text-left text-sm transition w-9/12 px-4 py-3 mr-5 border-2 rounded-lg border-gray-300 h-full overflow-hidden cursor-pointer ' + (file?.length ? "text-gray-800 "  : message == "Upload Image" || message == "Paste profile picture" ? isDragAccept || focus ? "bg-blue-100 border-blue-300 text-blue-400" : "text-gray-400" : isDragAccept ? "bg-blue-100 border-blue-300 text-blue-400" : "text-red-400")}>
+          {file?.[0]?.name || message}{require && message === "Upload Image" && <span className='text-red-400'>*</span>}
           {file.length > 0 && <div onClick={() => setFile([])} className='hover:text-blue-400 transition absolute top-1/2 right-3 -translate-y-1/2 text-xl'>x</div>}
         </div>
-        <label for="profile" className='hover:bg-blue-400 cursor-pointer transition w-3/12 bg-blue-500 grid place-items-center rounded-sm'>
+        <label for="profile" className='hover:bg-blue-400 cursor-pointer transition w-3/12 bg-blue-900 text-sm grid place-items-center rounded-lg'>
             <div className='text-white font-medium'>Upload</div>
             <input ref={input} {...getInputProps()} id="profile" name="profile" type="file" className="hidden w-full" accept=".jpg, .jpeg, .png" multiple={false} />
         </label>

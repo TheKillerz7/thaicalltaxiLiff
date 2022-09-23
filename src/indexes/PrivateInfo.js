@@ -14,12 +14,12 @@ const PrivateInfo = () => {
   const [userId, setUserId] = useState("")
   const catagory = [
     {
-      title: "Booking for me / my group",
-      detail: "It is a long established fact that a reader will be distracted by the readable content of a page when looking"
+      title: "Booking for Yourself, Your Group",
+      detail: ""
     },
     {
       title: "Booking for other person",
-      detail: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      detail: "For your Friends, Family or Agent's customers"
     }
   ]
   const { register, setValue, handleSubmit } = useForm()
@@ -70,8 +70,8 @@ const PrivateInfo = () => {
             <div onClick={() => currentStep === 1 && setStep(currentStep - 1)} className={"py-2 text-lg w-full rounded-l-lg " + (currentStep === 0 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>For me</div>
             <div onClick={() => currentStep === 0 && setStep(currentStep + 1)} className={"py-2 text-lg w-full rounded-r-lg " + (currentStep === 1 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>For others</div>
           </div>
-          <div className="text-xl font-semibold w-10/12 mx-auto mb-3">{catagory[currentStep].title}</div>
-          <div className="w-10/12 mx-auto mb-5">{catagory[currentStep].detail}</div>
+          <div className="text-md font-semibold w-10/12 mx-auto mb-3">{catagory[currentStep].title}</div>
+          <div className="w-10/12 mx-auto mb-5 text-sm">{catagory[currentStep].detail}</div>
           <FormTracker currentStep={currentStep} body={[
             <ForMeForm setStep={setStep} register={register} setValue={setValue} />,
             <AgentForm setStep={setStep} register={register} setValue={setValue} />
@@ -92,13 +92,16 @@ const ForMeForm = ({ register, setValue }) => {
         <Dropdown onChange={() => {}} register={register("customerName")} options={["Mr.", "Ms."]} title="Title" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("name")} title="Name" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("name")} title="Meeting Name (English)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
         <Numberinput onChange={() => {}} register={register("phone")} title="Mobile Number" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("flight")} title="Other contact for urgent (Optional)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("flight")} title="Contact for urgent (Optional)" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("flight")} title="Arrival Flight No. (Airport Pickup)" setValue={setValue} />
       </div>
     </div>
   )
@@ -113,23 +116,26 @@ const AgentForm = ({ setStep, register, setValue }) => {
   return (
     <div>
       <div className={"mb-3" }>
-        <Dropdown onChange={() => {}} register={register("customerName")} options={["Mr.", "Ms."]} title="Title" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("customerName")} options={["Mr.", "Ms."]} title="Passenger's Title" setValue={setValue} />
       </div>
       <div className={"mb-3" }>
-        <Textinput onChange={() => {}} register={register("customerName")} title="Meeting Name (English)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("customerName")} title="Passenger's Name (English)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("customerPhone")} title="Customer Contact Info (Mobile, App)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("customerPhone")} title="Passenger's Contact (Mobile, App)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("agentName")} title="Agent/Your Name (English)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("agentPhone")} title="Agent/Your Contact Info" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("agentPhone")} title="Agent/Your Contact (Mobile, App)" setValue={setValue} />
+      </div>
+      <div className={"mb-3 " }>
+        <Dropdown onChange={() => {}} register={register("agentPhone")} title="Payment Method (Needed before service)" options={["Cash", "Online banking", "Others (Discuss with driver)"]} setValue={setValue} />
       </div>
       <div className="text-left mt-2">
         <input {...register("meetingName")} className="mr-3" type="checkbox" id="agent" name="agent" value={true} />
-        <label for="agent">Use agent's name for meeting?</label><br></br>
+        <label className="text-sm" for="agent">Use agent's name for meeting?</label><br></br>
       </div>
     </div>
   )

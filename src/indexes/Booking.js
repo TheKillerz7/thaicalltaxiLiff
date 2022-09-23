@@ -10,6 +10,8 @@ import axios from 'axios'
 import Timepicker from "../components/Timepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
+import { useScript } from "../apis/useScript";
+import Dropdown from "../components/Dropdown";
 
 const Booking = () => {
   const [currentStep, setStep] = useState(0)
@@ -17,14 +19,16 @@ const Booking = () => {
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit } = useForm()
+  const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBbjxIWcwiaWvTlPuPn9lzOMhJCEwYAhu0&libraries=places&callback=initMap")
+
   const catagory = [
     {
       title: <div>From A - To B</div>,
-      detail: "It is a long established fact that a reader will be distracted by the readable content of a page when looking"
+      detail: "Pick up from your place to your destination."
     },
     {
-      title: "Hourly / Daily with driver",
-      detail: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      title: "Hourly, Daily with driver",
+      detail: "Sightseeing, Shopping, Business or Others"
     }
   ]
 
@@ -46,11 +50,7 @@ const Booking = () => {
   }
 
   useEffect(() => {
-    // initLine();
-  }, []);
-
-  useEffect(() => {
-    // initLine();
+    initLine();
   }, []);
 
   const onSubmit = (data) => {
@@ -61,26 +61,26 @@ const Booking = () => {
   const onConfirm = async () => {
     setLoading(true)
     let dataTemp = bookData
-    dataTemp.userId = userId || "U2330f4924d1d5faa190c556e978bee23"
+    dataTemp.userId = userId
     await axios.post("/booking", dataTemp)
     liff.closeWindow()
   }
 
   return (
     <div className="grid pt-20 h-screen w-full">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
+        {scriptStatus && <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
           <div className="flex w-10/12 mx-auto mb-5">
             <div onClick={() => currentStep === 1 && setStep(currentStep - 1)} className={"py-2 text-lg font-semibold w-full rounded-l-lg " + (currentStep === 0 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>A  <FontAwesomeIcon className="mx-1" icon={faArrowRightLong} />  B</div>
             <div onClick={() => currentStep === 0 && setStep(currentStep + 1)} className={"py-2 text-lg w-full rounded-r-lg " + (currentStep === 1 ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>Rent & Hire</div>
           </div>
           <div className="text-xl font-semibold w-10/12 mx-auto mb-3">{catagory[currentStep].title}</div>
-          <div className="w-10/12 mx-auto mb-5">{catagory[currentStep].detail}</div>
+          <div className="w-10/12 mx-auto mb-5 text-sm">{catagory[currentStep].detail}</div>
           <FormTracker currentStep={currentStep} body={[
             <AToBCourse setStep={setStep} register={register} setValue={setValue} />,
             <RentAndHire setStep={setStep} register={register} setValue={setValue} />
           ]} />
           <input type="submit" value="Send" className="py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-8 mb-14" />
-        </form>
+        </form>}
     </div>
   );
 }
@@ -95,8 +95,8 @@ const AToBCourse = ({ setStep, register, setValue }) => {
   return (
     <div>
       <div className="grid grid-cols-2 gap-x-2">
-        <div className="mb-3"><Datepicker register={register("pickupDate")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Date" setValue={setValue} /></div>
-        <div className="mb-3"><Timepicker register={register("pickupTime")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Time" setValue={setValue} /></div>
+        {/* <div className="mb-3"><Datepicker register={register("pickupDate")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Date" setValue={setValue} /></div>
+        <div className="mb-3"><Timepicker register={register("pickupTime")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Time" setValue={setValue} /></div> */}
       </div>
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("from")} title="From" setValue={setValue} />
@@ -104,9 +104,9 @@ const AToBCourse = ({ setStep, register, setValue }) => {
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("to")} title="To" setValue={setValue} />
       </div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("passenger")} title="Passenger (including Child)" setValue={setValue} /></div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("luggage")} title="Lugggage (Big + Medium size)" setValue={setValue} /></div>
-      <div className="mb-3"><Textareainput register={register("message")} title="Other requests for the correct price" setValue={setValue} /></div>
+      <div className="mb-3"><Numberinput onChange={() => {}} register={register("passenger")} title="All Passengers (with Child)" setValue={setValue} /></div>
+      <div className="mb-3"><Numberinput onChange={() => {}} register={register("luggage")} title="Lugggage (Big + Mid size)" setValue={setValue} /></div>
+      <div className="mb-3"><Textareainput register={register("message")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
   )
 }
@@ -115,7 +115,8 @@ const AToBCourse = ({ setStep, register, setValue }) => {
 const RentAndHire = ({ setStep, register, setValue }) => {
   const [time, setTime] = useState(new Date())
   const [asap, setAsap] = useState(false)
-  const [areaToVisit, setAreaToVisit] = useState(1)
+  const [areaToVisit, setAreaToVisit] = useState({})
+  const [increment, setIncrement] = useState(1)
   
   useEffect(() => {
     
@@ -128,10 +129,15 @@ const RentAndHire = ({ setStep, register, setValue }) => {
         <div className="mb-3"><Timepicker register={register("pickupTime")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Starting Time" setValue={setValue} /></div>
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("from")} title="Starting Place" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("from")} title="Trip title" options={["Sightseeing (Tour)", "Shopping", "Business", "Others"]} setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        {[...Array(areaToVisit)].map((area, index) => <Textinput onChange={() => {}} register={register("to")} title="Area info to visit" setValue={setValue} />)}
+        <Textinput onChange={() => {}} register={register("from")} title="Starting Place to Pickup" setValue={setValue} />
+      </div>
+      {[...Array(areaToVisit)].map((area, index) => <div className={"" + (index !== areaToVisit - 1 ? "mb-3" : "mb-2")}><Textinput onChange={() => {}} register={register("to")} title="Place info to visit" setValue={setValue} /></div>)}
+      <div className="flex">
+        <div onClick={() => setAreaToVisit(areaToVisit + 1)} className="text-white rounded-md bg-blue-900 w-max py-2 px-2 text-xs cursor-pointer text-left mb-5">+ Add Place</div>
+        <div onClick={() => setAreaToVisit(areaToVisit - 1)} className="text-white rounded-md bg-blue-900 w-max py-2 px-2 text-xs cursor-pointer text-left mb-5 ml-2">- Remove Place</div>
       </div>
       <div className="grid grid-cols-2 gap-x-2">
         <div className="mb-3"><Datepicker register={register("pickupDate")} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Ending Date" setValue={setValue} /></div>
@@ -140,9 +146,9 @@ const RentAndHire = ({ setStep, register, setValue }) => {
       <div className={"mb-3 " }>
         <Textinput onChange={() => {}} register={register("from")} title="Ending Place (Final destination)" setValue={setValue} />
       </div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("passenger")} title="Passenger (including Child)" setValue={setValue} /></div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("luggage")} title="Lugggage (Big + Medium size)" setValue={setValue} /></div>
-      <div className="mb-3"><Textareainput register={register("message")} title="Other requests for the correct price" setValue={setValue} /></div>
+      <div className="mb-3"><Numberinput onChange={() => {}} register={register("passenger")} title="All Passengers (with Child)" setValue={setValue} /></div>
+      <div className="mb-3"><Numberinput onChange={() => {}} register={register("luggage")} title="Lugggage (Big + Mid size)" setValue={setValue} /></div>
+      <div className="mb-3"><Textareainput register={register("message")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
   )
 }

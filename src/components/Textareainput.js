@@ -31,7 +31,7 @@ const Textareainput = ({ between, title, top, register, setValue, errors, render
     }
 
     return(
-        <div ref={iniHeight} className={'bg-transparent px-4 transition-all rounded-xl border-2 ' + (focus ? !reTitle ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
+        <div ref={iniHeight} className={'bg-transparent px-4 transition-all rounded-lg border-2 ' + (focus ? !reTitle ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
             <div style={{ height: height }} className="absolute w-9/12 pointer-events-none -mt-0.5">
                 <div className={'absolute transition-all top-1/2 pointer-events-none ' + ((focus || isFilled) ? `-translate-y-5 text-xs ${focus ? !reTitle ? "text-blue-900" : "text-red-400" : !reTitle ? "text-gray-400" : "text-red-400"}` : !reTitle ? "text-gray-400 -translate-y-1/2" : "text-red-400 -translate-y-1/2")}>{reTitle || title}{errors?.[register.name]?.message && !reTitle && <span className='text-red-400'>*</span>}</div>
             </div>
