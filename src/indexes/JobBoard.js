@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import FormTracker from "../partials/FormTracker";
-import { useForm } from "react-hook-form"
 import liff from '@line/liff';
-import axios from 'axios'
 import DataTable from "../components/DataTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignRight, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import Textinput from "../components/Textinput";
 import JobPage from "../partials/JobPage";
-import { getBookingByStatusWithoutDriverId, getBookingWithStatus, getDriverById } from "../apis/backend";
+import { getBookingByStatusWithoutDriverId, getDriverById } from "../apis/backend";
+import { useNavigate } from "react-router-dom";
 
 const JobBoard = () => {
   const [isJobOpen, setJobOpen] = useState(false)
@@ -16,6 +13,8 @@ const JobBoard = () => {
   const [search, setSearch] = useState("")
   const [userId, setUserId] = useState("")
   const [jobList, setJobList] = useState([])
+
+  const navigate = useNavigate()
 
   const initLine = () => {
     liff.init({ liffId: '1657246657-XxVxBO25' }, () => {
@@ -36,13 +35,16 @@ const JobBoard = () => {
 
   useEffect(() => {
     initLine();
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     if (!userId) return
     const callback = async () => {
       const driver = (await getDriverById(userId)).data
-      if (!driver.length) return 
+      if (!driver.length) {
+        navigate("/driver") 
+        return
+      }
       const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
       setJobList(jobs.data)
     }

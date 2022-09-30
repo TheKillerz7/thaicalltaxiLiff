@@ -88,7 +88,10 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, driverId, setJobOp
                             <iframe
                                 height="250"
                                 className="w-full rounded-md"
-                                src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyBbjxIWcwiaWvTlPuPn9lzOMhJCEwYAhu0&origin=Oslo+Norway&destination=Telemark+Norway"
+                                src={`https://www.google.com/maps/embed/v1/directions?
+                                    key=AIzaSyBbjxIWcwiaWvTlPuPn9lzOMhJCEwYAhu0&
+                                    origin=${bookingData.bookingInfo.start?.place?.placeId || bookingData.bookingInfo.from.placeId}&
+                                    destination=${bookingData.bookingInfo.end?.place?.placeId || bookingData.bookingInfo.to.placeId}`}
                             >
                             </iframe>
                         </div>

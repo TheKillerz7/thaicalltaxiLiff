@@ -9,10 +9,13 @@ import liff from '@line/liff';
 import axios from 'axios'
 import Dropdown from "../components/Dropdown";
 import Imageinput from "../components/Imageinput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { createDriver } from "../apis/backend";
 
 const Driver = () => {
   const [currentStep, setStep] = useState(0)
-  const [bookData, setBookData] = useState({})
+  const [registerData, setRegisterData] = useState({})
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit, unregister } = useForm()
 
@@ -40,26 +43,27 @@ const Driver = () => {
 
   const onSubmit = (data) => {
     setStep(currentStep + 1)
-    setBookData(data)
-    console.log(data)
+    setRegisterData(data)
   }
 
   const onConfirm = async () => {
-    let dataTemp = bookData
+    let dataTemp = registerData
     dataTemp.driverId = userId || "U2330f4924d1d5faa190c556e978bee23"
-    await axios.post("/driver", bookData)
+    console.log(registerData)
+    await createDriver(registerData)
     liff.closeWindow()
-    // console.log(bookData)
   }
 
   return (
     <div className="grid pt-20 h-screen w-full">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
             <div className="text-4xl font-semibold mb-10">Register Driver</div>
-            <FormTracker currentStep={currentStep} body={[
-              <PickupInfoForm setStep={setStep} register={register} unregister={unregister} setValue={setValue} />,
+            <div className={"w-10/12 mx-auto " + (!currentStep ? "block" : "hidden")}>
+              <PickupInfoForm setStep={setStep} register={register} unregister={unregister} setValue={setValue} />
+            </div>
+            <div className={"w-10/12 mx-auto " + (currentStep ? "block" : "hidden")}>
               <ConfirmInfoForm setStep={setStep} register={register} setValue={setValue} />
-            ]} />
+            </div>
             {currentStep === 0 && <input type="submit" value="Next" className="py-2 mb-14 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-10" />}
             {currentStep === 1 &&
               <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
@@ -78,57 +82,70 @@ export default Driver;
 const PickupInfoForm = ({ setStep, register, unregister, setValue }) => {
   const [reRender, setRender] = useState(1)
   const [tableCount, setTableCount] = useState({1: ""})
+  const [years, setYears] = useState([])
 
-  const tableHandler = (item, type) => {
-    let tableTemp = {...tableCount}
-    if (type === "-") {
-      unregister(`table`)
-      delete tableTemp[item]
-      setRender(reRender+1)
-      setTableCount({...tableTemp})
+  useEffect(() => {
+    const date = new Date()
+    let yearArray = []
+    for (let i = date.getFullYear() - 18; i >= date.getFullYear() - 60; i--) {
+      yearArray.push(i.toString())
+    } 
+    setYears([...yearArray])
+  }, []);
+
+  const addContactHandle = (id, type, index) => {
+    let temp = tableCount
+    if (type === "add") {
+      temp[reRender + 1] = ""
+      setTableCount(temp)
+      setRender(reRender + 1)
       return
     }
-    tableTemp[reRender+1] = ""
-    setRender(reRender+1)
-    console.log(tableTemp)
-    setTableCount({...tableTemp})
+    unregister(`personalInfo.contact`)
+    delete temp[id]
+    setTableCount(temp)
+    setRender(reRender + 1)
   }
 
   return (
     <div>
       <div className="text-xl font-medium text-left mb-3">ข้อมูลส่วนตัว</div>
       <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} register={register("carType")} title="คำนำหน้า" options={["Mr.", "Mrs."]} setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("personalInfo.title")} title="คำนำหน้า" options={["Mr.", "Mrs."]} setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("name")} title="ชื่อจริง-นามสกุล (อังกฤษ)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("personalInfo.name")} title="ชื่อจริง-นามสกุล (อังกฤษ)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Datepicker onChange={() => {}} register={register("name")} title="ปีเกิด" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("personalInfo.birth")} title="ปีเกิด" options={years} setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Numberinput onChange={() => {}} register={register("phone")} title="หมายเลขบัตรประชาชน" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("personalInfo.citizenId")} title="หมายเลขบัตรประชาชน" setValue={setValue} />
       </div>
       <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-        <Numberinput onChange={() => {}} register={register("phone")} title="หมายเลขใบขับขี่" setValue={setValue} />
-        <Textinput onChange={() => {}} register={register("carModel")} title="ประเภทใบขับขี่" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("personalInfo.driverLicense")} title="หมายเลขใบขับขี่" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("personalInfo.driverLicenseType")} title="ประเภทใบขับขี่" setValue={setValue} />
       </div>
-      {Object.keys(tableCount).map((count, index) => {
+      {reRender && Object.keys(tableCount).map((count, index) => {
         return (
-          <div className={Object.keys(tableCount).length !== index + 1 ? "mb-3" : "mb-1"}>
-            <Textinput onChange={() => {}} register={register("carModel")} title="ช่องทางการติดต่อ" setValue={setValue} />
+          <div key={count} className={"flex " + (Object.keys(tableCount).length !== index + 1 ? "mb-3" : "mb-2")}>
+            <div className="grid grid-cols-2 gap-x-2">
+              <Textinput onChange={() => {}} register={register(`personalInfo.contact.[${index}].title`)} title="ช่องทางติดต่อ" setValue={setValue} />
+              <Textinput onChange={() => {}} register={register(`personalInfo.contact.[${index}].id`)} title="ไอดี/เบอร์" setValue={setValue} />
+            </div>
+            {index !== 0 && <div onClick={() => addContactHandle(count, "remove", index)} style={{ aspectRatio: "1" }} className="ml-2 bg-blue-900 h-8 rounded-md grid place-items-center"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
           </div>
         )
       })}
-      <div className="text-sm text-blue-400 text-left mb-3">+ Add more</div>
+      <div onClick={() => addContactHandle("", "add")} className="text-white font-medium rounded-md bg-blue-900 w-max py-2 px-2 text-sm cursor-pointer text-left mb-5">+ เพิ่มช่องทางการติดต่อ</div>
       <div className={"mb-3 " }>
-        <Textareainput onChange={() => {}} register={register("carModel")} title="ที่อยู่ปัจจุบัน" setValue={setValue} />
+        <Textareainput onChange={() => {}} register={register("personalInfo.address")} title="ที่อยู่ปัจจุบัน" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("carModel")} title="ติดต่อฉุกเฉิน (เพื่อน หรือคนใกล้ชิด)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("personalInfo.urgentContact")} title="ติดต่อฉุกเฉิน (เพื่อน หรือคนใกล้ชิด)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("carModel")} title="ชื่อทีม (ไม่บังคับ)" setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("personalInfo.team")} title="ชื่อทีม (ไม่บังคับ)" setValue={setValue} />
       </div>
     </div>
   )
@@ -136,33 +153,43 @@ const PickupInfoForm = ({ setStep, register, unregister, setValue }) => {
 
 //last page of the booking form
 const ConfirmInfoForm = ({ setStep, register, setValue }) => {
+  const [years, setYears] = useState([])
+
+  useEffect(() => {
+    const date = new Date()
+    let yearArray = []
+    for (let i = date.getFullYear(); i >= date.getFullYear() - 10; i--) {
+      yearArray.push(i.toString())
+    } 
+    setYears([...yearArray])
+  }, []);
 
   return (
     <div>
       <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
       <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-        <Dropdown onChange={() => {}} register={register("carType")} title="ประเภทรถ" options={["Economy car", "Sedan car", "Family car", "Minibus", "VIP Van", "VIP Car"]} setValue={setValue} />
-        <Textinput onChange={() => {}} register={register("name")} title="ชื่อรุ่นของรถ" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("vehicleInfo.carType")} title="ประเภทรถ" options={["Economy car", "Sedan car", "Family car", "Minibus", "VIP Van", "VIP Car"]} setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Datepicker onChange={() => {}} register={register("name")} title="ปีเกิดของรถ" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("vehicleInfo.birth")} title="ปีเกิดของรถ" options={years} setValue={setValue} />
       </div>
       <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-        <Textinput onChange={() => {}} register={register("phone")} title="เลขทะเบียนรถ" setValue={setValue} />
-        <Dropdown onChange={() => {}} register={register("carType")} title="สีทะเบียนรถ" options={["Green", "Yellow", "White"]} setValue={setValue} />
+        <Textinput onChange={() => {}} register={register("vehicleInfo.plateNo")} title="เลขทะเบียนรถ" setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("vehicleInfo.plateColor")} title="สีทะเบียนรถ" options={["Green", "Yellow", "White"]} setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} register={register("carType")} title="ชั้นของประกันรถ" options={["Level 1", "Level 2", "Level 3"]} setValue={setValue} />
+        <Dropdown onChange={() => {}} register={register("vehicleInfo.insurance")} title="ชั้นของประกันรถ" options={["Level 1", "Level 2", "Level 3"]} setValue={setValue} />
+      </div>
+      {/* <div className={"mb-3 " }>
+        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("carModel")} title="Address (Current address)" setValue={setValue} />
+        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("carModel")} title="Address (Current address)" setValue={setValue} />
-      </div>
-      <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("carModel")} title="Address (Current address)" setValue={setValue} />
-      </div>
+        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
+      </div> */}
     </div>
   )
 }

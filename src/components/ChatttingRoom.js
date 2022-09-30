@@ -38,7 +38,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://d13b-2405-9800-b650-586-3c04-d0f-1ff1-baa7.ap.ngrok.io", connectionOptions)
+        const socket = io("https://a2d3-49-228-105-212.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             console.log('connect')
             const res = await getRoomsHandle()
@@ -110,7 +110,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://d13b-2405-9800-b650-586-3c04-d0f-1ff1-baa7.ap.ngrok.io", connectionOptions)
+        socket = io("https://a2d3-49-228-105-212.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             // const chatOpponent = userType === "user" ? await getBook() : await getDriverById
