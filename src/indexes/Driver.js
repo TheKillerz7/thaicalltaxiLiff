@@ -15,7 +15,6 @@ import { createDriver } from "../apis/backend";
 
 const Driver = () => {
   const [currentStep, setStep] = useState(0)
-  const [registerData, setRegisterData] = useState({})
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit, unregister } = useForm()
 
@@ -41,22 +40,17 @@ const Driver = () => {
     initLine();
   }, []);
 
-  const onSubmit = (data) => {
-    setStep(currentStep + 1)
-    setRegisterData(data)
-  }
-
-  const onConfirm = async () => {
-    let dataTemp = registerData
-    dataTemp.driverId = userId || "U2330f4924d1d5faa190c556e978bee23"
-    console.log(registerData)
-    await createDriver(registerData)
+  const onConfirm = async (data) => {
+    let dataTemp = data
+    dataTemp.driverId = userId
+    console.log(dataTemp)
+    await createDriver(dataTemp)
     liff.closeWindow()
   }
 
   return (
     <div className="grid pt-20 h-screen w-full">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
+        <form onSubmit={handleSubmit(onConfirm)} className="w-full text-center">
             <div className="text-4xl font-semibold mb-10">Register Driver</div>
             <div className={"w-10/12 mx-auto " + (!currentStep ? "block" : "hidden")}>
               <PickupInfoForm setStep={setStep} register={register} unregister={unregister} setValue={setValue} />
@@ -64,11 +58,11 @@ const Driver = () => {
             <div className={"w-10/12 mx-auto " + (currentStep ? "block" : "hidden")}>
               <ConfirmInfoForm setStep={setStep} register={register} setValue={setValue} />
             </div>
-            {currentStep === 0 && <input type="submit" value="Next" className="py-2 mb-14 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-10" />}
+            {currentStep === 0 && <div onClick={() => setStep(currentStep + 1)} className="py-2 bg-blue-900 mx-auto w-10/12 mx-auto mb-10 text-white text-lg w-full rounded-lg mt-10">Next</div>}
             {currentStep === 1 &&
-              <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
-                <div onClick={() => setStep(currentStep - 1)} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Back</div>
-                <div onClick={onConfirm} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg mt-10">Send</div>
+              <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5 mt-10">
+                <div onClick={() => setStep(currentStep - 1)} className="py-2 bg-blue-900 text-white text-lg w-full rounded-lg">Back</div>
+                <input type="submit" value="Send" className="py-2 bg-blue-900 text-white text-lg rounded-lg" />
               </div>
             }
         </form>
@@ -138,15 +132,19 @@ const PickupInfoForm = ({ setStep, register, unregister, setValue }) => {
         )
       })}
       <div onClick={() => addContactHandle("", "add")} className="text-white font-medium rounded-md bg-blue-900 w-max py-2 px-2 text-sm cursor-pointer text-left mb-5">+ เพิ่มช่องทางการติดต่อ</div>
-      <div className={"mb-3 " }>
+      <div className="mb-3">
         <Textareainput onChange={() => {}} register={register("personalInfo.address")} title="ที่อยู่ปัจจุบัน" setValue={setValue} />
       </div>
-      <div className={"mb-3 " }>
-        <Textinput onChange={() => {}} register={register("personalInfo.urgentContact")} title="ติดต่อฉุกเฉิน (เพื่อน หรือคนใกล้ชิด)" setValue={setValue} />
+      <div className="text-left font-semibold mt-3 mb-1">ช่องทางการติดต่อฉุกเฉิน</div>
+      <div className="flex mb-3">
+        <div className="grid grid-cols-2 gap-x-2">
+          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.title`)} title="เจ้าของเบอร์" setValue={setValue} />
+          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.id`)} title="เบอร์โทรศัพท์" setValue={setValue} />
+        </div>
       </div>
-      <div className={"mb-3 " }>
+      {/* <div className="mb-3">
         <Textinput onChange={() => {}} register={register("personalInfo.team")} title="ชื่อทีม (ไม่บังคับ)" setValue={setValue} />
-      </div>
+      </div> */}
     </div>
   )
 }
@@ -161,35 +159,39 @@ const ConfirmInfoForm = ({ setStep, register, setValue }) => {
     for (let i = date.getFullYear(); i >= date.getFullYear() - 10; i--) {
       yearArray.push(i.toString())
     } 
-    setYears([...yearArray])
+    setYears(yearArray)
   }, []);
 
   return (
     <div>
-      <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
-      <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-        <Dropdown onChange={() => {}} register={register("vehicleInfo.carType")} title="ประเภทรถ" options={["Economy car", "Sedan car", "Family car", "Minibus", "VIP Van", "VIP Car"]} setValue={setValue} />
-        <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} />
-      </div>
-      <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} register={register("vehicleInfo.birth")} title="ปีเกิดของรถ" options={years} setValue={setValue} />
-      </div>
-      <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-        <Textinput onChange={() => {}} register={register("vehicleInfo.plateNo")} title="เลขทะเบียนรถ" setValue={setValue} />
-        <Dropdown onChange={() => {}} register={register("vehicleInfo.plateColor")} title="สีทะเบียนรถ" options={["Green", "Yellow", "White"]} setValue={setValue} />
-      </div>
-      <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} register={register("vehicleInfo.insurance")} title="ชั้นของประกันรถ" options={["Level 1", "Level 2", "Level 3"]} setValue={setValue} />
-      </div>
-      {/* <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
-      </div>
-      <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
-      </div>
-      <div className={"mb-3 " }>
-        <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
-      </div> */}
+      {years.length > 0 && 
+        <>
+          <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
+          <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.carSize")} title="ขนาดของรถ" options={["Economy size", "Sedan size", "Family size", "Minibus size", "VIP Van", "VIP Car"]} setValue={setValue} />
+            <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} />
+          </div>
+          <div className={"mb-3 " }>
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.birth")} title="ปีเกิดของรถ" options={years} setValue={setValue} />
+          </div>
+          <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
+            <Textinput onChange={() => {}} register={register("vehicleInfo.plateNo")} title="เลขทะเบียนรถ" setValue={setValue} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.plateColor")} title="สีทะเบียนรถ" options={["Green", "Yellow", "White"]} setValue={setValue} />
+          </div>
+          <div className={"mb-3 " }>
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.insurance")} title="ชั้นของประกันรถ" options={["Level 1", "Level 2", "Level 3"]} setValue={setValue} />
+          </div>
+          {/* <div className={"mb-3 " }>
+            <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
+          </div>
+          <div className={"mb-3 " }>
+            <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
+          </div>
+          <div className={"mb-3 " }>
+            <Imageinput onChange={() => {}} register={register("image.")} title="Address (Current address)" setValue={setValue} />
+          </div> */}
+        </>
+      }
     </div>
   )
 }

@@ -13,7 +13,7 @@ export const translation = (text, target) => {
 export const geocode = (placeId) => {
     return axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
         params: {
-            placeId,
+            place_id: placeId,
             language: "en",
             key: "AIzaSyAyRniSWIgVCvj30C2q7d9YlMnN06ZzT_M"
         }

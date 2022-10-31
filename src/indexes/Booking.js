@@ -21,7 +21,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState("")
   const { register, setValue, handleSubmit, unregister } = useForm()
-  const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places")
+  const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places&sensor=false&language=en")
   let autocomplete1
   let autocomplete2
 
@@ -56,17 +56,14 @@ const Booking = () => {
   const fillInAddress = (type, inputEl) => {
     // Get the place details from the autocomplete object.
     const place = type === "from" ? autocomplete1.getPlace() : autocomplete2.getPlace()
-    const placeName = inputEl.value.replace(/[^0-9a-zA-Z]+$/g, "")
+    console.log(place)
+    const placeName = place.name.split(",")?.[0] || place.name
     inputEl.value = placeName
     return {
       placeId: place.place_id,
       name: placeName
     }
   }
-
-  useEffect(() => {
-    console.log(placeInfo)
-  }, [placeInfo])
 
   useEffect(() => {
     if (scriptStatus !== "ready") return
@@ -76,12 +73,12 @@ const Booking = () => {
     const placeState = {} //State doesnt update in listener
     autocomplete1 = new window.google.maps.places.Autocomplete(from, {
       componentRestrictions: { country: ["th"] },
-      fields: ["place_id"],
+      fields: ["place_id", "name"],
       type: ["establishment"]
     });
     autocomplete2 = new window.google.maps.places.Autocomplete(to, {
       componentRestrictions: { country: ["th"] },
-      fields: ["place_id"],
+      fields: ["place_id", "name"],
       type: ["establishment"]
     });
     autocomplete1.addListener("place_changed", () => {
@@ -121,7 +118,7 @@ const Booking = () => {
   }
 
   return (
-    <div className="grid pt-20 h-screen w-full">
+    <div className="grid pt-10 h-screen w-full">
         {scriptStatus === "ready" && <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
           <div className="flex w-10/12 mx-auto mb-5">
             <div onClick={() => bookingType === "R&H" && setType("A2B")} className={"py-2 text-lg font-semibold w-full rounded-l-lg " + (bookingType === "A2B" ? "bg-blue-900 text-white" : "bg-gray-200 text-gray-500")}>A  <FontAwesomeIcon className="mx-1" icon={faArrowRightLong} />  B</div>
@@ -162,8 +159,17 @@ const AToBCourse = ({ setType, register, setValue }) => {
       <div className={"mb-3 " }>
         <Textinput id="to" onChange={() => {}} register={register("bookingInfo.to")} title="To" setValue={setValue} />
       </div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("bookingInfo.passenger")} title="All Passengers (with Child)" setValue={setValue} /></div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("bookingInfo.luggage")} title="Lugggage (Big + Mid size)" setValue={setValue} /></div>
+      <div className="mb-3">
+        <Dropdown onChange={() => {}} register={register("bookingInfo.carSize")} title="Car type" options={["Economy car", "Sedan car", "Family car", "Minibus/Van", "VIP Van", "VIP Car", ]} setValue={setValue} />
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 mb-3">
+        <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.adult")} title="Adult" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.child")} title="Child/Baby" setValue={setValue} />
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 mb-3">
+        <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.big")} title="Big luggage" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.medium")} title="Mid luggage" setValue={setValue} />
+      </div>
       <div className="mb-3"><Textareainput register={register("bookingInfo.message")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
   )
@@ -199,7 +205,7 @@ const RentAndHire = ({ unregister, register, setValue }) => {
       </div>
       <div className="flex items-center mb-4">
         <input onClick={() => setAsap(current => !current)} id="asap" type="checkbox" className="font-semibold" />
-        <label htmlFor="asap" className='text-sm ml-2 text-left font-medium'>Want as soon as possible?</label>
+        <label htmlFor="asap" className='underline decoration-red-500 text-red-600 text-sm ml-2 text-left font-medium'>I want as soon as possible</label>
       </div>
       <div className={"mb-3 " }>
         <Dropdown onChange={() => {}} register={register("bookingInfo.type")} title="Trip title" options={["Sightseeing (Tour)", "Shopping", "Business", "Others"]} setValue={setValue} />
@@ -223,8 +229,17 @@ const RentAndHire = ({ unregister, register, setValue }) => {
       <div className={"mb-3 " }>
         <Textinput id="to" onChange={() => {}} register={register("bookingInfo.end.place")} title="Ending Place (Final destination)" setValue={setValue} />
       </div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("bookingInfo.passenger")} title="All Passengers (with Child)" setValue={setValue} /></div>
-      <div className="mb-3"><Numberinput onChange={() => {}} register={register("bookingInfo.luggage")} title="Lugggage (Big + Mid size)" setValue={setValue} /></div>
+      <div className="mb-3">
+        <Dropdown onChange={() => {}} register={register("bookingInfo.carSize")} title="Car type" options={["Economy car", "Sedan car", "Family car", "Minibus/Van", "VIP Van", "VIP Car", ]} setValue={setValue} />
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 mb-3">
+        <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.adult")} title="Adult" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.child")} title="Child/Baby" setValue={setValue} />
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 mb-3">
+        <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.big")} title="Big luggage" setValue={setValue} />
+        <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.medium")} title="Mid luggage" setValue={setValue} />
+      </div>
       <div className="mb-3"><Textareainput register={register("bookingInfo.message")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
   )

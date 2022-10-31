@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://a2d3-49-228-105-212.ap.ngrok.io"
+const baseURL = process.env.BASE_URL || "https://24e3-2405-9800-b650-586-b0e7-2c78-7def-6cef.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
@@ -7,15 +7,32 @@ export const getBookingByStatusWithoutDriverId = (status, driverId) => {
 }
 
 export const getBookingById = (id) => {
-    
+    return axios.get(`${baseURL}/booking/id/${id}`)
+}
+
+export const getDrivers = (option, value) => {
+    return axios.get(`${baseURL}/driver`, {
+        params: {
+            option: option || null,
+            value: value || null
+        }
+    })
 }
 
 export const getDriverById = (id) => {
     return axios.get(`${baseURL}/driver/${id}`)
 }
 
+export const getJobsByDriverId = (driverId) => {
+    return axios.get(`${baseURL}/driver/jobs/${driverId}`)
+}
+
 export const getRoomsByUserId = (userId, userType) => {
     return axios.get(`${baseURL}/chat/rooms/${userId}/${userType}`)
+}
+
+export const getRoomByRoomId = (roomId) => {
+    return axios.get(`${baseURL}/chat/room/${roomId}`)
 }
 
 export const getChattingMessages = (roomId) => {
@@ -27,12 +44,20 @@ export const driverRegisterToBooking = (data) => {
     return axios.post(`${baseURL}/driver/jobBoard`, data)
 }
 
+export const actionToDriver = (id, action, message) => {
+    return axios.post(`${baseURL}/driver/action`, {
+        id,
+        action,
+        message
+    })
+}
+
 export const createBooking = (data) => {
     return axios.post(`${baseURL}/booking`, data)
 }
 
 export const createDriver = (data) => {
-    return axios.post("/driver", data)
+    return axios.post(`${baseURL}/driver`, data)
 }
 
 //patch
