@@ -52,7 +52,7 @@ const DriverList = () => {
                         <div className="text-sm font-semibold w-2/12">Name</div>
                         <div className="text-sm font-semibold w-1/12">Sex</div>
                         <div className="text-sm font-semibold w-1/12">Age</div>
-                        <div className="text-sm font-semibold w-2/12">Car Size</div>
+                        <div className="text-sm font-semibold w-2/12">Car Type</div>
                         <div className="text-sm font-semibold w-1/12">Job Done</div>
                         <div className="text-sm font-semibold w-2/12">Join Date</div>
                         <div className="text-sm font-semibold w-1/12">Status</div>
@@ -71,7 +71,7 @@ const DriverList = () => {
                                     }
                                 </div>
                                 <div className="text-sm w-1/12 pl-2">{new Date().getFullYear() - personalInfo.birth}</div>
-                                <div className="text-sm w-2/12">{vehicleInfo.carSize}</div>
+                                <div className="text-sm w-2/12">{vehicleInfo.carType}</div>
                                 <div className="text-sm w-1/12">{jobAcceptance}</div>
                                 <div className="text-sm w-2/12">{moment(createdDate).format("DD MMM YYYY")}</div>
                                 <div className={"text-sm w-1/12 " + (status === "active" ? "text-green-500" : "text-red-500")}>{status.charAt(0).toUpperCase() + status.slice(1)}</div>
@@ -131,8 +131,8 @@ const DriverList = () => {
                             <div className="pl-8">
                                 <div className="text-xl font-medium mb-5">Vehicle Info</div>
                                 <div className="mb-4">
-                                    <div className="text-sm">Car Size</div>
-                                    <div className="font-medium">{driverInfo[0]?.vehicleInfo.carSize}</div>
+                                    <div className="text-sm">Car Type</div>
+                                    <div className="font-medium">{driverInfo[0]?.vehicleInfo.carType}</div>
                                 </div>
                                 <div className="mb-4">
                                     <div className="text-sm">Car Model</div>

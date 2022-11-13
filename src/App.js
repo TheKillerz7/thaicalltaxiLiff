@@ -12,7 +12,7 @@ function App() {
     <div className="App">
       <div style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className='flex justify-between items-center px-3 py-3'>
         <div className='font-semibold text-xl w-max mr-3'>BELL-MAN</div>
-        <div className='text-sm text-right w-max font-medium'>Thai limo taxi for tourists</div>
+        <div className='text-sm text-right w-max font-medium'>Taxi for Tourists & Foreingers</div>
       </div>
       <BrowserRouter>
         <Routes>

@@ -19,6 +19,11 @@ export const getDrivers = (option, value) => {
     })
 }
 
+export const getSelectedRegisterByBookingId = (id) => {
+    return axios.get(`${baseURL}/driver/register/${id}`)
+}
+
+
 export const getDriverById = (id) => {
     return axios.get(`${baseURL}/driver/${id}`)
 }

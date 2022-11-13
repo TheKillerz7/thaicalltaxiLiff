@@ -6,12 +6,12 @@ import DatePicker from 'sassy-datepicker';
 
 const Datepicker = ({ asap, setAsap, register, setValue, isReset, title }) => {
     const [focus, setFocus] = useState(false)
-    const [reTitle, setReTitle] = useState("Select date")
+    const [reTitle, setReTitle] = useState("Select")
     const [time, setTime] = useState(new Date())
     const input = useRef(null)
 
     useEffect(() => {
-        setReTitle("Select date")
+        setReTitle("Select")
         setFocus(false)
     }, [isReset])
 
@@ -25,7 +25,7 @@ const Datepicker = ({ asap, setAsap, register, setValue, isReset, title }) => {
 
     useEffect(() => {
         if (!asap) {
-            setReTitle("Select date")
+            setReTitle("Select")
             setValue(register.name, undefined)
             return
         }

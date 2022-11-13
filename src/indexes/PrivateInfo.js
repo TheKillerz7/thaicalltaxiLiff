@@ -144,7 +144,7 @@ const PrivateInfo = () => {
                         </tr>
                         <tr>
                           <td className="align-top whitespace-nowrap font-medium">Car Type:</td>
-                          <td className="align-top pl-2">{bookingInfo.bookingInfo.carSize}</td>
+                          <td className="align-top pl-2">{bookingInfo.bookingInfo.carType}</td>
                         </tr>
                         <tr>
                           <td className="align-top whitespace-nowrap font-medium">Passenger:</td>
@@ -174,7 +174,7 @@ const PrivateInfo = () => {
                         </tr>
                         <tr>
                           <td className="align-top whitespace-nowrap font-medium">Car Type:</td>
-                          <td className="align-top pl-2">{bookingInfo.bookingInfo.carSize}</td>
+                          <td className="align-top pl-2">{bookingInfo.bookingInfo.carType}</td>
                         </tr>
                         <tr>
                           <td className="align-top whitespace-nowrap font-medium">Passenger:</td>
@@ -257,7 +257,7 @@ const PrivateInfo = () => {
               <div>
                 <div className="bg-blue-50 rounded-lg relative">
                   <div className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
-                    <div className="text-lg mb-3"><span className="font-semibold">Car Size:</span> dsa</div>
+                    <div className="text-lg mb-3"><span className="font-semibold">Car Type:</span> dsa</div>
                     <table>
                       <tbody>
                         <tr>

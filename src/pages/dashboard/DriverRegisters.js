@@ -65,7 +65,7 @@ const DriverRegisters = () => {
                         <div className="text-sm font-semibold w-2/12">Name</div>
                         <div className="text-sm font-semibold w-1/12">Sex</div>
                         <div className="text-sm font-semibold w-1/12">Age</div>
-                        <div className="text-sm font-semibold w-2/12">Car Size</div>
+                        <div className="text-sm font-semibold w-2/12">Car Type</div>
                         <div className="text-sm font-semibold w-2/12">Car Model</div>
                         <div className="text-sm font-semibold w-1/12">Car Birth</div>
                         <div className="text-sm font-semibold w-1/12">Plate Color</div>
@@ -84,7 +84,7 @@ const DriverRegisters = () => {
                                     }
                                 </div>
                                 <div className="text-sm w-1/12 pl-2">{new Date().getFullYear() - personalInfo.birth}</div>
-                                <div className="text-sm w-2/12">{vehicleInfo.carSize}</div>
+                                <div className="text-sm w-2/12">{vehicleInfo.carType}</div>
                                 <div className="text-sm w-2/12">{vehicleInfo.carModel}</div>
                                 <div className="text-sm w-1/12">{vehicleInfo.birth}</div>
                                 <div className="text-sm w-1/12">{vehicleInfo.plateColor}</div>
@@ -145,8 +145,8 @@ const DriverRegisters = () => {
                         <div className="pl-8">
                             <div className="text-xl font-medium mb-5">Vehicle Info</div>
                             <div className="mb-4">
-                                <div className="text-sm">Car Size</div>
-                                <div className="font-medium">{driverInfo[0]?.vehicleInfo.carSize}</div>
+                                <div className="text-sm">Car Type</div>
+                                <div className="font-medium">{driverInfo[0]?.vehicleInfo.carType}</div>
                             </div>
                             <div className="mb-4">
                                 <div className="text-sm">Car Model</div>

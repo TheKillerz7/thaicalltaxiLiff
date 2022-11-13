@@ -1,7 +1,7 @@
 import axios from "axios"
 
-export const translation = (text, target) => {
-    axios.post("https://translation.googleapis.com/language/translate/v2", {
+export const translations = (text, target) => {
+    return axios.post("https://translation.googleapis.com/language/translate/v2", {}, {
         params: {
             q: text,
             target,

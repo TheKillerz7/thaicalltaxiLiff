@@ -168,7 +168,7 @@ const ConfirmInfoForm = ({ setStep, register, setValue }) => {
         <>
           <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
           <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.carSize")} title="ขนาดของรถ" options={["Economy size", "Sedan size", "Family size", "Minibus size", "VIP Van", "VIP Car"]} setValue={setValue} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.carType")} title="ขนาดของรถ" options={["Economy type", "Sedan type", "Family type", "Minibus type", "VIP Van", "VIP Car"]} setValue={setValue} />
             <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} />
           </div>
           <div className={"mb-3 " }>
