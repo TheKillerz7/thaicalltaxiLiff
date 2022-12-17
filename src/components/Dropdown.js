@@ -1,16 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
-const Dropdown = ({ between, top, register, setValue, isReset, options, title }) => {
+const Dropdown = ({ register, setValue, error, options, title, prefill }) => {
     const [focus, setFocus] = useState(false)
     const [reTitle, setReTitle] = useState("Select")
     const input = useRef(null)
-
-    useEffect(() => {
-        setReTitle("Select")
-        if (!input?.current?.value) return
-        input.current.value = ""
-        setFocus(false)
-    }, [isReset])
 
     useEffect(() => {
         setValue(register.name, options[0])
@@ -23,6 +16,13 @@ const Dropdown = ({ between, top, register, setValue, isReset, options, title })
         return () => document.body.removeEventListener("click", handleClick)
     }, [])
 
+    useEffect(() => {
+        if (prefill) {
+            setReTitle(prefill)
+            setValue(register.name, input.current.value)
+        }
+    }, [prefill])
+
     const handleChanges = (selected) => {
         setReTitle(selected.innerText)
         setFocus(false)
@@ -30,8 +30,8 @@ const Dropdown = ({ between, top, register, setValue, isReset, options, title })
     }
 
     return(
-        <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 ' + (focus ? reTitle ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
-            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium ' + (focus ? "text-blue-900" : "text-gray-400")}>{title}</div>
+        <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 ' + (focus ? !error ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
+            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium ' + (!error ? focus ? "text-blue-900" : "text-gray-400" : "text-red-400")}>{error || title}</div>
             <div ref={input} onClick={() => setFocus(!focus)} className="outline-none w-full text-left h-full pt-5 cursor-pointer translate-y-0">{reTitle}</div>
             <div style={{boxShadow: "4px 4px 30px rgba(0, 0, 0, 0.20)", maxHeight: "300px"}} className={'absolute overflow-y-scroll z-10 transition top-full bg-white translate-y-1 w-full left-0 ' + (focus ? "opacity-1" : "opacity-0 pointer-events-none")}>
                 {options.map((option, index) => {

@@ -1,36 +1,19 @@
-import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
-import { TimePicker } from 'sassy-datepicker';
 
-const Timepicker = ({ asap, setAsap, register, setValue, isReset, title }) => {
-    const [focus, setFocus] = useState(false)
-    const [time, setTime] = useState(new Date());
+const Timepicker = ({ asap, register, setValue, title, prefill }) => {
+    const [focus, setFocus] = useState([false, false])
+    const [timeValue, setTimeValue] = useState([prefill?.split(":")[0] || "00", prefill?.split(":")[1] || "00"]);
     const [reTitle, setReTitle] = useState(moment(new Date()).format('HH:mm'))
-    const input = useRef(null)
 
     useEffect(() => {
-        setReTitle(moment(time).format('HH:mm'))
-        setFocus(false)
-    }, [isReset])
-
-    useEffect(() => {
-        setValue(register.name, moment(time).format('HH:mm'))
-    }, [])
-
-    const handleChange = (time) => {
-        setFocus(false)
-        setTime(time)
-        const formatDate = moment(time).format('HH:mm')
-        // setAsap(false)
-        setReTitle(formatDate)
-        setValue(register.name, moment(time).format("HH:mm"))
-    };
+        setFocus([false, false])
+        setValue(register.name, timeValue[0] + ":" + timeValue[1])
+    }, [timeValue])
 
     useEffect(() => {
         if (!asap) {
-            setReTitle(moment(time).format('HH:mm'))
+            setValue(register.name, timeValue[0] + ":" + timeValue[1])
             return
         }
         setReTitle("ASAP")
@@ -38,16 +21,30 @@ const Timepicker = ({ asap, setAsap, register, setValue, isReset, title }) => {
     }, [asap])
 
     return(
-        <div style={{ height: "48px" }} className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 h-full w-full ' + (focus ? "border-blue-900" : "border-gray-300")}>
-            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium ' + (focus ? "text-blue-900" : "text-gray-400")}>{title}</div>
-            {asap && <div ref={input} onClick={() => setFocus(true)} className="outline-none w-full text-left text-sm font-medium h-full pt-5 cursor-pointer">{reTitle}</div>}
-            {!asap && <TimePicker
-                onChange={handleChange}
-                value={{ hours: 0, minutes: 0 }}
-                displayFormat="24hr"
-                className='text-left text-sm font-semibold pt-5 cursor-pointer w-full justify-between'
-                style={{ border: "none", boxShadow: "none" }}
-            />}
+        <div style={{ height: "48px" }} className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 h-full w-full '}>
+            <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium '}>{title}</div>
+            {asap && <div className="outline-none w-full text-left text-sm font-medium h-full pt-5 cursor-pointer">{reTitle}</div>}
+            {!asap && 
+                <div className='flex pt-5 w-full justify-between text-sm'>
+                    <div onClick={(e) => !e.target.id.includes(register.name) ? setFocus([false, false]) : setFocus([!focus[1], false])} className='relative border border-blue-400 rounded-md px-0.5'>
+                        <input id={register.name} value={timeValue[0]} style={{ width: "1.1rem" }} className='rounded-md cursor-pointer caret-transparent outline-none text-center' readOnly />
+                        {focus[0] && 
+                            <div id={register.name} className='absolute bg-white z-10 px-1 -left-0.5 translate-y-0.5 rounded-md border border-gray-300 h-48 overflow-y-scroll'>
+                                {[...Array(24)].map((item, index) => <div id={register.name} onClick={() => setTimeValue([index.toString().length === 1 ? "0" + index.toString() : index, timeValue[1]])} key={index} className={"my-2 rounded-md cursor-pointer " + (parseInt(timeValue[0]) === index && "bg-blue-400 px-1 py-0.5 text-white")}>{index.toString().length === 1 ? "0" + index.toString() : index}</div>)}
+                            </div>
+                        }
+                    </div>
+                    <div>:</div>
+                    <div onClick={(e) => !e.target.id.includes(register.name) ? setFocus([false, false]) : setFocus([false, !focus[1]])} id={register.name} className='relative border border-blue-400 rounded-md px-0.5'>
+                        <input id={register.name} value={timeValue[1]} style={{ width: "1.1rem" }} className='rounded-md cursor-pointer caret-transparent outline-none text-center' readOnly />
+                        {focus[1] &&
+                            <div id={register.name} className='absolute bg-white z-10 px-1 -left-0.5 translate-y-0.5 rounded-md border border-gray-300 h-48 overflow-y-scroll'>
+                                {[...Array(12)].map((item, index) => <div id={register.name} onClick={() => setTimeValue([timeValue[0], (index * 5).toString().length === 1 ? "0" + (index * 5).toString() : (index * 5)])} key={index} className={"my-2 rounded-md cursor-pointer " + (parseInt(timeValue[1]) === (index * 5) && "bg-blue-400 px-1 py-0.5 text-white")}>{(index * 5).toString().length === 1 ? "0" + (index * 5).toString() : (index * 5)}</div>)}
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://24e3-2405-9800-b650-586-b0e7-2c78-7def-6cef.ap.ngrok.io"
+const baseURL = process.env.BASE_URL || "https://3a2d-2405-9800-b650-586-1006-4248-cf6f-9f84.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
@@ -8,6 +8,10 @@ export const getBookingByStatusWithoutDriverId = (status, driverId) => {
 
 export const getBookingById = (id) => {
     return axios.get(`${baseURL}/booking/id/${id}`)
+}
+
+export const getUserById = (id) => {
+    return axios.get(`${baseURL}/user/${id}`)
 }
 
 export const getDrivers = (option, value) => {
@@ -44,9 +48,24 @@ export const getChattingMessages = (roomId) => {
     return axios.get(`${baseURL}/chat/message/${roomId}`)
 }
 
+export const getDriverImage = (driverId) => {
+    return axios.get(`${baseURL}/driver/image/${driverId}`)
+}
+
 //post
 export const driverRegisterToBooking = (data) => {
     return axios.post(`${baseURL}/driver/jobBoard`, data)
+}
+
+export const uploadImage = (data, driverId) => {
+    return axios.post(`${baseURL}/driver/image`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        params: {
+            driverId
+        }
+    })
 }
 
 export const actionToDriver = (id, action, message) => {
@@ -66,8 +85,24 @@ export const createDriver = (data) => {
 }
 
 //patch
-export const updateBooking = (bookingId, userId, data) => {
-    return axios.patch(`${baseURL}/booking`, {bookingId, userId, data})
+export const updateBooking = (bookingId, data) => {
+    return axios.patch(`${baseURL}/booking`, {bookingId, data})
+}
+
+export const updateUserById = (data, id) => {
+    return axios.patch(`${baseURL}/user/${id}`, {data})
+}
+
+export const transferJob = (driverId, bookingId) => {
+    return axios.patch(`${baseURL}/driver/transfer`, {bookingId, driverId})
+}
+
+export const updatePrice = (bookingId, data) => {
+    return axios.patch(`${baseURL}/booking/price`, {bookingId, data})
+}
+
+export const updateDriver = (driverId, data) => {
+    return axios.patch(`${baseURL}/driver`, {driverId, data})
 }
 
 export const readChatMessages = (roomId, userType) => {

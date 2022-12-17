@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-const Imageinput = ({ register, setValue, errors, rendercount, isReset, require }) => {
+const Imageinput = ({ register, setValue, errors, rendercount, isReset, require, prefill }) => {
   const [file, setFile] = useState([])
   const [message, setMessage] = useState("Upload Image")
   const [focus, setFocus] = useState(false)
+  const [image, setImage] = useState()
   const input = useRef(null)
 
   useEffect(() => {
@@ -13,87 +14,71 @@ const Imageinput = ({ register, setValue, errors, rendercount, isReset, require 
   }, [rendercount])
 
   useEffect(() => {
-    !file?.[0]?.name && !message && setMessage("Upload Image")
+    if (!file?.[0]?.name) {
+      setImage(null)
+      input.current.value = ""
+    }
   }, [file])
 
   useEffect(() => {
-    const image = document.querySelector(".image")
-    let focusin = false
-    const handler = (e) => {
-      if(focusin && e.clipboardData.files[0]) {
-        const fileTemp = e.clipboardData.files
-        const extension = fileTemp[0].name.split(".")[fileTemp[0].name.split(".").length - 1]
-        const accept = ["png", "jpg", "jpeg"]
-        if(accept.includes(extension) || !fileTemp.length) {
-          setMessage("")
-          setFile(fileTemp)
-          setValue(register.name, fileTemp)
-        } else {
-          setFile([])
-          setValue(register.name, [])
-          setMessage("Invalid file type")
-        }
-      }
-      else if (focusin) {
-        setMessage("Invalid pasted data")
-      }
-    }
-    const focusHandler = (e) => {
-      if(e.type === "click") {
-        focusin = true
-        setFocus(true)
-        setMessage("Paste profile picture")
-      }
-      else {
-        focusin = false
-        setFocus(false)
-        setMessage("Upload Image")
-      }
-    }
-    image.addEventListener('click', focusHandler)
-    image.addEventListener('focusout', focusHandler)
-    document.body.addEventListener('paste', handler)
-    return () => {
-      document.body.removeEventListener('paste', handler)
-      image.removeEventListener('click', focusHandler)
-      image.removeEventListener('focusout', focusHandler)
-    }
-  }, [])
+    if (!prefill) return
+    const converted = b64toBlob(prefill, "")
+    const myFile = new File([converted], 'image-' + register.name + ".jpg", {
+      type: 'image/jpg',
+      lastModified: new Date(),
+    });
 
-  useEffect(() => {
-    if (!file.length) return
-    setMessage("Upload Image")
-    setFile([])
-}, [isReset])
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(myFile);
+    console.log(dataTransfer)
+    const imageURL = URL.createObjectURL(dataTransfer.files[0]);
+    setFile(dataTransfer.files)
+    setValue(register.name, dataTransfer.files)
+    setImage(imageURL)
+  }, [prefill])
 
-  const onDrop = (acceptedFiles) => {
-
-    const extension = acceptedFiles?.[0]?.name.split(".")[acceptedFiles[0].name.split(".").length - 1]
-    const accept = ["png", "jpg", "jpeg"]
-
-    if(accept.includes(extension) || !acceptedFiles.length) {
-      setMessage("")
-      setFile(acceptedFiles)
-      setValue(register.name, acceptedFiles)
-    } else {
-      setFile([])
-      setValue(register.name, [])
-      setMessage("Invalid extension")
+  const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+  
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+  
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
     }
+  
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
   }
-    
-  const {getRootProps, getInputProps, isDragAccept} = useDropzone({onDrop, noClick: true})
+
+  const onFileHandle = e => {
+    const imageURL = URL.createObjectURL(e.target.files[0]);
+    setFile(e.target.files)
+    setValue(register.name, e.target.files)
+    setImage(imageURL)
+  }
   
   return(
-    <div className='bg-transparent flex'>
-        <div {...getRootProps()} className={'image relative text-left text-sm transition w-9/12 px-4 py-3 mr-5 border-2 rounded-lg border-gray-300 h-full overflow-hidden cursor-pointer ' + (file?.length ? "text-gray-800 "  : message == "Upload Image" || message == "Paste profile picture" ? isDragAccept || focus ? "bg-blue-100 border-blue-300 text-blue-400" : "text-gray-400" : isDragAccept ? "bg-blue-100 border-blue-300 text-blue-400" : "text-red-400")}>
-          {file?.[0]?.name || message}{require && message === "Upload Image" && <span className='text-red-400'>*</span>}
-          {file.length > 0 && <div onClick={() => setFile([])} className='hover:text-blue-400 transition absolute top-1/2 right-3 -translate-y-1/2 text-xl'>x</div>}
+    <div>
+      <div style={{ maxWidth: "100vw" }} className='bg-transparent flex overflow-hidden'>
+        <div className={'image relative text-left text-sm transition w-9/12 px-4 py-3 mr-5 border-2 rounded-lg border-gray-300 overflow-hidden cursor-pointer ' + (file?.length ? "bg-blue-100 border-blue-300 text-blue-400" : "text-gray-400")}>
+          <div className='text-ellipsis overflow-hidden whitespace-nowrap pr-3'>{file?.[0]?.name || message}{require && message === "Upload Image" && <span className='text-red-400'>*</span>}</div>
+          {file.length > 0 && <div onClick={() => setFile([])} className='transition absolute top-1/2 right-3 -translate-y-1/2 text-xl'>x</div>}
         </div>
-        <label for="profile" className='hover:bg-blue-400 cursor-pointer transition w-3/12 bg-blue-900 text-sm grid place-items-center rounded-lg'>
+        <label htmlFor={register.name} className='cursor-pointer transition w-3/12 bg-blue-900 text-sm grid place-items-center rounded-lg'>
             <div className='text-white font-medium'>Upload</div>
-            <input ref={input} {...getInputProps()} id="profile" name="profile" type="file" className="hidden w-full" accept=".jpg, .jpeg, .png" multiple={false} />
+            <input onChange={onFileHandle} ref={input} id={register.name} name={register.name} type="file" className="hidden w-full" accept=".jpg, .jpeg, .png" multiple={false} />
         </label>
+      </div>
+      <div className=''>
+        {image && <img style={{ aspectRatio: "12/14" }} className='object-cover w-5/12 mt-3 rounded-md overflow-hidden border border-blue-400 object-center' src={image} />}
+      </div>
     </div>
   )
 }

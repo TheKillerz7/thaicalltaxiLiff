@@ -15,7 +15,7 @@ const DriverList = () => {
 
     useEffect(() => {
         const callback = async () => {
-            const driversArray = await getDrivers()
+            const driversArray = await getDrivers("whereNot", {title: "driverStatus", value: "pending"})
             console.log(driversArray)
             setDrivers(driversArray.data)
         }
@@ -24,10 +24,10 @@ const DriverList = () => {
 
     const actionToDriverHandle = async (data) => {
         try {
-            await actionToDriver(driverInfo[0].driverId, driverInfo[0]?.status === "active" ? "ban" : "unban", data[driverInfo[0]?.status === "active" ? "ban" : "unban"])
-            const driversArray = await getDrivers()
+            await actionToDriver(driverInfo[0].driverId, driverInfo[0]?.driverStatus === "active" ? "ban" : "unban", data[driverInfo[0]?.driverStatus === "active" ? "ban" : "unban"])
+            const driversArray = await getDrivers("whereNot", {title: "driverStatus", value: "pending"})
             setDrivers(driversArray.data)
-            alert(driverInfo[0].status === "active" ? "Ban successful" : "Unban successful")
+            alert(driverInfo[0].driverStatus === "active" ? "Ban successful" : "Unban successful")
             setOnDriverInfo(false)
             setOnAction(false)
         } catch (error) {
@@ -58,7 +58,7 @@ const DriverList = () => {
                         <div className="text-sm font-semibold w-1/12">Status</div>
                         <div className="text-sm font-semibold w-1/12"></div>
                     </div>
-                    {drivers.length > 0 && drivers.map(({ id, personalInfo, vehicleInfo, status, createdDate, jobAcceptance }, index) => {
+                    {drivers.length > 0 && drivers.map(({ id, personalInfo, vehicleInfo, driverStatus, createdDate, jobAcceptance }, index) => {
                         return (
                             <div key={index} className={"py-2 px-7 flex items-center " + (index + 1 !== drivers.length && "border-b border-gray-200")}>
                                 <div className="text-sm w-1/12">{id}</div>
@@ -74,7 +74,7 @@ const DriverList = () => {
                                 <div className="text-sm w-2/12">{vehicleInfo.carType}</div>
                                 <div className="text-sm w-1/12">{jobAcceptance}</div>
                                 <div className="text-sm w-2/12">{moment(createdDate).format("DD MMM YYYY")}</div>
-                                <div className={"text-sm w-1/12 " + (status === "active" ? "text-green-500" : "text-red-500")}>{status.charAt(0).toUpperCase() + status.slice(1)}</div>
+                                <div className={"text-sm w-1/12 " + (driverStatus === "active" ? "text-green-500" : "text-red-500")}>{driverStatus.charAt(0).toUpperCase() + driverStatus.slice(1)}</div>
                                 <div onClick={() => {
                                     setOnDriverInfo(true)
                                     setDriverInfo([drivers[index]])
@@ -95,7 +95,7 @@ const DriverList = () => {
                             <div className="text-white mb-7">Driver Info</div>
                             <div className="flex items-center mb-2">
                                 <div className="text-white opacity-80 mr-2">#A2-1032</div>
-                                <div className={"py-1.5 px-3 text-white font-medium text-xs rounded-md " + (driverInfo[0]?.status === "active" ? "bg-green-600" : "bg-red-600")}>{driverInfo[0]?.status.charAt(0).toUpperCase() + driverInfo[0]?.status.slice(1)}</div>
+                                <div className={"py-1.5 px-3 text-white font-medium text-xs rounded-md " + (driverInfo[0]?.driverStatus === "active" ? "bg-green-600" : "bg-red-600")}>{driverInfo[0]?.driverStatus.charAt(0).toUpperCase() + driverInfo[0]?.driverStatus.slice(1)}</div>
                             </div>
                             <div className="text-2xl text-white">{driverInfo[0]?.personalInfo.title}{driverInfo[0]?.personalInfo.name} <span className="text-lg opacity-80 ml-1">{new Date().getFullYear() - driverInfo[0]?.personalInfo.birth} years old</span></div>
                             <div onClick={() => setOnDriverInfo(false)} className="text-2xl font-medium absolute text-white cursor-pointer top-4 right-5">x</div>
@@ -167,7 +167,7 @@ const DriverList = () => {
                         </div>
                         <div className="flex justify-end items-center px-8 py-4">
                             {/* <div className="py-2 px-5 cursor-pointer text-sm font-medium bg-gray-300 rounded-md w-max">Close</div> */}
-                            {driverInfo[0]?.status === "active" ?
+                            {driverInfo[0]?.driverStatus === "active" ?
                                 <div onClick={() => setOnAction(true)} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Ban Driver</div>
                                 :
                                 <div onClick={() => setOnAction(true)} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Unban Driver</div>
@@ -175,7 +175,7 @@ const DriverList = () => {
                         </div>
                         <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction ? "opacity-100" : "opacity-0 pointer-events-none")}>
                             <form onSubmit={handleSubmit(actionToDriverHandle)} className="bg-white px-4 py-4 w-6/12 rounded-md">
-                                {driverInfo[0]?.status === "active" ?
+                                {driverInfo[0]?.driverStatus === "active" ?
                                     <>
                                         <div className="text-lg font-semibold mb-2">Ban Driver</div>
                                         <div className="border-2 border-gray-300 mb-3 rounded-md py-1 px-3 flex items-center w-full">

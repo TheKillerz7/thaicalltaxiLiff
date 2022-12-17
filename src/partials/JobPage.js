@@ -11,7 +11,7 @@ import Textareainput from "../components/Textareainput";
 import he from "he"
 import { translations } from "../apis/google";
 
-const JobPage = ({ bookingData, currentJobs, isOpen, onClick, driverId, setJobOpen }) => {
+const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
     const [applyProcess, setApplyProcess] = useState("")
     const [total, setTotal] = useState(0)
     const [extraCount, setExtraCount] = useState(1)
@@ -73,7 +73,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, driverId, setJobOp
 
     const onSubmit = async (data) => {
         data.bookingId = bookingData.bookingId
-        data.driverId = driverId || "U2330f4924d1d5faa190c556e978bee23"
+        data.driverId = userId
         const translated = await translations(data.message.th, "en")
         data.message.en = he.decode(translated.data.data.translations[0].translatedText)
         const res = await driverRegisterToBooking(data)

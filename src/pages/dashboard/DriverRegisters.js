@@ -16,7 +16,7 @@ const DriverRegisters = () => {
 
     useEffect(() => {
         const callback = async () => {
-            const driversArray = await getDrivers("where", {title: "status", value: "pending"})
+            const driversArray = await getDrivers("where", {title: "driverStatus", value: "registering"})
             console.log(driversArray)
             setDrivers(driversArray.data)
         }
@@ -26,7 +26,7 @@ const DriverRegisters = () => {
     const rejectHandle = async (data) => {
         try {
             await actionToDriver(driverInfo[0].driverId, "reject", data.reject)
-            const driversArray = await getDrivers("where", {title: "status", value: "pending"})
+            const driversArray = await getDrivers("where", {title: "driverStatus", value: "registering"})
             setDrivers(driversArray.data)
             alert("Reject successful")
             setOnDriverInfo(false)
@@ -36,10 +36,10 @@ const DriverRegisters = () => {
         }
     }
 
-    const acceptHandle = async () => {
+    const acceptHandle = async (data) => {
         try {
-            await actionToDriver(driverInfo[0].driverId, "accept")
-            const driversArray = await getDrivers("where", {title: "status", value: "pending"})
+            await actionToDriver(driverInfo[0].driverId, "accept", data.accept)
+            const driversArray = await getDrivers("where", {title: "driverStatus", value: "registering"})
             setDrivers(driversArray.data)
             alert("Accept successful")
             setOnDriverInfo(false)
@@ -196,13 +196,16 @@ const DriverRegisters = () => {
                         </form>
                     </div>
                     <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction === "accept" ? "opacity-100" : "opacity-0 pointer-events-none")}>
-                        <div className="bg-white px-4 py-4 w-6/12 rounded-md">
+                        <form onSubmit={handleSubmit(acceptHandle)} className="bg-white px-4 py-4 w-6/12 rounded-md">
                             <div className="text-lg font-semibold mb-2">Acception</div>
+                            <div className="border-2 border-gray-300 mb-3 rounded-md py-1 px-3 flex items-center w-full">
+                                <input {...register("accept")} placeholder="Driver Code..." className="outline-none w-full text-sm" type="text" />
+                            </div>
                             <div className="grid grid-cols-2 gap-x-2 text-center items-center">
                                 <div onClick={() => setOnAction("")} className="py-2 px-5 cursor-pointer text-xs font-medium bg-gray-300 rounded-md">Close</div>
-                                <div onClick={acceptHandle} style={{ backgroundColor: "#0c143d" }} className="py-2 px-5 cursor-pointer text-xs text-white rounded-md">Send</div>
+                                <button type="submit" style={{ backgroundColor: "#0c143d" }} className="py-2 px-5 cursor-pointer text-xs text-white rounded-md">Send</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

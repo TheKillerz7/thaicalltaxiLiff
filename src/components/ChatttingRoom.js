@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import DatePicker, { TimePicker } from "sassy-datepicker";
 import {io} from 'socket.io-client';
-import { getBookingById, getChattingMessages, getRoomByRoomId, getRoomsByUserId, getSelectedRegisterByBookingId, readChatMessages } from "../apis/backend";
+import { getBookingById, getChattingMessages, getDriverById, getRoomByRoomId, getRoomsByUserId, getSelectedRegisterByBookingId, readChatMessages, transferJob, updateBooking, updatePrice } from "../apis/backend";
 import Textinput from "./Textinput";
 
 const connectionOptions =  {
@@ -15,9 +15,17 @@ const connectionOptions =  {
   };
 
 const ChattingRoom = ({ userId }) => {
-    const { page, roomId, userType  } = useParams();
+    const { page, roomId, userType } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams()
     const roomIdEscaped = roomId && roomId.split("&")[0]
-    
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (searchParams.get("roomId")) {
+            navigate(`/chat/${userType}/room/${searchParams.get("roomId")}`) 
+        }
+    }, [])
+
     return (
         <div>
             {page === "inbox" ?
@@ -43,7 +51,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://24e3-2405-9800-b650-586-b0e7-2c78-7def-6cef.ap.ngrok.io", connectionOptions)
+        const socket = io("https://3a2d-2405-9800-b650-586-1006-4248-cf6f-9f84.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -80,20 +88,22 @@ const RoomsPage = ({ userId, userType }) => {
                         var now = moment(new Date()); //todays date
                         var end = moment(room.messages.latestMessage?.createdDate || room.createdDate); // another date
                         var duration = moment.duration(now.diff(end));
-                        var days = duration.asDays() <= 1 ? duration.asMinutes() <= 30 ? duration.humanize() + " ago" : end.format("HH.mm") : duration.asDays() >= 2 ? end.format("DD/MM/yyyy") : "yesterday";
+                        var days = duration.asDays() <= 1 ? duration.asMinutes() <= 30 ? duration.humanize().includes("minutes") ? duration.humanize().replace("minutes", "mins") : duration.humanize().replace("minute", "mins") : end.format("HH.mm") : duration.asDays() >= 2 ? end.format("DD/MM/yyyy") : "yesterday";
                         const messages = room.messages
 
                         return (
                             <Link key={index} to={`/chat/${userType}/room/${room.roomId}`}>
                                 <div className="focus:bg-blue-100 flex justify-between px-5 py-4">
-                                    <div className="flex">
+                                    <div className="flex w-full overflow-hidden">
                                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
-                                        <div className="">
-                                            <div className="font-medium">{room.name || "Mr.doter onssa"}</div>
-                                            {!messages.unreadMessages.length > 0 && <span className="text-gray-500">{messages?.latestMessage?.message}</span>}
-                                            {messages.unreadMessages.length > 0 && <span className="font-semibold">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</span>}
-                                            {!messages.latestMessage && <span className="text-gray-500">No message yet.</span>}
-                                            <span className="text-right font-medium text-sm text-gray-400 pt-0.5 ml-3 text-ellipsis whitespace-nowrap overflow-hidden">{days}</span>
+                                        <div className="overflow-hidden">
+                                            <div className="font-medium">{room.pickupTime === "ASAP" ? room.pickupDate : room.pickupTime + ", " + room.pickupDate}</div>
+                                            <div className="flex">
+                                                {!messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden">{messages?.latestMessage?.message}</div>}
+                                                {messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="font-semibold text-ellipsis whitespace-nowrap overflow-hidden">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</div>}
+                                                {!messages.latestMessage && <div className="text-gray-500">No message yet.</div>}
+                                                <div className="text-right w-max font-medium text-sm text-gray-400 pt-0.5 ml-3">{days}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -110,23 +120,43 @@ const RoomsPage = ({ userId, userType }) => {
 
 let socket
 const ChatPage = ({ roomId, userType, userId }) => {
-    const [receiverInfo, setReceiverInfo] = useState()
     const [inputValue, setInputValue] = useState("")
     const [messages, setMessages] = useState([])
     const [bookingData, setBookingData] = useState({})
+    const [driver, setDriver] = useState([])
+    const [meetingService, setMeetingService] = useState(null)
+    const [prices, setPrices] = useState({})
     const [onTransfer, setOnTransfer] = useState(false)
     const [onCheckBookingInfo, setOnCheckBookingInfo] = useState(false)
-
+    const [roomName, setRoomName] = useState("")
+    const navigate = useNavigate()
+    
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://24e3-2405-9800-b650-586-b0e7-2c78-7def-6cef.ap.ngrok.io", connectionOptions)
+        socket = io("https://3a2d-2405-9800-b650-586-1006-4248-cf6f-9f84.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
-            const res = await getRoomByRoomId(roomId)
-            const booking = (await getBookingById(res.data[0].bookingId)).data[0]
+            const room = (await getRoomByRoomId(roomId)).data[0]
+            if (!room) return navigate(`/chat/${userType}/inbox`)
+            const booking = (await getBookingById(room.bookingId)).data[0]
+            setMeetingService(booking.meetingService)
+            const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
+            prices.extra = JSON.parse(prices.extra)
+            setPrices(prices)
+            const driver = (await getDriverById(prices.driverId)).data
+            driver[0].vehicleInfo = JSON.parse(driver[0].vehicleInfo)
+            setDriver(driver)
             booking.bookingInfo = JSON.parse(booking.bookingInfo)
-            booking.personalInfo = JSON.parse(booking.personalInfo)
+            let startingDate = []
+            let pickupDateStart = ""
+            if (booking.bookingInfo.start?.pickupDate === "ASAP" || booking.bookingInfo.pickupDate === "ASAP") {
+                setRoomName(`ASAP`)
+            } else {
+                startingDate = booking.bookingInfo.start?.pickupDate.split("/").reverse() || booking.bookingInfo.pickupDate.split("/").reverse()
+                pickupDateStart = moment(new Date(startingDate[0], startingDate[1], startingDate[2])).format("DD MMM")
+                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.from.pickupTime}, ${pickupDateStart}`)
+            }
             setBookingData(booking)
             await readChatMessages(roomId, userType)
             const messages = await getChattingMessages(roomId)
@@ -158,6 +188,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
         input.current.value = ""
         setInputValue("")
         socket.emit('message', {
+            bookingId: bookingData.bookingId,
             roomId,
             inputValue,
             userType,
@@ -172,33 +203,127 @@ const ChatPage = ({ roomId, userType, userId }) => {
     return (
         <div className="h-full">
             <div style={{  }} className="py-4 px-5 flex items-center justify-between bg-blue-50 mb-5 sticky top-0">
-                <div className="flex items-center w-9/12 overflow-hidden">
+                <div className="flex items-center w-10/12 overflow-hidden">
                     <Link to={`/chat/${userType}/inbox`}><div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div></Link>
                     <div className="items-center flex overflow-hidden">
                         <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-10 mr-4"></div>
                         <div className="overflow-hidden pr-1">
-                            <div className="font-medium text-lg text-ellipsis whitespace-nowrap overflow-hidden">{receiverInfo?.name || "BoomBeem GIiidsasdak"}</div>
+                            <div className="font-medium text-lg text-ellipsis whitespace-nowrap overflow-hidden">{roomName}</div>
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-end w-3/12">
-                    <div className="grid place-items-center cursor-pointer mr-5"><FontAwesomeIcon className="text-blue-900 text-xl" icon={faPhone} /></div>
+                <div className="flex justify-end w-2/12">
                     <div onClick={() => setOnCheckBookingInfo(current => !current)} className="grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-blue-900 text-2xl" icon={faCircleInfo} /></div>
                 </div>
             </div>
             <div className="pb-24 px-3">
                 {messages.map((message, index) => {
                     let messageSide = message.senderType === userType ? "right" : "left"
+
+                    const MessageComponent = () => {
+                        switch (message.messageType) {
+                            case "greeting":
+                                return(
+                                    <div className="break-normal font-medium">
+                                        {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
+                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
+                                    </div>
+                                )
+
+                            case "meeting":
+                                return (
+                                    <div>
+                                        <div className="font-semibold text-lg">Meeting Service?</div>
+                                        <div>Easy meeting in airport for just B100</div>
+                                        {meetingService ?
+                                                <div className="bg-green-600 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">+ B100</div>
+                                                :
+                                                meetingService === null ?
+                                                    userType === "driver" ? 
+                                                        <div className="bg-gray-400 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">Choosing</div>
+                                                        :
+                                                        <div className="grid grid-cols-2 gap-x-2">
+                                                            <div onClick={(async () => {
+                                                                socket.emit('message', {
+                                                                    bookingId: bookingData.bookingId,
+                                                                    roomId,
+                                                                    inputValue: "",
+                                                                    userType: "driver",
+                                                                    userId: driver[0]?.driverId
+                                                                })
+                                                                setMeetingService(false)
+                                                                await updateBooking(bookingData.bookingId, {meetingService: false})
+                                                            })} className="bg-red-500 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">No</div>
+                                                            <div onClick={(async () => {
+                                                                socket.emit('message', {
+                                                                    bookingId: bookingData.bookingId,
+                                                                    roomId,
+                                                                    inputValue: "",
+                                                                    userType: "driver",
+                                                                    userId: driver[0]?.driverId
+                                                                })
+                                                                setMeetingService(true)
+                                                                await updateBooking(bookingData.bookingId, {meetingService: true})
+                                                            })} className="bg-green-500 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">Yes</div>
+                                                        </div>
+                                                    :
+                                                    <div className="bg-red-600 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">No Service</div>
+                                        }
+                                    </div>
+                                )
+
+                            case "text":
+                                if (message.message.includes("://")) {
+                                    return (
+                                        <div className="break-normal font-medium">
+                                            {messageSide === "left" &&
+                                                <div className="mb-1">
+                                                    {message.translated.split(" ").length ? 
+                                                        message.translated.split(" ").map((text, index) => {
+                                                            return text.includes("://") ? 
+                                                                <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5" + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
+                                                                :
+                                                                text + " "
+                                                        })
+                                                        :
+                                                        <div onClick={() => window.location.replace(message.translated)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.translated}</div>
+                                                    }
+                                                </div>
+                                            }
+                                            <div className={messageSide === "left" ? "text-white font-light" : ""}>
+                                                {message.message.split(" ").length ? 
+                                                    message.message.split(" ").map((text, index) => {
+                                                        return text.includes("://") ? 
+                                                            <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
+                                                            :
+                                                            text + " "
+                                                    })
+                                                    :
+                                                    <div onClick={() => window.location.replace(message.message)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.message}</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                    
+                                }
+                                return (
+                                    <div className="break-normal font-medium">
+                                        {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
+                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
+                                    </div>
+                                )
+                        
+                            default:
+                                return ""
+                        }
+                    }
                     
                     return (
                         <div key={index}>
                             <div className={"flex mb-5 " + (messageSide === "right" ? "justify-end" : "justify-start")}>
                                 {messageSide === "left" && <div className="w-8 mr-3"><div className="bg-blue-900 text-white grid place-items-center rounded-full w-8 h-8"><FontAwesomeIcon icon={faUser} /></div></div>}
                                 <div className={"max-w-xs px-3 py-2 rounded-md " + (messageSide === "left" ? "bg-blue-900 text-white" : "bg-gray-100")}>
-                                    <div className="break-normal font-medium">
-                                        {messageSide === "left" && <div className="mb-1">{message.translated || "No translated yet"}</div>}
-                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
-                                    </div>
+                                    <MessageComponent />
                                 </div>
                             </div>
                         </div>
@@ -216,7 +341,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             </div>
             {bookingData.bookingInfo && (
                 <>
-                    <BookingDetail onCheckBookingInfo={onCheckBookingInfo} setOnTransfer={setOnTransfer} setOnCheckBookingInfo={setOnCheckBookingInfo} bookingData={bookingData} userType={userType} />
+                    <BookingDetail driver={driver} prices={prices} onCheckBookingInfo={onCheckBookingInfo} setOnTransfer={setOnTransfer} setOnCheckBookingInfo={setOnCheckBookingInfo} bookingData={bookingData} userType={userType} />
                     <TransferJob bookingData={bookingData} onTransfer={onTransfer} setOnTransfer={setOnTransfer} />
                 </>
             )}
@@ -224,7 +349,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     )
 }
 
-const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData, userType, setOnTransfer }) => {
+const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData, userType, setOnTransfer, driver, prices }) => {
     const [onEdit, setOnEdit] = useState([false, false])
     const [price, setPrice] = useState({})
     const [iniPrice, setIniPrice] = useState([])
@@ -232,21 +357,22 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const [datePicker, setDatePicker] = useState("")
     const [dateValue, setDateValue] = useState(new Date())
     const [total, setTotal] = useState(0)
-    const [increment, setIncrement] = useState(1)
-    const [increment1, setIncrement1] = useState(1)
+    const [increment, setIncrement] = useState(10000)
+    const [increment1, setIncrement1] = useState(10000)
+    const [submitType, setSubmitType] = useState("")
     
-    const { register, setValue, handleSubmit, reset, unregister } = useForm({defaultValues: {
+    const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
+    const pickupDate = moment(new Date(dateArray[0], dateArray[1], dateArray[2])).format("DD MMM YYYY")
+    const dateArrayEnd = (bookingData?.bookingInfo.end?.pickupDate.split("/").reverse())
+    const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], dateArrayEnd[1], dateArrayEnd[2])).format("DD MMM YYYY")
+    
+    const { register, setValue, handleSubmit, reset, unregister, getValues } = useForm({defaultValues: {
         bookingInfo: bookingData.bookingInfo
     }})
 
-    const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const pickupDate = moment(new Date(dateArray[0], dateArray[1], dateArray[2])).format("DD MMM YYYY")
-
     useEffect(() => {
-        console.log( bookingData.bookingInfo)
         if (iniPrice.extra?.length) {
             reset({
-                bookingInfo: bookingData.bookingInfo,
                 extra: {
                     course: iniPrice.course,
                     tollway: iniPrice.tollway,
@@ -254,7 +380,14 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                 }
             })
         }
-    }, [onEdit])
+    }, [onEdit[1]])
+
+    useEffect(() => {
+        reset({
+            bookingInfo: bookingData.bookingInfo
+        })
+        setValue("bookingInfo.carType", driver[0]?.vehicleInfo.carType)
+    }, [onEdit[0]])
 
     useEffect(() => {
         if (bookingData.bookingType === "R&H") {
@@ -265,9 +398,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
             setArea({...areaTemp})
         }
         const callback = async () => {
-            const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
-            console.log(prices)
-            prices.extra = JSON.parse(prices.extra)
+            setValue("bookingInfo.carType", driver[0].vehicleInfo.carType)
             const priceObj = {}
             prices.extra.forEach((extra, index) => {
                 priceObj[extra.title] = parseInt(extra.price)
@@ -296,12 +427,13 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         callback()
     }, [])
 
-    const onDatepickHandle = async (e) => {
-        console.log(date)
-        const date = datePicker
-        const name = date.includes(".") ? date.split(".") : [date]
-        const time = moment(e).format("DD/MM/YYYY")
-        setDatePicker("")
+    useEffect(() => {
+        const timeString = moment(dateValue).format("DD/MM/YYYY")
+        setValue("bookingInfo." + datePicker, timeString)
+    }, [dateValue])
+
+    const onDatepickHandle = (e) => {    
+        setDateValue(e)
     }
 
     const onTimePickHandle = (e) => {
@@ -309,57 +441,65 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         const time = moment(e).format("HH:mm")
     }
 
-    useEffect(() => {
-        console.log(increment1)
-    }, [increment1])
-
     const addAreaHandle = (id, type, index) => {
         const temp = area
         if (type === "add") {
             temp[increment1 + 1] = ""
             setArea(temp)
-            setIncrement1(increment1 + 1)
+            setIncrement1(curr => curr + 1)
             return
         }
         unregister(`bookingInfo.visit`)
         delete temp[id]
         setArea(temp)
-        setIncrement1(increment1 + 1)
+        setIncrement1(curr => curr + 1)
     }
-
-    useEffect(() => {
-        console.log(price)
-    }, [increment])
 
     const addExtraHandle = (id, type, index) => {
         const temp = price
         if (type === "add") {
             temp[increment + 1] = 0
             setPrice(temp)
-            setIncrement(increment + 1)
+            setIncrement(curr => curr + 1)
             return
         }
         unregister(`extra`)
         delete temp[id]
         setPrice(temp)
-        setIncrement(increment + 1)
+        setIncrement(curr => curr + 1)
     }
 
-    const submitHandle = (data) => {
-        console.log(data)
+    const submitHandle = async (data) => {
+        try {
+            if (submitType === "bookingInfo") {
+                data.bookingInfo = JSON.stringify(data.bookingInfo)
+                await updateBooking(bookingData.bookingId, {bookingInfo: data.bookingInfo})
+            } else {
+                data.extra.extra = JSON.stringify(data.extra.extra)
+                await updatePrice(bookingData.bookingId, data.extra)
+            }
+            alert("Success")
+            window.location.reload(false);
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
         <div>
-            <div style={{ zIndex: "10" }} className={'fixed h-screen w-screen transition bg-black top-0 bg-opacity-30 left-0 grid place-items-center ' + (datePicker != "" ? "opacity-100" : "opacity-0 pointer-events-none")}>
+            <div onClick={(e) => {
+                if (typeof e.target.className === "string") {
+                    !e.target.className?.includes("sdp") && setDatePicker("")
+                }
+            }} style={{ zIndex: "10" }} className={'fixed h-screen w-screen transition bg-black top-0 bg-opacity-30 left-0 grid place-items-center ' + (datePicker !== "" ? "opacity-100" : "opacity-0 pointer-events-none")}>
                 <div className='w-10/12 grid place-items-center'>
-                    <DatePicker
+                    {dateValue && <DatePicker
                         minDate={new Date()}
                         value={dateValue}
                         onChange={onDatepickHandle}
                         className="w-full"
                         style={{ paddingBottom: "20px" }}
-                    />
+                    />}
                 </div>
             </div>
             <div className={"h-screen w-full absolute top-0 left-0 bg-white transition duration-300 " + (onCheckBookingInfo ? "translate-x-0" : "translate-x-full")}>
@@ -369,18 +509,11 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                 </div>
                 <div>
                     <div>
-                        <div className="flex flex-col items-center justify-center pt-8 pb-4">
-                            <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-24"></div>
-                            <div className="text-2xl font-semibold mt-3">Duty Driver <span className="text-gray-400 text-lg font-medium">#CA-124</span></div>
-                            <div className="mt-3">
-                                <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full w-9 grid place-items-center cursor-pointer"><FontAwesomeIcon className="text-white" icon={faPhone} /></div>
-                            </div>
-                        </div>
                         <div className="px-5 pt-5 bg-white pb-3">
                             <div className="">
                                 <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info</div>
                                 <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
-                                    {!onEdit[0] && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
+                                    {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
                                     {bookingData.bookingType === "R&H" ?
                                     <div className="">
                                         <div>
@@ -400,7 +533,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                 {index > 0 && <div className={"absolute bottom-full left-1/2 -translate-x-1/2 w-1 bg-yellow-600 " + (onEdit[0] ? "h-7" : "h-5")}></div>}
                                                             </div>
                                                             {!onEdit[0] ?
-                                                                area[place]
+                                                                <div className="text-ellipsis overflow-hidden whitespace-nowrap">{area[place]}</div>
                                                                 :
                                                                 <div className="flex items-center w-full">
                                                                     <div className='bg-white w-full my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
@@ -444,7 +577,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                             bookingData.bookingInfo.type
                                                             :
                                                             <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <select className="w-full outline-none" {...register("bookingInfo.type")}>
+                                                                <select className="w-full outline-none bg-white" {...register("bookingInfo.type")}>
                                                                     <option value="Sightseeing">Sightseeing</option>
                                                                     <option value="Shopping">Shopping</option>
                                                                     <option value="Business">Business</option>
@@ -459,7 +592,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
                                                         {!onEdit[0] ?
-                                                            bookingData.bookingInfo.start.pickupDate
+                                                            bookingData.bookingInfo.start.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.start.pickupTime + ", " + pickupDate
                                                             :
                                                             <div className="grid gap-x-2 grid-cols-2">
                                                                 <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
@@ -473,9 +606,12 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     <input {...register("bookingInfo.start.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                                 </div>
                                                                 <div onClick={() => {
-                                                                    // const date = new Date(temp[0], (parseInt(temp[1]) - 1).toString(), temp[2])
-                                                                    // setDateValue(date)
-                                                                    // setDatePicker("pickupDate")
+                                                                    let date = getValues("bookingInfo.start.pickupDate")
+                                                                    if (date !== "ASAP") {
+                                                                        date = date.split('/').reverse()
+                                                                        setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
+                                                                    }
+                                                                    setDatePicker("start.pickupDate")
                                                                 }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
                                                                     <input {...register("bookingInfo.start.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
                                                                 </div>
@@ -488,9 +624,9 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
                                                         {!onEdit[0] ?
-                                                            bookingData.bookingInfo.end.pickupDate
+                                                            bookingData.bookingInfo.end.pickupTime + ", " + pickupDateEnd
                                                             :
-                                                            <div className="flex">
+                                                            <div className="grid gap-x-2 grid-cols-2">
                                                                 <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
                                                                     <TimePicker
                                                                         onChange={onTimePickHandle}
@@ -502,10 +638,12 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     <input {...register("bookingInfo.end.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                                 </div>
                                                                 <div onClick={() => {
-                                                                    // const temp = inputs.bookingInfo.pickupDate.split("/").reverse()
-                                                                    // const date = new Date(temp[0], (parseInt(temp[1]) - 1).toString(), temp[2])
-                                                                    // setDateValue(date)
-                                                                    // setDatePicker("pickupDate")
+                                                                    let date = getValues("bookingInfo.end.pickupDate")
+                                                                    if (date !== "ASAP") {
+                                                                        date = date.split('/').reverse()
+                                                                        setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
+                                                                    }
+                                                                    setDatePicker("end.pickupDate")
                                                                 }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
                                                                     <input {...register("bookingInfo.end.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
                                                                 </div>
@@ -518,10 +656,10 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
                                                         {!onEdit[0] ?
-                                                            bookingData.bookingInfo.carType
+                                                            driver[0]?.vehicleInfo.carType
                                                             :
                                                             <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <select className="w-full outline-none" {...register("bookingInfo.carType")}>
+                                                                <select className="w-full outline-none bg-white" {...register("bookingInfo.carType")}>
                                                                     <option value="Economy type">Economy type</option>
                                                                     <option value="Sedan type">Sedan type</option>
                                                                     <option value="Family type">Family type</option>
@@ -614,11 +752,11 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Date</td>
+                                                <td className="align-middle whitespace-nowrap font-medium">Time</td>
                                                 {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                 <td className="align-middle pl-2">
                                                     {!onEdit[0] ?
-                                                        bookingData.bookingInfo.pickupTime + ", " + pickupDate
+                                                        bookingData.bookingInfo.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.pickupTime + ", " + pickupDate
                                                         :
                                                         <div className="grid gap-x-2 grid-cols-2">
                                                             <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
@@ -632,10 +770,12 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                 <input {...register("bookingInfo.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                             </div>
                                                             <div onClick={() => {
-                                                                // const temp = inputs.bookingInfo.pickupDate.split("/").reverse()
-                                                                // const date = new Date(temp[0], (parseInt(temp[1]) - 1).toString(), temp[2])
-                                                                // setDateValue(date)
-                                                                // setDatePicker("pickupDate")
+                                                                let date = getValues("bookingInfo.pickupDate")
+                                                                if (date !== "ASAP") {
+                                                                    date = date.split('/').reverse()
+                                                                    setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
+                                                                }
+                                                                setDatePicker("pickupDate")
                                                             }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
                                                                 <input {...register("bookingInfo.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
                                                             </div>
@@ -648,10 +788,10 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                 <td className="align-middle pl-2">
                                                     {!onEdit[0] ?
-                                                        bookingData.bookingInfo.carType
+                                                        driver[0]?.vehicleInfo.carType
                                                         :
                                                         <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                            <select className="w-full outline-none" {...register("bookingInfo.carType")}>
+                                                            <select className="w-full outline-none bg-white" {...register("bookingInfo.carType")}>
                                                                 <option value="Economy type">Economy type</option>
                                                                 <option value="Sedan type">Sedan type</option>
                                                                 <option value="Family type">Family type</option>
@@ -715,7 +855,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 }
                                                 setOnEdit([false, onEdit[1]])
                                             }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
-                                            <button onClick={() => {}} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
+                                            <button onClick={() => setSubmitType("bookingInfo")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
                                         </div>
                                     }
                                 </form>
@@ -723,7 +863,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                     <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Selected Price</div>
                                     <div className="bg-blue-50 rounded-lg relative">
                                         <form onSubmit={handleSubmit(submitHandle)} className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
-                                            {!onEdit[1] && <div onClick={() => setOnEdit([onEdit[0], true])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
+                                            {!onEdit[1] && userType === "driver" && <div onClick={() => setOnEdit([onEdit[0], true])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
                                             <table>
                                                 <tbody>
                                                     <tr>
@@ -805,7 +945,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                         setOnEdit([onEdit[0], false])
                                                         setPrice({...temp})
                                                     }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
-                                                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
+                                                    <button onClick={() => setSubmitType("extra")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
                                                 </div>
                                             }
                                         </form>
@@ -841,6 +981,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
     const [prices, setPrices] = useState([0, 0, [0]])
     
     const { register, setValue, handleSubmit, unregister } = useForm()
+    const navigate = useNavigate()
 
     useEffect(() => {
         let extraTotalPrices = 0
@@ -868,8 +1009,15 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
     }
 
     const onSubmit = async (data) => {
-        // data.bookingId = bookingId
-        // data.driverId = driverId
+        data.bookingId = bookingData.bookingId
+        console.log(data)
+        const res = await transferJob(data.driver, data.bookingId)
+        if (res.data === "Successful") {
+            alert(res.data)
+            navigate('/chat/driver/inbox')
+        } else {
+            alert(res.data)
+        }
     }
 
     return (
@@ -879,7 +1027,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
                 <div><Textinput onChange={() => {}} register={register(`driver`)} setValue={setValue} title="Driver ID" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
                     <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">Cancel</div>
-                    <div className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</div>
+                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</button>
                 </div>
             </form>
         </div>
