@@ -21,7 +21,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
     const { register, setValue, handleSubmit, unregister } = useForm()
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const pickupDate = isOpen && moment(new Date(dateArray[0], dateArray[1], dateArray[2])).format("DD MMM")
+    const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
     useEffect(() => {
         unregister("")
@@ -31,19 +31,6 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
         const JobBoard = document.querySelector('#job')
         if (!isOpen) return enableBodyScroll(JobBoard)
         setApplyProcess("")
-        console.log(bookingData)
-        const el = document.querySelector("#headJob")
-        const observer = new IntersectionObserver( 
-            ([e]) => e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
-            { threshold: [1] }
-        );
-        observer.observe(el);
-
-        disableBodyScroll(JobBoard)
-        return () => {
-            clearAllBodyScrollLocks()
-            observer.disconnect()
-        }
     }, [isOpen])
 
     useEffect(() => {
@@ -89,7 +76,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                     <FontAwesomeIcon className="text-blue-900 mr-4" icon={faArrowLeft} />
                     Jobs Board
                 </div>
-                <div id="headJob" className="sticky z-10 -top-1 transition-all duration-400">
+                <div className="">
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
                             <div className="text-xl font-semibold">{bookingData.bookingInfo.start?.place.name || bookingData.bookingInfo.from.name}</div>

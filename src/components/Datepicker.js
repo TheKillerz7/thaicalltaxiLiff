@@ -19,26 +19,20 @@ const Datepicker = ({ asap, error, register, setValue, title }) => {
     };
 
     useEffect(() => {
-        console.log(error)
-    }, [error])
-
-    useEffect(() => {
         if (!asap) {
-            setReTitle("Select")
-            setValue(register.name, undefined)
+            const formatDate = moment(time).format('DD MMM')
+            setReTitle(formatDate)
+            setValue(register.name, moment(time).format("DD/MM/YYYY"))
             return
         }
-        console.log(asap)
         setReTitle("ASAP")
         setValue(register.name, "ASAP")
-    }, [asap])
+    }, [asap, register])
     
-
-
     return(
         <div>
             <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 h-full ' + (focus ? !error ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
-                <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium pl-8 ' + (!error ? focus ? "text-blue-900" : "text-gray-400" : "text-red-400")}>{error || title}</div>
+                <div className={'absolute transition-all top-1/2 -translate-y-5 pointer-events-none text-xs font-medium pl-8 ' + (!error ? focus ? "text-blue-900" : "text-gray-400" : "text-red-400")}>{title}</div>
                 <div ref={input} onClick={() => setFocus(!asap)} className="outline-none w-full text-left text-sm font-medium h-full pt-5 pl-8 cursor-pointer">{reTitle}</div>
                 <div className="absolute transition-all top-1/2 -translate-y-1/2 left-3 pointer-events-none"><FontAwesomeIcon icon={faCalendarDay} className={"transition mr-1 text-2xl " + (focus ? "text-blue-900" : "text-gray-500")} /></div>
             </div>

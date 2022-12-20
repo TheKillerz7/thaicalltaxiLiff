@@ -50,7 +50,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
                 
                 const bookingInfo = job.bookingInfo
                 const dateArray = bookingInfo.start?.pickupDate?.split("/").reverse() || bookingInfo.pickupDate.split("/").reverse()
-                const pickupDate = moment(new Date(dateArray[0], dateArray[1], dateArray[2])).format("DD MMM")
+                const pickupDate = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
                 if (job.bookingType === "R&H") {
                     return (
@@ -74,6 +74,7 @@ const DataTable = ({ filter, search, onClick, data }) => {
                         </div>
                     )
                 } else {
+                    console.log(bookingInfo)
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex justify-between items-center">

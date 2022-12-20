@@ -8,6 +8,7 @@ import DatePicker, { TimePicker } from "sassy-datepicker";
 import {io} from 'socket.io-client';
 import { getBookingById, getChattingMessages, getDriverById, getRoomByRoomId, getRoomsByUserId, getSelectedRegisterByBookingId, readChatMessages, transferJob, updateBooking, updatePrice } from "../apis/backend";
 import Textinput from "./Textinput";
+import Timepicker from "./Timepicker";
 
 const connectionOptions =  {
     withCredentials: true,
@@ -51,7 +52,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://3a2d-2405-9800-b650-586-1006-4248-cf6f-9f84.ap.ngrok.io", connectionOptions)
+        const socket = io("https://b297-2405-9800-b650-586-9c97-2051-44f1-7f25.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -134,7 +135,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://3a2d-2405-9800-b650-586-1006-4248-cf6f-9f84.ap.ngrok.io", connectionOptions)
+        socket = io("https://b297-2405-9800-b650-586-9c97-2051-44f1-7f25.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
@@ -154,8 +155,8 @@ const ChatPage = ({ roomId, userType, userId }) => {
                 setRoomName(`ASAP`)
             } else {
                 startingDate = booking.bookingInfo.start?.pickupDate.split("/").reverse() || booking.bookingInfo.pickupDate.split("/").reverse()
-                pickupDateStart = moment(new Date(startingDate[0], startingDate[1], startingDate[2])).format("DD MMM")
-                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.from.pickupTime}, ${pickupDateStart}`)
+                pickupDateStart = moment(new Date(startingDate[0], (parseInt(startingDate[1]) - 1).toString(), startingDate[2])).format("DD MMM")
+                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.pickupTime}, ${pickupDateStart}`)
             }
             setBookingData(booking)
             await readChatMessages(roomId, userType)
@@ -227,48 +228,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
                                     <div className="break-normal font-medium">
                                         {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
                                         <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
-                                    </div>
-                                )
-
-                            case "meeting":
-                                return (
-                                    <div>
-                                        <div className="font-semibold text-lg">Meeting Service?</div>
-                                        <div>Easy meeting in airport for just B100</div>
-                                        {meetingService ?
-                                                <div className="bg-green-600 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">+ B100</div>
-                                                :
-                                                meetingService === null ?
-                                                    userType === "driver" ? 
-                                                        <div className="bg-gray-400 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">Choosing</div>
-                                                        :
-                                                        <div className="grid grid-cols-2 gap-x-2">
-                                                            <div onClick={(async () => {
-                                                                socket.emit('message', {
-                                                                    bookingId: bookingData.bookingId,
-                                                                    roomId,
-                                                                    inputValue: "",
-                                                                    userType: "driver",
-                                                                    userId: driver[0]?.driverId
-                                                                })
-                                                                setMeetingService(false)
-                                                                await updateBooking(bookingData.bookingId, {meetingService: false})
-                                                            })} className="bg-red-500 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">No</div>
-                                                            <div onClick={(async () => {
-                                                                socket.emit('message', {
-                                                                    bookingId: bookingData.bookingId,
-                                                                    roomId,
-                                                                    inputValue: "",
-                                                                    userType: "driver",
-                                                                    userId: driver[0]?.driverId
-                                                                })
-                                                                setMeetingService(true)
-                                                                await updateBooking(bookingData.bookingId, {meetingService: true})
-                                                            })} className="bg-green-500 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">Yes</div>
-                                                        </div>
-                                                    :
-                                                    <div className="bg-red-600 text-center rounded-md text-white py-1.5 mt-3 px-2 font-medium">No Service</div>
-                                        }
                                     </div>
                                 )
 
@@ -357,12 +316,13 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const [datePicker, setDatePicker] = useState("")
     const [dateValue, setDateValue] = useState(new Date())
     const [total, setTotal] = useState(0)
+    const [boolean, setBoolean] = useState(false)
     const [increment, setIncrement] = useState(10000)
     const [increment1, setIncrement1] = useState(10000)
     const [submitType, setSubmitType] = useState("")
     
     const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const pickupDate = moment(new Date(dateArray[0], dateArray[1], dateArray[2])).format("DD MMM YYYY")
+    const pickupDate = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
     const dateArrayEnd = (bookingData?.bookingInfo.end?.pickupDate.split("/").reverse())
     const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], dateArrayEnd[1], dateArrayEnd[2])).format("DD MMM YYYY")
     
@@ -430,15 +390,12 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     useEffect(() => {
         const timeString = moment(dateValue).format("DD/MM/YYYY")
         setValue("bookingInfo." + datePicker, timeString)
+        setBoolean(!boolean)
+        if (boolean) setDatePicker("")
     }, [dateValue])
 
     const onDatepickHandle = (e) => {    
         setDateValue(e)
-    }
-
-    const onTimePickHandle = (e) => {
-        // setDatePicker(false)
-        const time = moment(e).format("HH:mm")
     }
 
     const addAreaHandle = (id, type, index) => {
@@ -596,13 +553,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                             :
                                                             <div className="grid gap-x-2 grid-cols-2">
                                                                 <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <TimePicker
-                                                                        onChange={onTimePickHandle}
-                                                                        value={{hours: 0, minutes: 0}}
-                                                                        displayFormat="24hr"
-                                                                        className='text-left text-sm font-semibold cursor-pointer w-full justify-between'
-                                                                        style={{ border: "none", boxShadow: "none" }}
-                                                                    />
+                                                                    <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.start.pickupTime} />
                                                                     <input {...register("bookingInfo.start.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                                 </div>
                                                                 <div onClick={() => {
@@ -628,13 +579,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                             :
                                                             <div className="grid gap-x-2 grid-cols-2">
                                                                 <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <TimePicker
-                                                                        onChange={onTimePickHandle}
-                                                                        value={new Date()}
-                                                                        displayFormat="24hr"
-                                                                        className='text-left text-sm font-semibold cursor-pointer w-full justify-between'
-                                                                        style={{ border: "none", boxShadow: "none" }}
-                                                                    />
+                                                                    <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.end.pickupTime} />
                                                                     <input {...register("bookingInfo.end.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                                 </div>
                                                                 <div onClick={() => {
@@ -663,9 +608,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     <option value="Economy type">Economy type</option>
                                                                     <option value="Sedan type">Sedan type</option>
                                                                     <option value="Family type">Family type</option>
-                                                                    <option value="Minibus type">Minibus type</option>
-                                                                    <option value="VIP Van">VIP Van</option>
-                                                                    <option value="VIP Car">VIP Car</option>
+                                                                    <option value="Van type">Van type</option>
                                                                 </select>
                                                             </div>
                                                         }
@@ -760,13 +703,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                         :
                                                         <div className="grid gap-x-2 grid-cols-2">
                                                             <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <TimePicker
-                                                                    onChange={onTimePickHandle}
-                                                                    value={new Date()}
-                                                                    displayFormat="24hr"
-                                                                    className='text-left text-sm font-semibold cursor-pointer w-full justify-between'
-                                                                    style={{ border: "none", boxShadow: "none" }}
-                                                                />
+                                                                <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.pickupTime} />
                                                                 <input {...register("bookingInfo.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                             </div>
                                                             <div onClick={() => {
@@ -795,9 +732,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                 <option value="Economy type">Economy type</option>
                                                                 <option value="Sedan type">Sedan type</option>
                                                                 <option value="Family type">Family type</option>
-                                                                <option value="Minibus type">Minibus type</option>
-                                                                <option value="VIP Van">VIP Van</option>
-                                                                <option value="VIP Car">VIP Car</option>
+                                                                <option value="Van type">Van type</option>
                                                             </select>
                                                         </div>
                                                     }
@@ -962,7 +897,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                     </div>
                                     {userType === "driver" &&
                                         <div className=" mb-5 mt-3">
-                                            <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</div>
+                                            <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอนงาน</div>
                                         </div>
                                     }
                                 </div>
@@ -1023,11 +958,12 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
     return (
         <div onSubmit={handleSubmit(onSubmit)} className={"bg-black px-5 bg-opacity-30 mb-10 h-screen w-full grid place-items-center top-0 left-0 fixed bg-white transition duration-300 " + (onTransfer ? "opacity-100" : "opacity-0 pointer-events-none")}>
             <form className="bg-white rounded-md py-3 px-3 w-full">
-                <div className="text-lg font-semibold mb-2">Transfer Booking</div>
-                <div><Textinput onChange={() => {}} register={register(`driver`)} setValue={setValue} title="Driver ID" /></div>
+                <div className="text-lg font-semibold mb-2">การโอนงาน</div>
+                <div><Textinput onChange={() => {}} register={register(`driver`)} setValue={setValue} title="Driver Code" /></div>
+                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="ข้อความให้คนขับรถคนใหม่" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
-                    <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">Cancel</div>
-                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</button>
+                    <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">ยกเลิก</div>
+                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอน</button>
                 </div>
             </form>
         </div>

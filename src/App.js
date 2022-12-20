@@ -6,6 +6,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ChatRoom from './indexes/ChatRoom';
 import Dashboard from './indexes/Dashboard';
 import PrivateInfo from './indexes/PrivateInfo';
+import RateDriver from './indexes/RateDriver';
+import CurrentBooking from './indexes/CurrentBooking';
 
 function App() {
   return (
@@ -23,6 +25,12 @@ function App() {
           <Route path="/chat/:userType/:page/:roomId" element={<ChatRoom />} />
           <Route path="/chat/:userType/:page" element={<ChatRoom />} />
           <Route path="/dashboard/:page" element={<Dashboard />} />
+          <Route path="/comment" element={<RateDriver />} />
+          <Route path="/currentBooking" element={<CurrentBooking />} />
+          <Route path="/currentJob" element={<RateDriver />} />
+          <Route path="/bookingHistory" element={<RateDriver />} />
+          <Route path="/jobHistory" element={<RateDriver />} />
+          <Route path="/driver/account" element={<RateDriver />} />
         </Routes>
       </BrowserRouter>
     </div>

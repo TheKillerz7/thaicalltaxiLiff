@@ -34,7 +34,7 @@ const Booking = () => {
   const [increment, setIncrement] = useState(1)
 
   const { register, setValue, handleSubmit, unregister, formState: { errors } } = useForm()
-  const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places&sensor=false&language=en")
+  const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places&language=en")
   let autocomplete1
   let autocomplete2
 
@@ -171,8 +171,10 @@ const Booking = () => {
     setLoading(true)
     data.userId = userId
     data.bookingType = bookingType
-    const translatedMessage = await translations(data.bookingInfo.message.en, "th")
-    data.bookingInfo.message.th = he.decode(translatedMessage.data.data.translations[0].translatedText)
+    if (data.bookingInfo.message.en) {
+      const translatedMessage = await translations(data.bookingInfo.message.en, "th")
+      data.bookingInfo.message.th = he.decode(translatedMessage.data.data.translations[0].translatedText)
+    }
     if (bookingType === "A2B") {
       data.bookingInfo.from = placeInfo.from
       data.bookingInfo.to = placeInfo.to
@@ -181,8 +183,9 @@ const Booking = () => {
       data.bookingInfo.visit = placeInfo.visits
       data.bookingInfo.end.place = placeInfo.to
     }
-    await updateUserById({userTermsAndCon: termsAndCon}, userId)
-    await createBooking(data)
+    console.log(data)
+    // await updateUserById({userTermsAndCon: termsAndCon}, userId)
+    // await createBooking(data)
     setLoading(false)
     liff.closeWindow()
   }
@@ -231,16 +234,13 @@ const AToBCourse = ({ setType, register, setValue, locationValue, setLocationVal
       </div>
       <div className={"mb-3 " }>
         <Textinput id="from" error={errors?.bookingInfo?.from?.message} controlledValue={locationValue.from} onChange={(e) => {
-          setLocationValue(curr => {
-            const temp = curr
-            temp.from = e
-            return temp
-          })
+          const temp = locationValue
+          temp.from = e
+          setLocationValue(temp)
         }} register={register("bookingInfo.from", { required: "Please fill this info" })} title="From" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
         <Textinput id="to" error={errors?.bookingInfo?.to?.message} controlledValue={locationValue.to} onChange={(e) => {
-          console.log(e)
           setLocationValue(curr => {
             const temp = curr
             temp.to = e
@@ -314,7 +314,7 @@ const RentAndHire = ({ unregister, register, setValue, increment, setIncrement, 
       {increment && Object.keys(areaToVisit).map((area, index) => {
         return (
           <div key={area} className={"relative " + (index !== areaToVisit - 1 ? "mb-3" : "mb-2")}>
-            <Textinput id="visit" error={errors?.bookingInfo?.visit?.[index]?.message} controlledValue={locationValue.visits[index][Object.keys(locationValue.visits[index])[0]]} onChange={(e) => {
+            <Textinput id="visit" error={errors?.bookingInfo?.visit?.[index]?.place} controlledValue={locationValue.visits[index][Object.keys(locationValue.visits[index])[0]]} onChange={(e) => {
               setLocationValue(curr => {
                 const temp = curr
                 temp.visits[index][Object.keys(locationValue.visits[index])[0]] = e

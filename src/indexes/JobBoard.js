@@ -152,6 +152,7 @@ const JobBoard = () => {
     setOnload(true)
     const callback = async () => {
       const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
+      console.log(jobs)
       setJobList(jobs.data)
     }
     callback()
