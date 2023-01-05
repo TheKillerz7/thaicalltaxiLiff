@@ -58,10 +58,14 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                 <div>
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
-                            <div className="text-xl font-semibold">{bookingData.bookingInfo.start?.place.name || bookingData.bookingInfo.from.name}</div>
-                            <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                            <div className="flex mb-1.5">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-2"></div>
+                                </div>
+                                <div className="text-xl font-semibold">{bookingData.bookingInfo.start?.place.name || bookingData.bookingInfo.from.name}</div>
+                            </div>
                             {bookingData.bookingType === "R&H" && bookingData.bookingInfo.visit.length && (
-                                <div>
+                                <div className="mb-1.5">
                                     <div>
                                         {bookingData.bookingInfo.visit.map((place, index) => {
                                             return (
@@ -73,10 +77,14 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                                             )
                                         })}
                                     </div>
-                                    <div><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
                                 </div>
                             )}
-                            <div className="text-xl font-semibold">{bookingData.bookingInfo.end?.place.name || bookingData.bookingInfo.to.name}</div>
+                            <div className="flex ">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-blue-800 rounded-full mt-2"></div>
+                                </div>
+                                <div className="text-xl font-semibold">{bookingData.bookingInfo.end?.place.name || bookingData.bookingInfo.to.name}</div>
+                            </div>
                         </div>
                         <div className="flex flex-wrap">
                             <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingData.bookingType === "A2B" ? "bg-green-700" : "bg-yellow-600")}>{bookingData.bookingType}</div>
@@ -89,7 +97,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-medium text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">

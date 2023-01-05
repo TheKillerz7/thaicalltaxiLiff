@@ -361,13 +361,16 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         const callback = async () => {
             setValue("bookingInfo.carType", driver[0].vehicleInfo.carType)
             const priceObj = {}
-            prices.extra.forEach((extra, index) => {
-                priceObj[extra.title] = parseInt(extra.price)
-            })
             let totalPrice = 0
-            Object.keys(priceObj).forEach((item, index) => {
-                totalPrice += priceObj[item]
-            })
+            if (prices.extra.length) {
+                prices.extra.forEach((extra, index) => {
+                    if (extra.title) priceObj[extra.title] = parseInt(extra.price)
+                })
+                
+                Object.keys(priceObj).forEach((item, index) => {
+                    totalPrice += priceObj[item]
+                })
+            }
             totalPrice += parseInt(prices.course)
             totalPrice += parseInt(prices.tollway)
             setTotal(totalPrice)
@@ -375,14 +378,12 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
             setValue("extra", {
                 course: prices.course,
                 tollway: prices.tollway,
-                extra: [
-                    ...prices.extra
-                ]
+                extra: (prices.extra.length && prices.extra)
             })
             setIniPrice({
                 course: prices.course,
                 tollway: prices.tollway,
-                extra: [...prices.extra]
+                extra: (prices.extra.length && prices.extra)
             })
         }
         callback()
@@ -428,12 +429,17 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     }
 
     const submitHandle = async (data) => {
+        console.log(data)
         try {
             if (submitType === "bookingInfo") {
                 data.bookingInfo = JSON.stringify(data.bookingInfo)
                 await updateBooking(bookingData.bookingId, {bookingInfo: data.bookingInfo})
             } else {
-                data.extra.extra = JSON.stringify(data.extra.extra)
+                if (data.extra.extra) {
+                    data.extra.extra = JSON.stringify(data.extra.extra)
+                } else {
+                    data.extra.extra = "{}"
+                }
                 await updatePrice(bookingData.bookingId, data.extra)
             }
             alert("Success")

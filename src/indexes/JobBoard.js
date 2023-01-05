@@ -119,8 +119,10 @@ const JobBoard = () => {
   }
 
   const runApp = () => {
-    const idToken = liff.getIDToken();
+    const idToken = liff.getAccessToken();
+    console.log(idToken)
     liff.getProfile().then(profile => {
+      console.log(profile)
       setUserId(profile.userId)
     }).catch(err => console.error(err));
   }
