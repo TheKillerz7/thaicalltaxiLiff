@@ -284,6 +284,17 @@ const JobBoard = () => {
                   <span className="sr-only">Loading...</span>
                 </div>}
             </div>
+            <div className="border border-gray-400 px-3 py-2 flex items-center rounded-t-md">จังหวัดที่เลือกแล้ว</div>
+            <div className="h-32 border-b border-l border-r border-gray-400 mb-3 overflow-y-scroll">
+              {selectedProvinces.map((province, index) => {
+                return (
+                  <div key={province} onClick={() => removeProvinceHandle(province)} className={"py-2 cursor-pointer px-3 flex items-center justify-between text-sm border-b border-b-gray-400 " + (onProvinceChange && "pointer-events-none")}>
+                    <div>{province}</div>
+                    <div className="font-medium text-blue-700 text-xl">-</div>
+                  </div>
+                )
+              })}
+            </div>
             <div className="mb-2 font-medium">เลือกจังหวัดที่ต้องการแสดงผลและแจ้งเตือน</div>
             <div className="border border-gray-400 px-3 py-2 flex items-center rounded-t-md">
               <FontAwesomeIcon className="text-gray-400 mr-2" icon={faMagnifyingGlass} />
@@ -295,17 +306,6 @@ const JobBoard = () => {
                   <div key={province} onClick={() => addProvinceHandle(province)} className={"py-2 cursor-pointer px-3 flex items-center justify-between text-sm border-b border-b-gray-400 " + (onProvinceChange && "pointer-events-none")}>
                     <div>{province}</div>
                     <div className="font-medium text-blue-700 text-xl">+</div>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="border border-gray-400 px-3 py-2 flex items-center rounded-t-md">จังหวัดที่เลือกแล้ว</div>
-            <div className="h-32 border-b border-l border-r border-gray-400 mb-3 overflow-y-scroll">
-              {selectedProvinces.map((province, index) => {
-                return (
-                  <div key={province} onClick={() => removeProvinceHandle(province)} className={"py-2 cursor-pointer px-3 flex items-center justify-between text-sm border-b border-b-gray-400 " + (onProvinceChange && "pointer-events-none")}>
-                    <div>{province}</div>
-                    <div className="font-medium text-blue-700 text-xl">-</div>
                   </div>
                 )
               })}

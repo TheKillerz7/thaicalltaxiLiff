@@ -86,11 +86,11 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                     <div>
                                         {bookingData.bookingInfo.visit.map((place, index) => {
                                             return (
-                                                <div className="text-lg flex items-center">
-                                                    <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 rounded-full border-yellow-600 font-bold mr-2">
-                                                        {index !== 0 && <div className="absolute bottom-full h-5 left-1/2 -translate-x-1/2 w-1 bg-yellow-600"></div>}
+                                                <div className="flex items-start">
+                                                    <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 mt-1 rounded-full border-yellow-600 font-bold mr-2">
+                                                        {/* {index !== 0 && <div className="absolute bottom-full h-5 left-1/2 -translate-x-1/2 w-1 bg-yellow-600"></div>} */}
                                                     </div>
-                                                    {place.name}
+                                                    {place.place.name}
                                                 </div>
                                             )
                                         })}
@@ -171,7 +171,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                     return (
                                         <div key={index} className="px-3 py-3 bg-blue-50 rounded-md mb-3">
                                             <div className="font-semibold text-lg mb-2">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
-                                            {currentJobs.length > 0 ? currentJobs.map((job, index) => {
+                                            {/* {currentJobs.length > 0 ? currentJobs.map((job, index) => {
                                                 console.log(job)
                                                 return (
                                                     <div key={index} className="mb-2 px-3 py-2 rounded-md bg-blue-100">
@@ -182,7 +182,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                                     </div>
                                                 )
                                             }) 
-                                            : "No job on this day"}
+                                            : "No job on this day"} */}
+                                            No job on this day
                                         </div>
                                     )
                                 })}

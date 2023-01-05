@@ -2,43 +2,32 @@ import { faArrowDown, faArrowLeft, faArrowRight, faBriefcase, faCalendar, faCale
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
-import NumberInput from "../../components/Numberinput"
 import { useForm } from "react-hook-form";
-import Textinput from "../../components/Textinput";
 import { cancelBooking, driverRegisterToBooking, getSelectedRegisterByBookingId } from "../../apis/backend";
 import moment from "moment";
-import Textareainput from "../../components/Textareainput";
-import he from "he"
-import { translations } from "../../apis/google";
-import { Link } from "react-router-dom";
 
-const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
+const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
     const [applyProcess, setApplyProcess] = useState("")
     const [price, setPrice] = useState({})
+    const [prices, setPrices] = useState({})
     const [loading, setLoading] = useState(false)
     const [total, setTotal] = useState(0)
 
     const { register, setValue, handleSubmit, unregister } = useForm()
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
+    const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
 
     useEffect(() => {
         const JobBoard = document.querySelector('#job')
         if (!isOpen) return enableBodyScroll(JobBoard)
         setApplyProcess("")
-        console.log(bookingData)
-    }, [isOpen])
-
-    useEffect(() => {
         const callback = async () => {
             const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
             const priceObj = {}
+            console.log(prices)
             if (prices) {
                 prices.extra = JSON.parse(prices.extra)
-                prices.extra.forEach((extra, index) => {
-                    priceObj[extra.title] = parseInt(extra.price)
-                })
                 let totalPrice = 0
                 Object.keys(priceObj).forEach((item, index) => {
                     totalPrice += priceObj[item]
@@ -46,11 +35,11 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                 totalPrice += parseInt(prices.course)
                 totalPrice += parseInt(prices.tollway)
                 setTotal(totalPrice)
-                setPrice({...priceObj})
+                setPrices(prices)
             }
         }
         callback()
-    }, [])
+    }, [isOpen])
 
     const handleCancelBooking = async () => {
         await cancelBooking(bookingData.bookingId, userId)
@@ -64,7 +53,7 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
             {isOpen && <div className="relative">
                 <div style={{ boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)" }} onClick={onClick || null} className="text-xl border-b border-gray-400 py-5 px-5">
                     <FontAwesomeIcon className="text-blue-900 mr-4" icon={faArrowLeft} />
-                    Current Booking
+                    Job History
                 </div>
                 <div>
                     <div className="px-5 pt-5 bg-white pb-3">
@@ -76,11 +65,10 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                                     <div>
                                         {bookingData.bookingInfo.visit.map((place, index) => {
                                             return (
-                                                <div className="text-lg flex items-center">
-                                                    <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 rounded-full border-yellow-600 font-bold mr-2">
-                                                        {index !== 0 && <div className="absolute bottom-full h-5 left-1/2 -translate-x-1/2 w-1 bg-yellow-600"></div>}
+                                                <div className="text-lg flex items-start">
+                                                    <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 mt-1.5 rounded-full border-yellow-600 font-bold mr-2">
                                                     </div>
-                                                    {place.name}
+                                                    {place.place.name}
                                                 </div>
                                             )
                                         })}
@@ -101,21 +89,10 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-medium text-lg text-yellow-600">You: "{bookingData.bookingInfo.message.en}"</div>}
-                        {price?.message?.en && <div className="mt-1 font-medium text-lg text-yellow-600">Driver: "{price.message.en}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-medium text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
-                    <div className="mb-10">
-                        <div style={{ aspectRatio: "7 / 5" }} className="bg-gray-500 rounded-md w-full text-white grid place-items-center mb-3">
-                            <iframe
-                                height="250"
-                                className="w-full rounded-md"
-                                src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBbjxIWcwiaWvTlPuPn9lzOMhJCEwYAhu0&origin=place_id:${bookingData.bookingInfo.start?.place.placeId || bookingData.bookingInfo.from?.placeId}&destination=place_id:${bookingData.bookingInfo.end?.place.placeId || bookingData.bookingInfo.to?.placeId}`}
-                            >
-                            </iframe>
-                        </div>
-                    </div>
                         <div className="mb-10">
                             <div>
                                 <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Price</div>
@@ -128,7 +105,7 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                                                         Course
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
-                                                        {"฿" + price.course}
+                                                        {"฿" + prices?.course}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -136,17 +113,17 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                                                         Tollway
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
-                                                        {"฿" + price.tollway}
+                                                        {"฿" + prices?.tollway}
                                                     </td>
                                                 </tr>
-                                                {Object.keys(price).map((item, index) => {
+                                                {prices?.extra?.map((extra, index) => {
                                                     return (
-                                                        <tr key={item}>
+                                                        <tr key={index}>
                                                             <td className="align-middle whitespace-nowrap font-medium">
-                                                                {item}
+                                                                {extra.title}
                                                             </td>
                                                             <td className="align-middle pl-3 w-7/12">
-                                                                {"฿" + price.extra[index].price}
+                                                                {"฿" + extra.price}
                                                             </td>
                                                         </tr>
                                                     )
@@ -167,10 +144,10 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
                                 </div>
                             </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-x-3">
-                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-red-600 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Cancel Booking</div>
-                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Chatroom</div></Link>
-                    </div>
+                    {/* <div className="grid grid-cols-2 gap-x-3">
+                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-red-600 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Chatroom</div>
+                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Start Job</div></Link>
+                    </div> */}
                 </div>
                 {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} handleCancelBooking={handleCancelBooking} />}
             </div>}
@@ -178,7 +155,7 @@ const BookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJob
     )
 }
 
-export default BookingView
+export default JobHistoryView
 
 const ApplicationConfirmation = ({ applyProcess, setApplyProcess, handleCancelBooking }) => {
     return (

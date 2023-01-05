@@ -38,8 +38,8 @@ const RateDriver = () => {
     const params = new URLSearchParams(window.location.search)
     data.starRate = rating
     data.userId = userId
-    data.bookingId = "params"
-    data.driverId = "params"
+    data.bookingId = params.bookingId
+    data.driverId = params.driverId
     console.log(data)
     await ratingDriver(data)
     alert("Thank you\nHave a nice time!")

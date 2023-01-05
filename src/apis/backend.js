@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://b297-2405-9800-b650-586-9c97-2051-44f1-7f25.ap.ngrok.io"
+const baseURL = process.env.BASE_URL || "https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
@@ -34,6 +34,22 @@ export const getDriverById = (id) => {
 
 export const getJobsByDriverId = (driverId) => {
     return axios.get(`${baseURL}/driver/jobs/${driverId}`)
+}
+
+export const getAllJobsByDriverId = (driverId) => {
+    return axios.get(`${baseURL}/driver/jobs/history/${driverId}`)
+}
+
+export const getCurrentJobsByDriverId = (driverId) => {
+    return axios.get(`${baseURL}/driver/jobs/current/${driverId}`)
+}
+
+export const getAllBookingsByUserId = (userId) => {
+    return axios.get(`${baseURL}/user/bookings/${userId}`)
+}
+
+export const getCurrentBookingsByUserId = (userId) => {
+    return axios.get(`${baseURL}/user/bookings/current/${userId}`)
 }
 
 export const getRoomsByUserId = (userId, userType) => {
@@ -88,6 +104,10 @@ export const createDriver = (data) => {
     return axios.post(`${baseURL}/driver`, data)
 }
 
+export const startJob = (bookingId, userId) => {
+    return axios.post(`${baseURL}/driver/start`, {bookingId, userId})
+}
+
 //patch
 export const updateBooking = (bookingId, data) => {
     return axios.patch(`${baseURL}/booking`, {bookingId, data})
@@ -97,8 +117,8 @@ export const updateUserById = (data, id) => {
     return axios.patch(`${baseURL}/user/${id}`, {data})
 }
 
-export const transferJob = (driverId, bookingId) => {
-    return axios.patch(`${baseURL}/driver/transfer`, {bookingId, driverId})
+export const transferJob = (driverId, bookingId, newMessage) => {
+    return axios.patch(`${baseURL}/driver/transfer`, {bookingId, driverId, newMessage})
 }
 
 export const updatePrice = (bookingId, data) => {

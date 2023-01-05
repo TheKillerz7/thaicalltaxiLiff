@@ -1,0 +1,75 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowDown, faCalendar, faUser, faBriefcase, faClock } from '@fortawesome/free-solid-svg-icons'
+import moment from "moment"
+
+const CurrentJobList = ({ onClick, data }) => {
+    const colors = {
+        date: ["#1e3a8a", "#c4a335", "#57b330", "#6c1c8a"],
+        job: ["#f0f5fc", "#fcfbe1", "#ebffe3", "#f6e3fc"],
+        button: ["#4e6cc2", "#c2b64e", "#6dbd48", "#4e6cc2"]
+    }
+
+    const jobs = [...Array(4)].map((count, index) => {
+        const bookings = data.map((job, i) => {
+            const date = job.bookingInfo.start?.pickupDate?.split("/")?.[0] || job.bookingInfo.pickupDate?.split("/")?.[0]
+            
+            if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
+                let bookingInfo = job.bookingInfo
+                console.log(bookingInfo)
+
+                if (job.bookingType === "R&H") {
+                    return (
+                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
+                            <div className="flex justify-between items-center">
+                                <div className="font-medium">{bookingInfo.start.place.name}</div>
+                            </div>
+                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                            <div className="font-medium mb-1">{bookingInfo.end.place.name}</div>
+                            <div className="flex flex-wrap">
+                                <div className="mb-2 py-1 px-2 font-medium text-sm bg-purple-900 text-white rounded-md mr-2">{job.bookingType}</div>
+                                {bookingInfo.start.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.start.pickupTime}</div>}
+                            </div>
+                        </div>
+                    )
+                } else {
+                    return (
+                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
+                            <div className="flex justify-between items-center">
+                                <div className="font-medium">{bookingInfo.from.name}</div>
+                            </div>
+                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                            <div className="font-medium mb-1">{bookingInfo.to.name}</div>
+                            <div className="flex flex-wrap">
+                                <div className="mb-2 py-1 px-2 font-medium text-sm bg-green-700 text-white rounded-md mr-2">{job.bookingType}</div>
+                                {bookingInfo.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.pickupTime}</div>}
+                            </div>
+                        </div>
+                    )
+                }
+            }
+          }).filter(item => item && item)
+
+        return (
+            <div key={index} className="px-1 mb-8">
+                <div style={{ backgroundColor: colors.date[index] }} className="px-3 py-2 mb-3 text-lg font-medium rounded-md text-white">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
+                {bookings.length <= 0 ? <div  style={{ backgroundColor: colors.job[index] }} className="px-3 py-2 text-lg font-medium inline-block rounded-md">ไม่มีงานในวันที่นี้</div>
+                    :
+                    bookings
+                }
+                <div></div>
+            </div>
+        )
+    })
+
+    return (
+        <div className="px-3 w-screen">
+            {jobs.length <= 0 ? <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job right now.</div>
+                :
+                jobs
+            }
+            <div></div>
+        </div>
+    )
+}
+
+export default CurrentJobList

@@ -58,17 +58,7 @@ const Driver = () => {
 
   const onConfirm = async (data) => {
     let dataTemp = data
-    // let images = {
-    //   file1: dataTemp.file1[0],
-    //   file2: dataTemp.file2[0],
-    //   file3: dataTemp.file3[0]
-    // }
-    // delete dataTemp.file1
-    // delete dataTemp.file2
-    // delete dataTemp.file3
     dataTemp.driverId = userId
-    // console.log(images)
-    // await uploadImage(images, userId)
     await createDriver(dataTemp)
     liff.closeWindow()
   }
@@ -206,7 +196,7 @@ const ConfirmInfoForm = ({ driverInfo, images, setStep, register, setValue }) =>
             <Dropdown onChange={() => {}} register={register("vehicleInfo.carType")} title="ประเภทของรถ" options={["Economy type", "Sedan type", "Family type", "Van type"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carType} />
             <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carModel} />
           </div>
-          <div className='underline decoration-red-500 text-red-600 text-sm mb-5 text-left font-medium'>กดเพื่อเช็คประเภทรถ</div>
+          <div onClick={() => window.location.replace("https://www.thai-taxi.com/car-type")} className='underline decoration-red-500 text-red-600 text-sm mb-5 text-left font-medium'>กดเพื่อเช็คประเภทรถ</div>
           <div className={"mb-3 " }>
             <Dropdown onChange={() => {}} register={register("vehicleInfo.birth")} title="ปีเกิดของรถ" options={years} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.birth} />
           </div>

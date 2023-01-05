@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import liff from '@line/liff';
 import DataTable from "../components/DataTable";
-import { getBookingByStatusWithoutDriverId, getDriverById, getJobsByDriverId } from "../apis/backend";
+import { getBookingByStatusWithoutDriverId, getCurrentBookingsByUserId, getDriverById, getJobsByDriverId } from "../apis/backend";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import BookingView from "../pages/currentBooking/BookingView";
+import BookingView from "../pages/currentBooking/CurrentBookingView";
 import CurrentBookingList from "../pages/currentBooking/CurrentBookingList";
+import CurrentBookingView from "../pages/currentBooking/CurrentBookingView";
 
-const JobBoard = () => {
+const CurrentBooking = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
   const [onload, setOnload] = useState(false)
@@ -42,42 +43,17 @@ const JobBoard = () => {
   }, []);
   
   useEffect(() => {
-    const callback = async () => {
-      if (!userId) return
-      const driver = (await getDriverById(userId)).data[0]
-      
-    }
-    callback()
-  }, [userId])
-
-  useEffect(() => {
-    if (!userId && !reload) return
-    setOnload(true)
-    const callback = async () => {
-      const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
-      console.log(jobs)
-      setJobList(jobs.data)
-    }
-    callback()
-    setTimeout(() => {
-      setOnload(false)
-    }, 20);
-  }, [reload]);
-
-  useEffect(() => {
     if (!userId && !isJobOpen) return
     const callback = async () => {
-      const driver = (await getDriverById(userId)).data
-      const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
-      setJobList(jobs.data)
-      const currentJobsReq = (await getJobsByDriverId(userId)).data
-      setCurrentJobs(currentJobsReq)
+      const bookings = await getCurrentBookingsByUserId(userId)
+      setJobList(bookings.data)
     }
     callback()
   }, [userId, isJobOpen]);
 
   const handleJobViewed = (e, data) => {
     console.log(data)
+    data.bookingInfo = JSON.parse(data.bookingInfo)
     setJobData(data)
     setJobOpen(true)
   }
@@ -97,9 +73,9 @@ const JobBoard = () => {
           <CurrentBookingList onClick={handleJobViewed} data={jobList} />
         }
       </div>
-      <BookingView onClick={() => setJobOpen(false)} currentJobs={currentJobs} setJobOpen={setJobOpen} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
+      <CurrentBookingView onClick={() => setJobOpen(false)} currentJobs={currentJobs} setJobOpen={setJobOpen} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
     </div>
   );
 }
 
-export default JobBoard;
+export default CurrentBooking;

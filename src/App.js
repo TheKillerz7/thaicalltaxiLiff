@@ -8,16 +8,21 @@ import Dashboard from './indexes/Dashboard';
 import PrivateInfo from './indexes/PrivateInfo';
 import RateDriver from './indexes/RateDriver';
 import CurrentBooking from './indexes/CurrentBooking';
+import CurrentJob from './indexes/CurrentJob';
+import BookingHistory from './indexes/BookingHistory';
+import JobHistory from './indexes/JobHistory';
+import Test from './indexes/Text';
 
 function App() {
   return (
     <div className="App">
-      <div style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className='flex justify-between items-center px-3 py-3'>
+      {/* <div style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className='flex justify-between items-center px-3 py-3'>
         <div className='font-semibold text-xl w-max mr-3'>BELL-MAN</div>
         <div className='text-sm text-right w-max font-medium'>Taxi for Tourists & Foreingers</div>
-      </div>
+      </div> */}
       <BrowserRouter>
         <Routes>
+          <Route path="/test" element={<Test />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/driver" element={<Driver />} />
           <Route path="/jobBoard" element={<JobBoard />} />
@@ -27,9 +32,9 @@ function App() {
           <Route path="/dashboard/:page" element={<Dashboard />} />
           <Route path="/comment" element={<RateDriver />} />
           <Route path="/currentBooking" element={<CurrentBooking />} />
-          <Route path="/currentJob" element={<RateDriver />} />
-          <Route path="/bookingHistory" element={<RateDriver />} />
-          <Route path="/jobHistory" element={<RateDriver />} />
+          <Route path="/currentJob" element={<CurrentJob />} />
+          <Route path="/bookingHistory" element={<BookingHistory />} />
+          <Route path="/jobHistory" element={<JobHistory />} />
           <Route path="/driver/account" element={<RateDriver />} />
         </Routes>
       </BrowserRouter>

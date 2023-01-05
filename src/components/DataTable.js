@@ -6,7 +6,7 @@ import moment from "moment"
 
 const DataTable = ({ filter, search, onClick, data }) => {
     const [jobs, setJobs] = useState([])
-
+console.log(data)
     useEffect(() => {
         let temp = data.map((item, index) => {
             if (!filter) return item

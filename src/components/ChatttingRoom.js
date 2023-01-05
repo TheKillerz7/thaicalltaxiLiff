@@ -52,7 +52,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://b297-2405-9800-b650-586-9c97-2051-44f1-7f25.ap.ngrok.io", connectionOptions)
+        const socket = io("https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -135,7 +135,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://b297-2405-9800-b650-586-9c97-2051-44f1-7f25.ap.ngrok.io", connectionOptions)
+        socket = io("https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
@@ -218,6 +218,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
                 </div>
             </div>
             <div className="pb-24 px-3">
+                {userType === "user" && <div className="border border-gray-500 px-5 py-4 rounded-md bg-gray-50 mb-5 w-10/12 mx-auto"><span className="font-semibold">Driver may provide:</span><br/>1. Same car type as you chosse<br/>2. Similar car type<br/>3. Bigger car type</div>}
                 {messages.map((message, index) => {
                     let messageSide = message.senderType === userType ? "right" : "left"
 
@@ -324,8 +325,8 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     const pickupDate = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
     const dateArrayEnd = (bookingData?.bookingInfo.end?.pickupDate.split("/").reverse())
-    const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], dateArrayEnd[1], dateArrayEnd[2])).format("DD MMM YYYY")
-    
+    const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], (parseInt(dateArrayEnd[1]) - 1).toString(), dateArrayEnd[2])).format("DD MMM YYYY")
+    console.log(area)
     const { register, setValue, handleSubmit, reset, unregister, getValues } = useForm({defaultValues: {
         bookingInfo: bookingData.bookingInfo
     }})
@@ -353,7 +354,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         if (bookingData.bookingType === "R&H") {
             const areaTemp = {}
             bookingData.bookingInfo.visit.forEach((visit, index) => {
-                areaTemp[index] = visit.name
+                areaTemp[index] = visit.place.name
             })
             setArea({...areaTemp})
         }
@@ -468,6 +469,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                     <div>
                         <div className="px-5 pt-5 bg-white pb-3">
                             <div className="">
+                                {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
                                 <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info</div>
                                 <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
                                     {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
@@ -485,16 +487,15 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 <div className="-mt-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
                                                 {increment1 && Object.keys(area).map((place, index) => {
                                                     return (
-                                                        <div key={place} className="flex items-center">
-                                                            <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 rounded-full border-yellow-600 font-bold mr-2">
-                                                                {index > 0 && <div className={"absolute bottom-full left-1/2 -translate-x-1/2 w-1 bg-yellow-600 " + (onEdit[0] ? "h-7" : "h-5")}></div>}
+                                                        <div key={place} className="flex items-start">
+                                                            <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 mt-1 rounded-full border-yellow-600 font-bold mr-2">
                                                             </div>
                                                             {!onEdit[0] ?
-                                                                <div className="text-ellipsis overflow-hidden whitespace-nowrap">{area[place]}</div>
+                                                                <div className="">{area[place]}</div>
                                                                 :
                                                                 <div className="flex items-center w-full">
                                                                     <div className='bg-white w-full my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                        <input {...register(`bookingInfo.visit.[${index}].name`)} placeholder="" type="text" className="outline-none w-full" />
+                                                                        <input {...register(`bookingInfo.visit.[${index}].place.name`)} placeholder="" type="text" className="outline-none w-full" />
                                                                     </div>
                                                                     {Object.keys(area)?.length !== 1 && <div onClick={() => addAreaHandle(place, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid ml-2 place-items-center cursor-pointer"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
                                                                 </div>
@@ -784,7 +785,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 if (bookingData.bookingType === "R&H") {
                                                     const areaTemp = {}
                                                     bookingData.bookingInfo.visit.forEach((visit, index) => {
-                                                        areaTemp[index] = visit.name
+                                                        areaTemp[index] = visit.place.name
                                                     })
                                                     setArea({...areaTemp})
                                                 }
@@ -915,7 +916,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
     const [extraCount, setExtraCount] = useState(1)
     const [prices, setPrices] = useState([0, 0, [0]])
     
-    const { register, setValue, handleSubmit, unregister } = useForm()
+    const { register, setValue, handleSubmit, unregister, formState: {errors} } = useForm()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -926,27 +927,9 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
         setTotal(prices[0] + prices[1] + extraTotalPrices)
     }, [prices])
 
-    const handleExtraPricesIncrementation = (isIncrement) => {
-        let extraPrice = prices[2]
-        if (isIncrement) {
-            if (extraCount === 5) return
-            setExtraCount(count => count + 1 )
-            extraPrice.push(0)
-            setPrices([prices[0], prices[1], [...extraPrice]])
-        }
-        else {
-            if (extraCount === 1) return
-            setExtraCount(count => count - 1)
-            extraPrice.pop()
-            unregister(`extra.[${extraCount - 1}]`)
-            setPrices([prices[0], prices[1], [...extraPrice]])
-        }
-    }
-
     const onSubmit = async (data) => {
         data.bookingId = bookingData.bookingId
-        console.log(data)
-        const res = await transferJob(data.driver, data.bookingId)
+        const res = await transferJob(data.driver, data.bookingId, data.newMessage)
         if (res.data === "Successful") {
             alert(res.data)
             navigate('/chat/driver/inbox')
@@ -959,7 +942,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
         <div onSubmit={handleSubmit(onSubmit)} className={"bg-black px-5 bg-opacity-30 mb-10 h-screen w-full grid place-items-center top-0 left-0 fixed bg-white transition duration-300 " + (onTransfer ? "opacity-100" : "opacity-0 pointer-events-none")}>
             <form className="bg-white rounded-md py-3 px-3 w-full">
                 <div className="text-lg font-semibold mb-2">การโอนงาน</div>
-                <div><Textinput onChange={() => {}} register={register(`driver`)} setValue={setValue} title="Driver Code" /></div>
+                <div><Textinput onChange={() => {}} error={errors?.driver?.message} register={register(`driver`, { required: "โปรดใส่รหัสคนขับรถ" })} required setValue={setValue} title="รหัสคนขับรถ" /></div>
                 <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="ข้อความให้คนขับรถคนใหม่" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
                     <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">ยกเลิก</div>
