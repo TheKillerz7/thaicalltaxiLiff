@@ -42,17 +42,18 @@ export default ChattingRoom
 
 const RoomsPage = ({ userId, userType }) => {
     const [rooms, setRooms] = useState([])
+    const [onload, setOnload] = useState(true)
 
     const getRoomsHandle = async () => {
         const res = await getRoomsByUserId(userId, userType)
+        setOnload(false)
         setRooms(res.data)
-        console.log(res)
         return res
     }
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io", connectionOptions)
+        const socket = io("https://b7a6-2405-9800-b650-586-add9-eec4-7af8-65b8.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -84,35 +85,42 @@ const RoomsPage = ({ userId, userType }) => {
                 <div className="text-3xl font-semibold">Chats</div>
             </div>
             <div className="w-full py-4">
-                {typeof rooms !== "string" && rooms.length > 0 ?
-                    rooms.map((room, index) => {
-                        var now = moment(new Date()); //todays date
-                        var end = moment(room.messages.latestMessage?.createdDate || room.createdDate); // another date
-                        var duration = moment.duration(now.diff(end));
-                        var days = duration.asDays() <= 1 ? duration.asMinutes() <= 30 ? duration.humanize().includes("minutes") ? duration.humanize().replace("minutes", "mins") : duration.humanize().replace("minute", "mins") : end.format("HH.mm") : duration.asDays() >= 2 ? end.format("DD/MM/yyyy") : "yesterday";
-                        const messages = room.messages
+                {onload ? 
+                    <div role="status" className="flex justify-center mt-5">
+                        <svg aria-hidden="true" className="mr-2 w-14 h-14 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+                        </svg>
+                    </div>
+                    : typeof rooms !== "string" && rooms.length > 0 ?
+                        rooms.map((room, index) => {
+                            var now = moment(new Date()); //todays date
+                            var end = moment(room.messages.latestMessage?.createdDate || room.createdDate); // another date
+                            var duration = moment.duration(now.diff(end));
+                            var days = duration.asDays() <= 1 ? duration.asMinutes() <= 30 ? duration.humanize().includes("minutes") ? duration.humanize().replace("minutes", "mins") : duration.humanize().replace("minute", "mins") : end.format("HH.mm") : duration.asDays() >= 2 ? end.format("DD/MM/yyyy") : "yesterday";
+                            const messages = room.messages
 
-                        return (
-                            <Link key={index} to={`/chat/${userType}/room/${room.roomId}`}>
-                                <div className="focus:bg-blue-100 flex justify-between px-5 py-4">
-                                    <div className="flex w-full overflow-hidden">
-                                        <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
-                                        <div className="overflow-hidden">
-                                            <div className="font-medium">{room.pickupTime === "ASAP" ? room.pickupDate : room.pickupTime + ", " + room.pickupDate}</div>
-                                            <div className="flex">
-                                                {!messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden">{messages?.latestMessage?.message}</div>}
-                                                {messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="font-semibold text-ellipsis whitespace-nowrap overflow-hidden">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</div>}
-                                                {!messages.latestMessage && <div className="text-gray-500">No message yet.</div>}
-                                                <div className="text-right w-max font-medium text-sm text-gray-400 pt-0.5 ml-3">{days}</div>
+                            return (
+                                <Link key={index} to={`/chat/${userType}/room/${room.roomId}`}>
+                                    <div className="focus:bg-blue-100 flex justify-between px-5 py-4">
+                                        <div className="flex w-full overflow-hidden">
+                                            <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
+                                            <div className="overflow-hidden">
+                                                <div className="font-medium">{room.pickupTime === "ASAP" ? room.pickupDate : room.pickupTime + ", " + room.pickupDate}</div>
+                                                <div className="flex">
+                                                    {!messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden">{messages?.latestMessage?.message}</div>}
+                                                    {messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="font-semibold text-ellipsis whitespace-nowrap overflow-hidden">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</div>}
+                                                    {!messages.latestMessage && <div className="text-gray-500">No message yet.</div>}
+                                                    <div className="text-right w-max font-medium text-sm text-gray-400 pt-0.5 ml-3">{days}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Link>
-                        )
-                    })
-                    :
-                    <div className="px-5 text-center text-lg font-medium pt-10">Sorry there's no chat rooms yet.</div>
+                                </Link>
+                            )
+                        })
+                        :
+                        <div className="px-5 text-center text-lg font-medium pt-10">Sorry there's no chat rooms yet.</div>
                 }
             </div>
         </div>
@@ -130,12 +138,13 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const [onTransfer, setOnTransfer] = useState(false)
     const [onCheckBookingInfo, setOnCheckBookingInfo] = useState(false)
     const [roomName, setRoomName] = useState("")
+    const [onload, setOnload] = useState(true)
     const navigate = useNavigate()
     
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io", connectionOptions)
+        socket = io("https://b7a6-2405-9800-b650-586-add9-eec4-7af8-65b8.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
@@ -161,6 +170,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             setBookingData(booking)
             await readChatMessages(roomId, userType)
             const messages = await getChattingMessages(roomId)
+            setOnload(false)
             messageStorage = [...messages.data.reverse()]
             setMessages([...messageStorage])
         }
@@ -218,77 +228,88 @@ const ChatPage = ({ roomId, userType, userId }) => {
                 </div>
             </div>
             <div className="pb-24 px-3">
-                {userType === "user" && <div className="border border-gray-500 px-5 py-4 rounded-md bg-gray-50 mb-5 w-10/12 mx-auto"><span className="font-semibold">Driver may provide:</span><br/>1. Same car type as you chosse<br/>2. Similar car type<br/>3. Bigger car type</div>}
-                {messages.map((message, index) => {
-                    let messageSide = message.senderType === userType ? "right" : "left"
+                {onload ? 
+                    <div role="status" className="flex justify-center mt-5">
+                        <svg aria-hidden="true" className="mr-2 w-14 h-14 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+                        </svg>
+                    </div>
+                    :
+                    <div>
+                        {userType === "user" && <div className="border border-gray-500 px-5 py-4 rounded-md bg-gray-50 mb-5 w-10/12 mx-auto"><span className="font-semibold">Driver may provide:</span><br/>1. Same car type as you chosse<br/>2. Similar car type<br/>3. Bigger car type</div>}
+                        {messages.map((message, index) => {
+                            let messageSide = message.senderType === userType ? "right" : "left"
 
-                    const MessageComponent = () => {
-                        switch (message.messageType) {
-                            case "greeting":
-                                return(
-                                    <div className="break-normal font-medium">
-                                        {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
-                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
-                                    </div>
-                                )
-
-                            case "text":
-                                if (message.message.includes("://")) {
-                                    return (
-                                        <div className="break-normal font-medium">
-                                            {messageSide === "left" &&
-                                                <div className="mb-1">
-                                                    {message.translated.split(" ").length ? 
-                                                        message.translated.split(" ").map((text, index) => {
-                                                            return text.includes("://") ? 
-                                                                <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5" + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
-                                                                :
-                                                                text + " "
-                                                        })
-                                                        :
-                                                        <div onClick={() => window.location.replace(message.translated)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.translated}</div>
-                                                    }
-                                                </div>
-                                            }
-                                            <div className={messageSide === "left" ? "text-white font-light" : ""}>
-                                                {message.message.split(" ").length ? 
-                                                    message.message.split(" ").map((text, index) => {
-                                                        return text.includes("://") ? 
-                                                            <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
-                                                            :
-                                                            text + " "
-                                                    })
-                                                    :
-                                                    <div onClick={() => window.location.replace(message.message)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.message}</div>
-                                                }
+                            const MessageComponent = () => {
+                                switch (message.messageType) {
+                                    case "greeting":
+                                        return(
+                                            <div className="break-normal font-medium">
+                                                {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
+                                                <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
                                             </div>
-                                        </div>
-                                    )
-                                    
+                                        )
+
+                                    case "text":
+                                        if (message.message.includes("://")) {
+                                            return (
+                                                <div className="break-normal font-medium">
+                                                    {messageSide === "left" &&
+                                                        <div className="mb-1">
+                                                            {message.translated.split(" ").length ? 
+                                                                message.translated.split(" ").map((text, index) => {
+                                                                    return text.includes("://") ? 
+                                                                        <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5" + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
+                                                                        :
+                                                                        text + " "
+                                                                })
+                                                                :
+                                                                <div onClick={() => window.location.replace(message.translated)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.translated}</div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    <div className={messageSide === "left" ? "text-white font-light" : ""}>
+                                                        {message.message.split(" ").length ? 
+                                                            message.message.split(" ").map((text, index) => {
+                                                                return text.includes("://") ? 
+                                                                    <div onClick={() => window.location.replace(text)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{text}</div>
+                                                                    :
+                                                                    text + " "
+                                                            })
+                                                            :
+                                                            <div onClick={() => window.location.replace(message.message)} className={"underline inline mr-1.5 " + (messageSide === "left" ? "text-blue-100" : "text-blue-500")}>{message.message}</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            )
+                                            
+                                        }
+                                        return (
+                                            <div className="break-normal font-medium">
+                                                {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
+                                                <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
+                                            </div>
+                                        )
+                                
+                                    default:
+                                        return ""
                                 }
-                                return (
-                                    <div className="break-normal font-medium">
-                                        {messageSide === "left" && <div className="mb-1">{message.translated}</div>}
-                                        <div className={messageSide === "left" ? "text-white font-light" : ""}>{message.message}</div>
+                            }
+                            
+                            return (
+                                <div key={index}>
+                                    <div className={"flex mb-5 " + (messageSide === "right" ? "justify-end" : "justify-start")}>
+                                        {messageSide === "left" && <div className="w-8 mr-3"><div className="bg-blue-900 text-white grid place-items-center rounded-full w-8 h-8"><FontAwesomeIcon icon={faUser} /></div></div>}
+                                        <div className={"max-w-xs px-3 py-2 rounded-md " + (messageSide === "left" ? "bg-blue-900 text-white" : "bg-gray-100")}>
+                                            <MessageComponent />
+                                        </div>
                                     </div>
-                                )
-                        
-                            default:
-                                return ""
-                        }
-                    }
-                    
-                    return (
-                        <div key={index}>
-                            <div className={"flex mb-5 " + (messageSide === "right" ? "justify-end" : "justify-start")}>
-                                {messageSide === "left" && <div className="w-8 mr-3"><div className="bg-blue-900 text-white grid place-items-center rounded-full w-8 h-8"><FontAwesomeIcon icon={faUser} /></div></div>}
-                                <div className={"max-w-xs px-3 py-2 rounded-md " + (messageSide === "left" ? "bg-blue-900 text-white" : "bg-gray-100")}>
-                                    <MessageComponent />
                                 </div>
-                            </div>
-                        </div>
-                    )
-                })}
+                            )
+                        })}
+                    </div>
+                }
             </div>
             <div className="py-5 px-3 fixed bottom-0 w-full bg-white">
                 <div className="bg-gray-200 rounded-full py-2 w-full flex justify-between items-center">
@@ -302,7 +323,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             {bookingData.bookingInfo && (
                 <>
                     <BookingDetail driver={driver} prices={prices} onCheckBookingInfo={onCheckBookingInfo} setOnTransfer={setOnTransfer} setOnCheckBookingInfo={setOnCheckBookingInfo} bookingData={bookingData} userType={userType} />
-                    <TransferJob bookingData={bookingData} onTransfer={onTransfer} setOnTransfer={setOnTransfer} />
+                    <TransferJob userId={userId} bookingData={bookingData} onTransfer={onTransfer} setOnTransfer={setOnTransfer} />
                 </>
             )}
         </div>
@@ -917,7 +938,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     )
 }
 
-const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
+const TransferJob = ({ bookingData, onTransfer, setOnTransfer, userId }) => {
     const [total, setTotal] = useState(0)
     const [extraCount, setExtraCount] = useState(1)
     const [prices, setPrices] = useState([0, 0, [0]])
@@ -935,7 +956,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer }) => {
 
     const onSubmit = async (data) => {
         data.bookingId = bookingData.bookingId
-        const res = await transferJob(data.driver, data.bookingId, data.newMessage)
+        const res = await transferJob(userId, data.bookingId, data.newMessage, data.driver)
         if (res.data === "Successful") {
             alert(res.data)
             navigate('/chat/driver/inbox')

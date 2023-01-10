@@ -10,7 +10,7 @@ import CurrentBookingView from "../pages/currentBooking/CurrentBookingView";
 const CurrentBooking = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
-  const [onload, setOnload] = useState(false)
+  const [onload, setOnload] = useState(true)
   const [search, setSearch] = useState("")
   const [userId, setUserId] = useState("")
   const [jobList, setJobList] = useState([])
@@ -46,6 +46,7 @@ const CurrentBooking = () => {
     if (!userId && !isJobOpen) return
     const callback = async () => {
       const bookings = await getCurrentBookingsByUserId(userId)
+      setOnload(false)
       setJobList(bookings.data)
     }
     callback()

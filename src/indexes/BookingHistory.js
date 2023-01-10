@@ -9,12 +9,11 @@ import BookingHistoryList from "../pages/bookingHistory/BookingHistoryList";
 const BookingHistory = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
-  const [onload, setOnload] = useState(false)
+  const [onload, setOnload] = useState(true)
   const [search, setSearch] = useState("")
   const [userId, setUserId] = useState("")
   const [jobList, setJobList] = useState([])
   const [currentJobs, setCurrentJobs] = useState([])
-  const [reload, setReload] = useState(false)
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -45,6 +44,7 @@ const BookingHistory = () => {
     if (!userId && !isJobOpen) return
     const callback = async () => {
       const bookings = await getAllBookingsByUserId(userId)
+      setOnload(false)
       setJobList(bookings.data)
     }
     callback()

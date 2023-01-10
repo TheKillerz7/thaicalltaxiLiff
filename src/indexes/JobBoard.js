@@ -90,7 +90,7 @@ const provincesJSON = [
 const JobBoard = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
-  const [onload, setOnload] = useState(false)
+  const [onload, setOnload] = useState(true)
   const [search, setSearch] = useState("")
   const [provinceSearch, setProvinceSearch] = useState("")
   const [userId, setUserId] = useState("")
@@ -154,7 +154,6 @@ const JobBoard = () => {
     setOnload(true)
     const callback = async () => {
       const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
-      console.log(jobs)
       setJobList(jobs.data)
     }
     callback()
@@ -194,6 +193,7 @@ const JobBoard = () => {
       } 
       const jobs = await getBookingByStatusWithoutDriverId("waiting", userId)
       setJobList(jobs.data)
+      setOnload(false)
       if (searchParams.get("bookingId")) {
         const jobTemp = jobs.data.find((job, index) => {
           if (job.bookingId === searchParams.get("bookingId")) return true
@@ -260,11 +260,11 @@ const JobBoard = () => {
   return (
     <div>
       <div id="job" className="relative pt-10 grid w-full">
-        <div className="text-3xl font-semibold text-center mb-8">Job Board</div>
+        <div className="text-3xl font-semibold text-center mb-8">บอร์ดงาน</div>
         <div className="px-3 flex justify-between mb-5">
             <div className="w-full mr-2 w-full border-2 border-gray-300 h-full rounded-md px-3 flex items-center">
                 <FontAwesomeIcon className="text-blue-900 mr-2" icon={faMagnifyingGlass} />
-                <input onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="w-full outline-none" />
+                <input onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหา" className="w-full outline-none" />
             </div>
             <div onClick={() => setOnFilter(true)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 mr-2 grid place-items-center"><FontAwesomeIcon icon={faLocationDot} /></div>
             <div onClick={() => setReload(!reload)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 grid place-items-center"><FontAwesomeIcon icon={faRotateRight} /></div>
@@ -272,7 +272,7 @@ const JobBoard = () => {
         <div className={"fixed bg-black bg-opacity-60 h-screen w-full top-0 left-0 grid place-items-center transition " + (onFilter ? "opacity-100" : "opacity-0 pointer-events-none") }>
           <div className="bg-white rounded-md w-11/12 px-5 py-5">
             <div className="flex items-center mb-5">
-              <div className="text-2xl font-semibold mr-3">แจ้งเตือนงาน</div>
+              <div className="text-2xl font-semibold mr-3">สถานะแจ้งเตือนงาน</div>
               <label className={"inline-flex relative items-center mr-2 " + (notiOnToggle && "pointer-events-none")}>
                   <input onChange={toggleNotificationHandle} type="checkbox" checked={notiValue} className="sr-only peer" />
                   <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-400 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 outline-none"></div>
@@ -328,7 +328,7 @@ const JobBoard = () => {
           <DataTable onClick={handleJobViewed} search={search} data={jobList} />
         }
       </div>
-      <JobPage onClick={() => setJobOpen(false)} currentJobs={currentJobs} setJobOpen={setJobOpen} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
+      <JobPage onClick={() => setJobOpen(false)} liff={liff} currentJobs={currentJobs} setJobOpen={setJobOpen} bookingData={jobData} isOpen={isJobOpen} userId={userId} />
     </div>
   );
 }

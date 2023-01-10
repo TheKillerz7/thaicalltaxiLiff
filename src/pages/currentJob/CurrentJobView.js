@@ -39,7 +39,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                 prices.extra = JSON.parse(prices.extra)
                 let totalPrice = 0
                 prices.extra.forEach((item, index) => {
-                    totalPrice += parseInt(item.price)
+                    if (typeof item.price === "number") totalPrice += parseInt(item.price)
                 })
                 totalPrice += parseInt(prices.course)
                 totalPrice += parseInt(prices.tollway)
@@ -69,6 +69,9 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                 <div>
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
+                            <div className="flex items-center mb-2">
+                                <div className="font-medium text-gray-600 mt-0.5">#{bookingData.bookingId}</div>
+                            </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">
                                     <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-2"></div>
@@ -131,7 +134,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                         <tbody>
                                             <tr>
                                                 <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Course
+                                                    ราคามาตรฐาน
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
                                                     {"฿" + prices?.course}
@@ -139,23 +142,25 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                             </tr>
                                             <tr>
                                                 <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Tollway
+                                                    ค่าทางด่วน
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
                                                     {"฿" + prices?.tollway}
                                                 </td>
                                             </tr>
                                             {prices?.extra?.map((extra, index) => {
-                                                return (
-                                                    <tr key={index}>
-                                                        <td className="align-middle whitespace-nowrap font-semibold">
-                                                            {extra.title}
-                                                        </td>
-                                                        <td className="align-middle pl-3 w-7/12">
-                                                            {"฿" + extra.price}
-                                                        </td>
-                                                    </tr>
-                                                )
+                                                if (extra.title && extra.price) {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td className="align-middle whitespace-nowrap font-semibold">
+                                                                {extra.title}
+                                                            </td>
+                                                            <td className="align-middle pl-3 w-7/12">
+                                                                {"฿" + extra.price}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
                                             })}
                                         </tbody>
                                     </table>
@@ -168,14 +173,14 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                 </div>
                             </div>
                             <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                <div className="text-lg font-semibold mr-2">Total:</div>
+                                <div className="text-lg font-semibold mr-2">รวม:</div>
                                 <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                             </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-x-3">
-                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">Chatroom</div></Link>
-                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Start Job</div>
+                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
+                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">เริ่มงาน</div>
                     </div>
                 </div>
                 {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} startJobHandle={startJobHandle} />}

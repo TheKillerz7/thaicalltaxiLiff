@@ -96,8 +96,8 @@ const PickupInfoForm = ({ driverInfo, setStep, register, unregister, setValue })
   useEffect(() => {
     const date = new Date()
     let yearArray = []
-    for (let i = date.getFullYear() - 25; i >= date.getFullYear() - 60; i--) {
-      yearArray.push(i.toString())
+    for (let i = date.getFullYear() - 25; i >= date.getFullYear() - 95; i--) {
+      yearArray.push((i + 543).toString())
     } 
     setYears([...yearArray])
   }, []);
@@ -141,10 +141,6 @@ const PickupInfoForm = ({ driverInfo, setStep, register, unregister, setValue })
       <div className={"mb-3 " }>
         <Numberinput onChange={() => {}} register={register("personalInfo.citizenId")} title="หมายเลขบัตรประชาชน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
       </div>
-      <div className={"mb-3 grid grid-cols-2 gap-x-2 " }>
-        <Dropdown onChange={() => {}} register={register("personalInfo.driverLicenseType")} title="ประเภทใบขับขี่" options={["ส่วนบุคคล", "ทุกประเภท"]} setValue={setValue} prefill={driverInfo[0]?.personalInfo.driverLicenseType} />
-        <Textinput onChange={() => {}} register={register("personalInfo.driverLicense")} title="หมายเลขใบขับขี่" setValue={setValue} prefill={driverInfo[0]?.personalInfo.driverLicense} />
-      </div>
       <div className={"mb-3 " }>
         <Numberinput onChange={() => {}} register={register("personalInfo.phone")} title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
       </div>
@@ -163,10 +159,10 @@ const PickupInfoForm = ({ driverInfo, setStep, register, unregister, setValue })
       <div className="mb-3">
         <Textareainput onChange={() => {}} register={register("personalInfo.address")} title="ที่อยู่ปัจจุบัน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.address} />
       </div>
-      <div className="text-left font-semibold mt-3 mb-1">ช่องทางการติดต่อฉุกเฉิน</div>
+      <div className="text-left font-semibold mt-3 mb-1">ช่องทางการติดต่อฉุกเฉินคนใกล้ชิด</div>
       <div className="flex mb-3">
         <div className="grid grid-cols-2 gap-x-2">
-          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.title`)} title="เจ้าของเบอร์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.title} />
+          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.title`)} title="ความสัมพันธ์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.title} />
           <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.id`)} title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.id} />
         </div>
       </div>
@@ -182,7 +178,7 @@ const ConfirmInfoForm = ({ driverInfo, images, setStep, register, setValue }) =>
     const date = new Date()
     let yearArray = []
     for (let i = date.getFullYear(); i >= date.getFullYear() - 10; i--) {
-      yearArray.push(i.toString())
+      yearArray.push((i + 543).toString())
     } 
     setYears(yearArray)
   }, []);

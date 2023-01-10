@@ -37,7 +37,7 @@ console.log(data)
 
     return (
         <div className="px-3 w-screen">
-            {!data?.length && <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job yet.</div>}
+            {!data?.length && <div className="text-center pt-10 text-2xl font-medium">ยังไม่มีงานในตอนนี้</div>}
             {data?.length > 0 && jobs.map((job, index) => {
                 const now = moment(new Date()); //todays date
                 const end = moment(job.createdDate); // another date

@@ -11,7 +11,7 @@ import JobHistoryView from "../pages/jobHistory/JobHistoryView";
 const JobHistory = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
-  const [onload, setOnload] = useState(false)
+  const [onload, setOnload] = useState(true)
   const [search, setSearch] = useState("")
   const [userId, setUserId] = useState("")
   const [jobList, setJobList] = useState([])
@@ -47,6 +47,7 @@ const JobHistory = () => {
     if (!userId && !isJobOpen) return
     const callback = async () => {
       const jobs = await getAllJobsByDriverId(userId)
+      setOnload(false)
       setJobList(jobs.data)
     }
     callback()

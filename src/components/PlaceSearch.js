@@ -49,7 +49,7 @@ const PlaceSearch = ({ title, register, setValue, error, reRender, onChange, id,
             const translated = await translations(value.terms[value.terms.length - 2].value, "th")
             const provinceObj = {
                 en: value.terms[value.terms.length - 2].value,
-                th: he.decode(translated.data.data.translations[0].translatedText) === "กรุงเทมหานคร" || "กรุงเทพฯ" ? "กรุงเทพมหานคร" : he.decode(translated.data.data.translations[0].translatedText)
+                th: he.decode(translated.data.data.translations[0].translatedText) === "กรุงเทมหานคร" || he.decode(translated.data.data.translations[0].translatedText) === "กรุงเทพฯ" ? "กรุงเทพมหานคร" : he.decode(translated.data.data.translations[0].translatedText)
             } 
             const data = {
                 name: value.structured_formatting.main_text,

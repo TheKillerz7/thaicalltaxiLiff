@@ -11,7 +11,7 @@ import Textareainput from "../components/Textareainput";
 import he from "he"
 import { translations } from "../apis/google";
 
-const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
+const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen, liff }) => {
     const [applyProcess, setApplyProcess] = useState("")
     const [total, setTotal] = useState(0)
     const [extraCount, setExtraCount] = useState(1)
@@ -61,12 +61,13 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
     const onSubmit = async (data) => {
         data.bookingId = bookingData.bookingId
         data.driverId = userId
-        const translated = await translations(data.message.th, "en")
-        data.message.en = he.decode(translated.data.data.translations[0].translatedText)
+        if (data.message.th) {
+            const translated = await translations(data.message.th, "en")
+            data.message.en = he.decode(translated.data.data.translations[0].translatedText)
+        }
         const res = await driverRegisterToBooking(data)
-        setJobOpen(false)
-        setApplyProcess("")
         alert(res.data)
+        liff.closeWindow()
     }
 
     return (
@@ -74,7 +75,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
             {isOpen && <div className="relative">
                 <div style={{ boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)" }} onClick={onClick || null} className="text-xl border-b border-gray-400 py-5 px-5">
                     <FontAwesomeIcon className="text-blue-900 mr-4" icon={faArrowLeft} />
-                    Jobs Board
+                    บอร์ดงาน
                 </div>
                 <div className="">
                     <div className="px-5 pt-5 bg-white pb-3">
@@ -111,7 +112,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        <div className="mt-1 font-medium text-lg text-yellow-600">"{bookingData.bookingInfo.message.th}"</div>
+                        {bookingData.bookingInfo.message.th && <div className="mt-1 font-medium text-lg text-yellow-600">ผู้โดยสาร: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
@@ -127,12 +128,12 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                     </div>
                     {applyProcess === "offering" ? 
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
-                            <div className="text-lg font-semibold mb-2">Price Offer</div>
-                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course")} setValue={setValue} title="Basic price" />
+                            <div className="text-lg font-semibold mb-2">เสนอราคา</div>
+                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคามาตรฐาน" />
                             <div className="my-3"></div>
-                            <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway")} setValue={setValue} title="Toll way" />
+                            <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
                             <div className="flex mb-2 mt-5 ">
-                                <div className="text-lg font-semibold mr-3">Other Prices</div>
+                                <div className="text-lg font-semibold mr-3">ราคาอื่นๆ</div>
                                 <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md">
                                     <div onClick={() => handleExtraPricesIncrementation(false)} className="px-2 cursor-pointer">-</div>
                                     <div onClick={() => handleExtraPricesIncrementation(true)} className="px-2 cursor-pointer">+</div>
@@ -148,15 +149,15 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                 return (
                                     <div key={index} className="mb-3">
                                         <div className="grid grid-cols-2 gap-x-2">
-                                            <Textinput onChange={() => {}} register={register(`extra.[${index}].title`)} setValue={setValue} title="Title" />
-                                            <NumberInput onChange={pricesHandle} register={register(`extra.[${index}].price`)} setValue={setValue} title="Price" />
+                                            <Textinput onChange={() => {}} register={register(`extra.[${index}].title`)} setValue={setValue} title="หัวข้อ" />
+                                            <NumberInput onChange={pricesHandle} register={register(`extra.[${index}].price`)} setValue={setValue} title="ราคา" />
                                         </div>
                                     </div>
                                 )
                             })}
-                            <div className="mt-2 mb-4 font-medium text-lg">Total: {total}</div>
-                            {bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP" && <div className="mb-3"><NumberInput onChange={() => {}} register={register("arrival")} setValue={setValue} title="Minutes until you arrived" /></div>}
-                            <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="Message to customer" />
+                            <div className="mt-2 mb-4 font-medium text-lg">รวม: {total}</div>
+                            {bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP" && <div className="mb-3"><NumberInput onChange={() => {}} register={register("arrival", { required: "" })} required setValue={setValue} title="นาทีที่คุณจะถึงที่นัดหมาย" /></div>}
+                            <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร" />
                             <div className="mb-9"></div>
                             <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "Send"}</button>
                         </form>
@@ -164,7 +165,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                         <div className="mb-10">
                             <div className="text-xl font-semibold mb-3">
                                 <FontAwesomeIcon className="text-blue-900 mr-2" icon={faCalendarCheck} />
-                                Your current Jobs
+                                งานปัจจุบันของคุณ
                             </div>
                             <div>
                                 {[...Array(3)].map((count, index) => {
@@ -183,14 +184,14 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                                 )
                                             }) 
                                             : "No job on this day"} */}
-                                            No job on this day
+                                            ยังไม่มีงานในวันที่นี้
                                         </div>
                                     )
                                 })}
                             </div>
                         </div>
                     }
-                    {applyProcess !== "offering" && <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium text-lg w-full py-2 grid place-items-center mb-10">Apply Now</div>}
+                    {applyProcess !== "offering" && <div onClick={() => setApplyProcess("offering")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium text-lg w-full py-2 grid place-items-center mb-10">เสนอราคาเลย</div>}
                 </div>
                 {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} />}
             </div>}

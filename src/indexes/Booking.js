@@ -31,16 +31,16 @@ const Booking = () => {
   const { register, setValue, handleSubmit, unregister, formState: { errors } } = useForm()
   const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places")
 
-  const catagory = [
-    {
-      title: <div>From A - To B</div>,
-      detail: "From your place to your destination."
-    },
-    {
-      title: "Hourly, Daily with driver",
-      detail: "Sightseeing, Shopping, Business or Others"
-    }
-  ]
+  // const catagory = [
+  //   {
+  //     title: <div>From A - To B</div>,
+  //     detail: "From your place to your destination."
+  //   },
+  //   {
+  //     title: "Hourly, Daily with driver",
+  //     detail: "Sightseeing, Shopping, Business or Others"
+  //   }
+  // ]
 
   const initLine = () => {
     liff.init({ liffId: '1657246657-jMPaJLl0' }, () => {
@@ -78,31 +78,35 @@ const Booking = () => {
 
   const onSubmit = async (data) => {
     setLoading(true)
-    data.userId = userId
-    data.bookingType = bookingType
-    if (data.bookingInfo.message.en) {
-      const translatedMessage = await translations(data.bookingInfo.message.en, "th")
-      data.bookingInfo.message.th = he.decode(translatedMessage.data.data.translations[0].translatedText)
+    try {
+      data.userId = userId
+      data.bookingType = bookingType
+      if (data.bookingInfo.message.en) {
+        const translatedMessage = await translations(data.bookingInfo.message.en, "th")
+        data.bookingInfo.message.th = he.decode(translatedMessage.data.data.translations[0].translatedText)
+      }
+      if (!data.bookingInfo.luggage.medium) data.bookingInfo.luggage.medium = 0
+      if (!data.bookingInfo.luggage.big) data.bookingInfo.luggage.big = 0
+      if (!data.bookingInfo.passenger.adult) data.bookingInfo.passenger.adult = 0
+      if (!data.bookingInfo.passenger.child) data.bookingInfo.passenger.child = 0
+      await updateUserById({userTermsAndCon: termsAndCon}, userId)
+      await createBooking(data)
+      liff.closeWindow()
+    } catch (error) {
+      console.log(error)
     }
-    if (!data.bookingInfo.luggage.medium) data.bookingInfo.luggage.medium = 0
-    if (!data.bookingInfo.luggage.big) data.bookingInfo.luggage.big = 0
-    if (!data.bookingInfo.passenger.adult) data.bookingInfo.passenger.adult = 0
-    if (!data.bookingInfo.passenger.child) data.bookingInfo.passenger.child = 0
-    await updateUserById({userTermsAndCon: termsAndCon}, userId)
-    await createBooking(data)
     setLoading(false)
-    liff.closeWindow()
   }
 
   return (
     <div className="grid pt-10 h-screen w-full">
         {scriptStatus === "ready" && <form onSubmit={handleSubmit(onSubmit)} className="w-full text-center">
-          <div className="flex w-10/12 mx-auto mb-5">
+          <div className="flex w-10/12 mx-auto mb-10">
             <div onClick={() => bookingType === "R&H" && setType("A2B")} className={"py-2 text-lg font-semibold w-full rounded-l-lg border-2 border-blue-900 transition " + (bookingType === "A2B" ? "bg-blue-900 text-white" : "bg-white text-blue-900")}>A  <FontAwesomeIcon className="mx-1" icon={faArrowRightLong} />  B</div>
             <div onClick={() => bookingType === "A2B" && setType("R&H")} className={"py-2 text-lg font-semibold w-full rounded-r-lg border-2 border-blue-900 transition " + (bookingType === "R&H" ? "bg-blue-900 text-white" : "bg-white text-blue-900")}>Rent & Hire</div>
           </div>
-          <div className="text-xl font-semibold w-10/12 mx-auto mb-3">{catagory[bookingType === "A2B" ? 0 : 1].title}</div>
-          <div className="w-10/12 mx-auto mb-5 text-sm">{catagory[bookingType === "A2B" ? 0 : 1].detail}</div>
+          {/* <div className="text-xl font-semibold w-10/12 mx-auto mb-3">{catagory[bookingType === "A2B" ? 0 : 1].title}</div>
+          <div className="w-10/12 mx-auto mb-5 text-sm">{catagory[bookingType === "A2B" ? 0 : 1].detail}</div> */}
           <FormTracker currentStep={bookingType === "A2B" ? 0 : 1} body={[
             <AToBCourse errors={errors} setType={setType} register={register} setValue={setValue} />,
             <RentAndHire errors={errors} increment={increment} setIncrement={setIncrement} unregister={unregister} register={register} setValue={setValue} />
@@ -113,7 +117,7 @@ const Booking = () => {
               <label htmlFor="terms" className='text-sm ml-2 text-left font-medium'>I agree to <span onClick={() => window.location.replace("https://www.thai-taxi.com/q-and-a")} className="underline inline text-blue-400">Terms & Conditions</span></label>
             </div>
           }
-          <input type="submit" value="Send" className={"py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-3 mb-10 " + (loading || !termsAndCon && "opacity-70 pointer-events-none")} />
+          <input type="submit" value="Send" className={"py-2 bg-blue-900 text-white text-lg w-10/12 mx-auto rounded-lg mt-3 mb-10 " + ((loading || !termsAndCon) && "opacity-70 pointer-events-none")} />
         </form>}
     </div>
   );

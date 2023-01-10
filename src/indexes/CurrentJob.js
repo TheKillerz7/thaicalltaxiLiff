@@ -11,7 +11,7 @@ import CurrentJobView from "../pages/currentJob/CurrentJobView";
 const CurrentJob = () => {
   const [isJobOpen, setJobOpen] = useState(false)
   const [jobData, setJobData] = useState({})
-  const [onload, setOnload] = useState(false)
+  const [onload, setOnload] = useState(true)
   const [search, setSearch] = useState("")
   const [userId, setUserId] = useState("")
   const [jobList, setJobList] = useState(null)
@@ -42,32 +42,6 @@ const CurrentJob = () => {
   useEffect(() => {
     initLine();
   }, []);
-  
-  useEffect(() => {
-    const callback = async () => {
-      if (!userId) return
-      const driver = (await getDriverById(userId)).data[0]
-      
-    }
-    callback()
-  }, [userId])
-
-  useEffect(() => {
-    if (!userId && !reload) return
-    setOnload(true)
-    const callback = async () => {
-      const jobs = (await getCurrentJobsByDriverId(userId)).data.map((job) => {
-        const temp = job
-        temp.bookingInfo = JSON.parse(temp.bookingInfo)
-        return temp
-      })
-      setJobList(jobs)
-    }
-    callback()
-    setTimeout(() => {
-      setOnload(false)
-    }, 20);
-  }, []);
 
   useEffect(() => {
     if (!userId && !isJobOpen) return
@@ -81,6 +55,7 @@ const CurrentJob = () => {
       setJobList(jobs)
       const currentJobsReq = (await getCurrentJobsByDriverId(userId)).data
       setCurrentJobs(currentJobsReq)
+      setOnload(false)
     }
     callback()
   }, [userId, isJobOpen]);

@@ -15,12 +15,22 @@ const JobHistoryList = ({ onClick, data }) => {
                 if (job.bookingType === "R&H") {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
-                            <div className="text-gray-500 text-xs">#302-514</div>
-                            <div className="flex justify-between items-center">
-                                <div className="font-medium">{bookingInfo.start.place.name}</div>
+                            <div className="flex items-center mb-2">
+                                <div className={"font-medium text-sm " + (job.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{job.bookingStatus.charAt(0).toUpperCase() + job.bookingStatus.slice(1)}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{job.bookingId}</div>
                             </div>
-                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                            <div className="font-medium mb-1 text-ellipsis whitespace-nowrap overflow-hidden">{bookingInfo.end.place.name}</div>
+                            <div className="flex mb-1">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.start.place.name}</div>
+                            </div>
+                            <div className="flex mb-1.5">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-blue-800 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.end.place.name}</div>
+                            </div>
                             <div className="flex flex-wrap">
                                 <div className="mb-2 py-1 px-2 font-medium text-sm bg-purple-900 text-white rounded-md mr-2">{job.bookingType}</div>
                                 <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-red-600" : "bg-yellow-800")}>
@@ -33,12 +43,22 @@ const JobHistoryList = ({ onClick, data }) => {
                 } else {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
-                            <div className="text-gray-500 text-xs">#302-514</div>
-                            <div className="flex justify-between items-center">
-                                <div className="font-medium">{bookingInfo.from.name}</div>
+                            <div className="flex items-center mb-2">
+                                <div className={"font-medium text-sm " + (job.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{job.bookingStatus.charAt(0).toUpperCase() + job.bookingStatus.slice(1)}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{job.bookingId}</div>
                             </div>
-                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                            <div className="font-medium mb-1 text-ellipsis whitespace-nowrap overflow-hidden">{bookingInfo.to.name}</div>
+                            <div className="flex mb-1">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.from.name}</div>
+                            </div>
+                            <div className="flex mb-1.5">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-blue-800 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.to.name}</div>
+                            </div>
                             <div className="flex flex-wrap">
                                 <div className="mb-2 py-1 px-2 font-medium text-sm bg-green-700 text-white rounded-md mr-2">{job.bookingType}</div>
                                 <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-red-600" : "bg-yellow-800")}>

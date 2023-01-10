@@ -45,7 +45,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                 prices.extra = JSON.parse(prices.extra)
                 let totalPrice = 0
                 prices.extra.forEach((item, index) => {
-                    totalPrice += parseInt(item.price)
+                    if (typeof item.price === "number") totalPrice += parseInt(item.price)
                 })
                 totalPrice += parseInt(prices.course)
                 totalPrice += parseInt(prices.tollway)
@@ -73,6 +73,9 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                 <div>
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
+                            <div className="flex items-center mb-2">
+                                <div className="font-medium text-gray-600 mt-0.5">#{bookingData.bookingId}</div>
+                            </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">
                                     <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-2"></div>
@@ -150,16 +153,18 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     </td>
                                                 </tr>
                                                 {prices?.extra?.map((extra, index) => {
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td className="align-middle whitespace-nowrap font-medium">
-                                                                {extra.title}
-                                                            </td>
-                                                            <td className="align-middle pl-3 w-7/12">
-                                                                {"฿" + extra.price}
-                                                            </td>
-                                                        </tr>
-                                                    )
+                                                    if (extra.title && extra.price) {
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td className="align-middle whitespace-nowrap font-semibold">
+                                                                    {extra.title}
+                                                                </td>
+                                                                <td className="align-middle pl-3 w-7/12">
+                                                                    {"฿" + extra.price}
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
                                                 })}
                                             </tbody>
                                         </table>

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
 import { useForm } from "react-hook-form";
-import { cancelBooking, driverRegisterToBooking, getSelectedRegisterByBookingId } from "../../apis/backend";
+import { cancelBooking, driverRegisterToBooking, getDriverById, getSelectedRegisterByBookingId } from "../../apis/backend";
 import moment from "moment";
 
 const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
@@ -12,6 +12,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
     const [prices, setPrices] = useState({})
     const [loading, setLoading] = useState(false)
     const [total, setTotal] = useState(0)
+    const [driver, setDriver] = useState({})
 
     const { register, setValue, handleSubmit, unregister } = useForm()
 
@@ -24,13 +25,16 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
         setApplyProcess("")
         const callback = async () => {
             const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
-            const priceObj = {}
-            console.log(prices)
+            const drivers = (await getDriverById(prices.driverId)).data[0]
+            drivers.personalInfo = JSON.parse(drivers.personalInfo)
+            drivers.vehicleInfo = JSON.parse(drivers.vehicleInfo)
+            prices.message = JSON.parse(prices.message)
+            setDriver(drivers)
             if (prices) {
                 prices.extra = JSON.parse(prices.extra)
                 let totalPrice = 0
-                Object.keys(priceObj).forEach((item, index) => {
-                    totalPrice += priceObj[item]
+                prices.extra.forEach((item, index) => {
+                    if (typeof item.price === "number") totalPrice += parseInt(item.price)
                 })
                 totalPrice += parseInt(prices.course)
                 totalPrice += parseInt(prices.tollway)
@@ -53,11 +57,15 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
             {isOpen && <div className="relative">
                 <div style={{ boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)" }} onClick={onClick || null} className="text-xl border-b border-gray-400 py-5 px-5">
                     <FontAwesomeIcon className="text-blue-900 mr-4" icon={faArrowLeft} />
-                    Job History
+                    ประวัติงาน
                 </div>
                 <div>
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
+                            <div className="flex items-center mb-2">
+                                <div className={"text-lg font-medium " + (bookingData.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{bookingData.bookingStatus.charAt(0).toUpperCase() + bookingData.bookingStatus.slice(1)}</div>
+                                <div className="font-medium text-gray-600 ml-2 mt-0.5">#{bookingData.bookingId}</div>
+                            </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">
                                     <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-2"></div>
@@ -97,20 +105,20 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ผู่โดยสาร: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
                         <div className="mb-10">
                             <div>
-                                <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Price</div>
+                                <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>ราคา</div>
                                 <div className="bg-blue-50 rounded-lg relative">
                                     <form className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
                                         <table>
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        Course
+                                                        ราคามาตรฐาน
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.course}
@@ -118,23 +126,25 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                                                 </tr>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        Tollway
+                                                        ค่าทางด่วน
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.tollway}
                                                     </td>
                                                 </tr>
                                                 {prices?.extra?.map((extra, index) => {
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td className="align-middle whitespace-nowrap font-medium">
-                                                                {extra.title}
-                                                            </td>
-                                                            <td className="align-middle pl-3 w-7/12">
-                                                                {"฿" + extra.price}
-                                                            </td>
-                                                        </tr>
-                                                    )
+                                                    if (extra.title && extra.price) {
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td className="align-middle whitespace-nowrap font-semibold">
+                                                                    {extra.title}
+                                                                </td>
+                                                                <td className="align-middle pl-3 w-7/12">
+                                                                    {"฿" + extra.price}
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
                                                 })}
                                             </tbody>
                                         </table>
@@ -147,7 +157,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                                     </div>
                                 </div>
                                 <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                    <div className="text-lg font-semibold mr-2">Total:</div>
+                                    <div className="text-lg font-semibold mr-2">รวม:</div>
                                     <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                                 </div>
                             </div>

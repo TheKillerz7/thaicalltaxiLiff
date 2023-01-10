@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://180a-2405-9800-b650-586-2c4d-5c98-5375-1da9.ap.ngrok.io"
+const baseURL = process.env.BASE_URL || "https://b7a6-2405-9800-b650-586-add9-eec4-7af8-65b8.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
@@ -117,8 +117,8 @@ export const updateUserById = (data, id) => {
     return axios.patch(`${baseURL}/user/${id}`, {data})
 }
 
-export const transferJob = (driverId, bookingId, newMessage) => {
-    return axios.patch(`${baseURL}/driver/transfer`, {bookingId, driverId, newMessage})
+export const transferJob = (driverId, bookingId, newMessage, driverCode) => {
+    return axios.patch(`${baseURL}/driver/transfer`, {bookingId, driverId, newMessage, driverCode})
 }
 
 export const updatePrice = (bookingId, data) => {

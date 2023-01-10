@@ -11,20 +11,28 @@ const CurrentJobList = ({ onClick, data }) => {
 
     const jobs = [...Array(4)].map((count, index) => {
         const bookings = data.map((job, i) => {
+            const bookingInfo = typeof job.bookingInfo === "string" ? JSON.parse(job.bookingInfo) : job.bookingInfo
             const date = job.bookingInfo.start?.pickupDate?.split("/")?.[0] || job.bookingInfo.pickupDate?.split("/")?.[0]
             
             if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
-                let bookingInfo = job.bookingInfo
-                console.log(bookingInfo)
-
                 if (job.bookingType === "R&H") {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
-                            <div className="flex justify-between items-center">
-                                <div className="font-medium">{bookingInfo.start.place.name}</div>
+                            <div className="flex items-center mb-2">
+                                <div className="text-sm font-medium text-gray-600">#{job.bookingId}</div>
                             </div>
-                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                            <div className="font-medium mb-1">{bookingInfo.end.place.name}</div>
+                            <div className="flex mb-1">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.start.place.name}</div>
+                            </div>
+                            <div className="flex mb-1.5">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-blue-800 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.end.place.name}</div>
+                            </div>
                             <div className="flex flex-wrap">
                                 <div className="mb-2 py-1 px-2 font-medium text-sm bg-purple-900 text-white rounded-md mr-2">{job.bookingType}</div>
                                 {bookingInfo.start.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.start.pickupTime}</div>}
@@ -34,14 +42,24 @@ const CurrentJobList = ({ onClick, data }) => {
                 } else {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
-                            <div className="flex justify-between items-center">
-                                <div className="font-medium">{bookingInfo.from.name}</div>
+                            <div className="flex items-center mb-2">
+                                <div className="text-sm font-medium text-gray-600">#{job.bookingId}</div>
                             </div>
-                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                            <div className="font-medium mb-1">{bookingInfo.to.name}</div>
+                            <div className="flex mb-1">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-red-600 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.from.name}</div>
+                            </div>
+                            <div className="flex mb-1.5">
+                                <div className="w-5 mr-2">
+                                    <div className="w-4 h-4 border-4 border-blue-800 rounded-full mt-1"></div>
+                                </div>
+                                <div className="font-semibold">{bookingInfo.to.name}</div>
+                            </div>
                             <div className="flex flex-wrap">
                                 <div className="mb-2 py-1 px-2 font-medium text-sm bg-green-700 text-white rounded-md mr-2">{job.bookingType}</div>
-                                {bookingInfo.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.pickupTime}</div>}
+                                <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "text-white bg-red-600" : "bg-yellow-800")}>{bookingInfo.pickupTime}</div>
                             </div>
                         </div>
                     )
