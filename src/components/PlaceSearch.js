@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { translations } from '../apis/google';
 
-const PlaceSearch = ({ title, register, setValue, error, reRender, onChange, id, prefill, controlledValue, setControlledValue }) => {
+const PlaceSearch = ({ title, register, setValue, error, required, onChange, id, prefill, controlledValue, setControlledValue }) => {
     const [focus, setFocus] = useState(false)
     const [isFilled, setFilled] = useState(false)
     const [reTitle, setReTitle] = useState("")
@@ -80,7 +80,7 @@ const PlaceSearch = ({ title, register, setValue, error, reRender, onChange, id,
 
     return(
         <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 ' + (focus ? !reTitle ? "border-blue-900" : "border-red-400" : "border-gray-300")}>
-            <div className={'absolute transition-all text-left top-1/2 pointer-events-none ' + ((focus || isFilled) ? `-translate-y-5 text-xs font-medium ${focus ? !reTitle ? "text-blue-900" : "text-red-400" : !reTitle ? "text-gray-400" : "text-red-400"}` : !reTitle ? "text-gray-400 -translate-y-1/2 text-sm" : "text-red-400 -translate-y-1/2")}>{title}{!reTitle && <span className='text-red-400'>*</span>}</div>
+            <div className={'absolute transition-all text-left top-1/2 pointer-events-none ' + ((focus || isFilled) ? `-translate-y-5 text-xs font-medium ${focus ? !reTitle ? "text-blue-900" : "text-red-400" : !reTitle ? "text-gray-400" : "text-red-400"}` : !reTitle ? "text-gray-400 -translate-y-1/2 text-sm" : "text-red-400 -translate-y-1/2")}>{reTitle || title}{required && <span className='text-red-400'>*</span>}</div>
             <input id={id || register.name} value={controlledValue || inputValue} onChange={(value) => handleChanges(value)} onClick={() => setFocus(true)} type="text" className="placeInput outline-none w-full pt-5" autoComplete="off" />
             <div style={{boxShadow: "4px 4px 30px rgba(0, 0, 0, 0.20)", maxHeight: "300px"}} className={'absolute overflow-y-scroll z-10 transition top-full bg-white translate-y-1 w-full left-0 ' + (focus ? "opacity-1" : "opacity-0 pointer-events-none")}>
                 {placeSearchValue.map((option, index) => {

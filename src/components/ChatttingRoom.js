@@ -487,7 +487,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                     />}
                 </div>
             </div>
-            <div className={"h-screen w-full absolute top-0 left-0 bg-white transition duration-300 " + (onCheckBookingInfo ? "translate-x-0" : "translate-x-full")}>
+            <div className={"h-screen w-full fixed top-0 left-0 bg-white transition duration-300 " + (onCheckBookingInfo ? "translate-x-0" : "translate-x-full")}>
                 <div onClick={() => setOnCheckBookingInfo(current => !current)} style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className="flex px-4 py-4">
                     <div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div>
                     <div className="font-semibold text-lg">Detail</div>

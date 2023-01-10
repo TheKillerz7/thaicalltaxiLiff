@@ -28,7 +28,7 @@ const Booking = () => {
   const [userId, setUserId] = useState("")
   const [increment, setIncrement] = useState(1)
 
-  const { register, setValue, handleSubmit, unregister, formState: { errors } } = useForm()
+  const { register, setValue, handleSubmit, unregister, setError, formState: { errors } } = useForm()
   const scriptStatus = useScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyACgdM4gHsoZA-JBVSdUPy5B2h70tq2ATU&libraries=places")
 
   // const catagory = [
@@ -81,6 +81,33 @@ const Booking = () => {
     try {
       data.userId = userId
       data.bookingType = bookingType
+      let isError = false
+      if (data.bookingType === "R&H") {
+        if (!data.bookingInfo.start.place.placeId) {
+          setError("bookingInfo.place", { type: "custom", message: "(Starting) Location not found" })
+          isError = true
+        }
+        data.bookingInfo.visit.forEach((visit, index) => {
+          if (!visit.place.placeId) {
+            setError(`bookingInfo.visit.[${index}].place`, { type: "custom", message: "(Visits) Location not found" })
+            isError = true
+          }
+        })
+        if (!data.bookingInfo.start.place.placeId) {
+          setError("bookingInfo.from", { type: "custom", message: "(Ending) Location not found" })
+          isError = true
+        }
+      } else {
+        if (!data.bookingInfo.from.placeId) {
+          setError("bookingInfo.from", { type: "custom", message: "(From) Location not found" })
+          isError = true
+        }
+        if (!data.bookingInfo.to.placeId) {
+          setError("bookingInfo.to", { type: "custom", message: "(To) Location not found" })
+          isError = true
+        }
+      }
+      if (isError) return setLoading(false)
       if (data.bookingInfo.message.en) {
         const translatedMessage = await translations(data.bookingInfo.message.en, "th")
         data.bookingInfo.message.th = he.decode(translatedMessage.data.data.translations[0].translatedText)
@@ -141,10 +168,10 @@ const AToBCourse = ({ setType, register, setValue, errors }) => {
         <label htmlFor="asap" className='underline decoration-red-500 text-red-600 text-sm ml-2 text-left font-medium'>I want now(ASAP)</label>
       </div>
       <div className={"mb-3 " }>
-        <PlaceSearch onChange={() => {}} error={errors?.bookingInfo?.from?.message} register={register("bookingInfo.from", { required: "Please fill this info" })} title="From" setValue={setValue} />
+        <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.from?.message} register={register("bookingInfo.from", { required: "From" })} title="From" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <PlaceSearch onChange={() => {}} error={errors?.bookingInfo?.to?.message} register={register("bookingInfo.to", { required: "Please fill this info" })} title="To" setValue={setValue} />
+        <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.to?.message} register={register("bookingInfo.to", { required: "To" })} title="To" setValue={setValue} />
       </div>
       <div className="grid grid-cols-2 gap-x-2 mb-3">
         <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.adult")} title="Adult" setValue={setValue} />
@@ -197,12 +224,12 @@ const RentAndHire = ({ unregister, register, setValue, increment, setIncrement, 
         <Dropdown onChange={() => {}} error={errors?.bookingInfo?.type?.message} register={register("bookingInfo.type", { required: "Please fill this info" })} title="Trip title" options={["Sightseeing (Tour)", "Shopping", "Business", "Others"]} setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <PlaceSearch onChange={() => {}} error={errors?.bookingInfo?.start?.place?.message} register={register("bookingInfo.start.place", { required: "Please fill this info" })} title="Starting Place to Pickup" setValue={setValue} />
+        <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.start?.place?.message} register={register("bookingInfo.start.place", { required: "Starting Place to Pickup" })} title="Starting Place to Pickup" setValue={setValue} />
       </div>
       {increment && Object.keys(areaToVisit).map((area, index) => {
         return (
           <div key={area} className={"relative " + (index !== areaToVisit - 1 ? "mb-3" : "mb-2")}>
-            <PlaceSearch onChange={() => {}} error={errors?.bookingInfo?.visits?.[index].message} reRender={increment} register={register(`bookingInfo.visit.[${index}].place`)} title="Place info to visit" setValue={setValue} />
+            <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.visits?.[index].message} reRender={increment} register={register(`bookingInfo.visit.[${index}].place`)} title="Place info to visit" setValue={setValue} />
             {index !== 0 && <div onClick={() => addAreaHandle(area, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid place-items-center top-1/2 -translate-y-1/2 right-3 absolute"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
           </div>
         )
@@ -213,7 +240,7 @@ const RentAndHire = ({ unregister, register, setValue, increment, setIncrement, 
         <div className="mb-3 w-4/12"><Timepicker error={errors?.bookingInfo?.end?.pickupTime?.message} register={register("bookingInfo.end.pickupTime", { required: "Please fill this info" })} time={time} setTime={setTime} asap={asap1} setAsap={setAsap1} title="Time" setValue={setValue} /></div>
       </div>
       <div className={"mb-3 " }>
-        <PlaceSearch onChange={() => {}} error={errors?.bookingInfo?.end?.place?.message} register={register("bookingInfo.end.place", { required: "Please fill this info" })} title="Ending Place (Final destination)" setValue={setValue} />
+        <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.end?.place?.message} register={register("bookingInfo.end.place", { required: "Ending Place (Final destination)" })} title="Ending Place (Final destination)" setValue={setValue} />
       </div>
       <div className="grid grid-cols-2 gap-x-2 mb-3">
         <Numberinput onChange={() => {}} register={register("bookingInfo.passenger.adult")} title="Adult" setValue={setValue} />

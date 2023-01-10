@@ -12,6 +12,7 @@ import CurrentJob from './indexes/CurrentJob';
 import BookingHistory from './indexes/BookingHistory';
 import JobHistory from './indexes/JobHistory';
 import Test from './indexes/Text';
+import DriverAccount from './indexes/DriverAccount';
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
           <Route path="/currentJob" element={<CurrentJob />} />
           <Route path="/bookingHistory" element={<BookingHistory />} />
           <Route path="/jobHistory" element={<JobHistory />} />
-          <Route path="/driver/account" element={<RateDriver />} />
+          <Route path="/driver/account" element={<DriverAccount />} />
         </Routes>
       </BrowserRouter>
     </div>
