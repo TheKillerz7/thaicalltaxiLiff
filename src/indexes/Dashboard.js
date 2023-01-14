@@ -20,7 +20,7 @@ const Dashboard = () => {
 
     return (
         <div className="flex">
-            <div style={{ backgroundColor: "#0c143d" }} className="h-screen w-2/12 bg-blue-900 px-5 py-5">
+            <div style={{ backgroundColor: "#0c143d" }} className="sm:block hidden h-screen w-2/12 bg-blue-900 px-5 py-5">
                 <Link to="/dashboard/home"><div className="text-xl text-white px-5 py-4 mb-10 cursor-pointer">Dashboard</div></Link>
                 <div className="px-5">
                     <div className="text-white mb-7">Driver Management</div>
@@ -30,7 +30,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-gray-100 w-10/12">
+            <div className="bg-gray-100 sm:w-10/12 w-full">
+                <div style={{ backgroundColor: "#0c143d" }} className="w-full h-16 block sm:hidden px-5 font-semibold text-white flex items-center text-xl">Bell-Man</div>
                 {LinkList[page]}
             </div>
         </div>

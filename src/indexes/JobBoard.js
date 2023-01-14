@@ -269,7 +269,7 @@ const JobBoard = () => {
             <div onClick={() => setOnFilter(true)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 mr-2 grid place-items-center"><FontAwesomeIcon icon={faLocationDot} /></div>
             <div onClick={() => setReload(!reload)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 grid place-items-center"><FontAwesomeIcon icon={faRotateRight} /></div>
         </div>
-        <div className={"fixed bg-black bg-opacity-60 h-screen w-full top-0 left-0 grid place-items-center transition " + (onFilter ? "opacity-100" : "opacity-0 pointer-events-none") }>
+        <div className={"fixed overflow-y-scroll bg-black bg-opacity-60 h-screen w-full top-0 left-0 grid place-items-center transition " + (onFilter ? "opacity-100" : "opacity-0 pointer-events-none") }>
           <div className="bg-white rounded-md w-11/12 px-5 py-5">
             <div className="flex items-center mb-5">
               <div className="text-2xl font-semibold mr-3">สถานะแจ้งเตือนงาน</div>

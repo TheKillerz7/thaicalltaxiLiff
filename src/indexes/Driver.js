@@ -131,25 +131,28 @@ const PickupInfoForm = ({ driverInfo, setStep, register, unregister, setValue })
   return (
     <div>
       <div className="text-xl font-medium text-left mb-3">ข้อมูลส่วนตัว</div>
+      <div className={"mb-3 " }>
+        <Textinput onChange={() => {}} register={register("personalInfo.recommend")} title="รหัสผู้แนะนำ" options={years} setValue={setValue} prefill={driverInfo[0]?.personalInfo.recommend} />
+      </div>
       <div style={{ gridTemplateColumns: "0.5fr 1fr" }} className={"mb-3 grid gap-x-2 " }>
-        <Dropdown onChange={() => {}} register={register("personalInfo.title")} title="คำนำหน้า" options={["Mr.", "Ms."]} setValue={setValue} prefill={driverInfo[0]?.personalInfo.title} />
-        <Textinput onChange={() => {}} register={register("personalInfo.name")} title="ชื่อจริง-นามสกุล (อังกฤษ)" setValue={setValue} prefill={driverInfo[0]?.personalInfo.name} />
+        <Dropdown onChange={() => {}} register={register("personalInfo.title", { required: "" })} required title="คำนำหน้า" options={["Mr.", "Ms."]} setValue={setValue} prefill={driverInfo[0]?.personalInfo.title} />
+        <Textinput onChange={() => {}} register={register("personalInfo.name", { required: "" })} required title="ชื่อจริง-นามสกุล (อังกฤษ)" setValue={setValue} prefill={driverInfo[0]?.personalInfo.name} />
       </div>
       <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} register={register("personalInfo.birth")} title="ปีเกิด" options={years} setValue={setValue} prefill={driverInfo[0]?.personalInfo.birth} />
+        <Dropdown onChange={() => {}} register={register("personalInfo.birth", { required: "" })} required title="ปีเกิด" options={years} setValue={setValue} prefill={driverInfo[0]?.personalInfo.birth} />
       </div>
       <div className={"mb-3 " }>
-        <Numberinput onChange={() => {}} register={register("personalInfo.citizenId")} title="หมายเลขบัตรประชาชน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
+        <Numberinput onChange={() => {}} register={register("personalInfo.citizenId", { required: "" })} required title="หมายเลขบัตรประชาชน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
       </div>
       <div className={"mb-3 " }>
-        <Numberinput onChange={() => {}} register={register("personalInfo.phone")} title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
+        <Numberinput onChange={() => {}} register={register("personalInfo.phone", { required: "" })} required title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.citizenId} />
       </div>
       {reRender && Object.keys(tableCount).map((count, index) => {
         return (
           <div key={count} className={"flex " + (Object.keys(tableCount).length !== index + 1 ? "mb-3" : "mb-2")}>
             <div className="grid grid-cols-2 gap-x-2">
-              <Dropdown onChange={() => {}} register={register(`personalInfo.contact.[${index}].title`)} title="ชื่่อแอพ" options={["Line", "Facebook", "Whatsapp"]} setValue={setValue} prefill={driverInfo[0]?.personalInfo.contact[index].title} />
-              <Textinput onChange={() => {}} register={register(`personalInfo.contact.[${index}].id`)} title="ไอดี" setValue={setValue} prefill={driverInfo[0]?.personalInfo.contact[index].id} />
+              <Dropdown onChange={() => {}} register={register(`personalInfo.contact.[${index}].title`, { required: "" })} required title="ชื่่อแอพ" options={["Line", "Facebook", "Whatsapp"]} setValue={setValue} prefill={driverInfo[0]?.personalInfo.contact[index].title} />
+              <Textinput onChange={() => {}} register={register(`personalInfo.contact.[${index}].id`, { required: "" })} required title="ไอดี" setValue={setValue} prefill={driverInfo[0]?.personalInfo.contact[index].id} />
             </div>
             {index !== 0 && <div onClick={() => addContactHandle(count, "remove", index)} style={{ aspectRatio: "1" }} className="ml-2 bg-blue-900 h-8 rounded-md grid place-items-center"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
           </div>
@@ -157,13 +160,13 @@ const PickupInfoForm = ({ driverInfo, setStep, register, unregister, setValue })
       })}
       <div onClick={() => addContactHandle("", "add")} className="text-white font-medium rounded-md bg-blue-900 w-max py-2 px-2 text-sm cursor-pointer text-left mb-5">+ เพิ่มแอพ</div>
       <div className="mb-3">
-        <Textareainput onChange={() => {}} register={register("personalInfo.address")} title="ที่อยู่ปัจจุบัน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.address} />
+        <Textareainput onChange={() => {}} register={register("personalInfo.address", { required: "" })} required title="ที่อยู่ปัจจุบัน" setValue={setValue} prefill={driverInfo[0]?.personalInfo.address} />
       </div>
       <div className="text-left font-semibold mt-3 mb-1">ช่องทางการติดต่อฉุกเฉินคนใกล้ชิด</div>
       <div className="flex mb-3">
         <div className="grid grid-cols-2 gap-x-2">
-          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.title`)} title="ความสัมพันธ์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.title} />
-          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.id`)} title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.id} />
+          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.title`, { required: "" })} required title="ความสัมพันธ์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.title} />
+          <Textinput onChange={() => {}} register={register(`personalInfo.urgentContact.id`, { required: "" })} required title="เบอร์โทรศัพท์" setValue={setValue} prefill={driverInfo[0]?.personalInfo.urgentContact.id} />
         </div>
       </div>
     </div>
@@ -177,8 +180,8 @@ const ConfirmInfoForm = ({ driverInfo, images, setStep, register, setValue }) =>
   useEffect(() => {
     const date = new Date()
     let yearArray = []
-    for (let i = date.getFullYear(); i >= date.getFullYear() - 10; i--) {
-      yearArray.push((i + 543).toString())
+    for (let i = date.getFullYear(); i >= date.getFullYear() - 30; i--) {
+      yearArray.push(i.toString())
     } 
     setYears(yearArray)
   }, []);
@@ -189,19 +192,19 @@ const ConfirmInfoForm = ({ driverInfo, images, setStep, register, setValue }) =>
         <>
           <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
           <div className={"mb-1 grid grid-cols-2 gap-x-3 " }>
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.carType")} title="ประเภทของรถ" options={["Economy type", "Sedan type", "Family type", "Van type"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carType} />
-            <Textinput onChange={() => {}} register={register("vehicleInfo.carModel")} title="ชื่อรุ่นของรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carModel} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.carType", { required: "" })} required title="ประเภทของรถ" options={["Economy type", "Sedan type", "Family type", "Van type"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carType} />
+            <Textinput onChange={() => {}} register={register("vehicleInfo.carModel", { required: "" })} required title="ชื่อรุ่นของรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.carModel} />
           </div>
           <div onClick={() => window.location.replace("https://www.thai-taxi.com/car-type")} className='underline decoration-red-500 text-red-600 text-sm mb-5 text-left font-medium'>กดเพื่อเช็คประเภทรถ</div>
           <div className={"mb-3 " }>
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.birth")} title="ปีเกิดของรถ" options={years} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.birth} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.birth", { required: "" })} required title="ปีเกิดของรถ" options={years} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.birth} />
           </div>
           <div className={"mb-3 grid grid-cols-2 gap-x-3 " }>
-            <Textinput onChange={() => {}} register={register("vehicleInfo.plateNo")} title="เลขทะเบียนรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.plateNo} />
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.plateColor")} title="ประเภททะเบียนรถ" options={["ป้ายเขียว", "ป้ายเหลือง", "อื่นๆ"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.plateColor} />
+            <Textinput onChange={() => {}} register={register("vehicleInfo.plateNo", { required: "" })} required title="เลขทะเบียนรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.plateNo} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.plateColor", { required: "" })} required title="ประเภททะเบียนรถ" options={["ป้ายเขียว", "ป้ายเหลือง", "อื่นๆ"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.plateColor} />
           </div>
           <div className={"mb-5 " }>
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.insurance")} title="ชั้นของประกันรถ" options={["ชั้น 1", "ชั้น 2", "ชั้น 3"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.insurance} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.insurance", { required: "" })} required title="ชั้นของประกันรถ" options={["ชั้น 1", "ชั้น 2", "ชั้น 3"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo.insurance} />
           </div>
         </>
       }

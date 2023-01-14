@@ -53,7 +53,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://b7a6-2405-9800-b650-586-add9-eec4-7af8-65b8.ap.ngrok.io", connectionOptions)
+        const socket = io("https://0dce-2405-9800-b650-586-eca1-587e-d62c-56e9.ap.ngrok.io", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -144,7 +144,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://b7a6-2405-9800-b650-586-add9-eec4-7af8-65b8.ap.ngrok.io", connectionOptions)
+        socket = io("https://0dce-2405-9800-b650-586-eca1-587e-d62c-56e9.ap.ngrok.io", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
@@ -487,138 +487,263 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                     />}
                 </div>
             </div>
-            <div className={"h-screen w-full fixed top-0 left-0 bg-white transition duration-300 " + (onCheckBookingInfo ? "translate-x-0" : "translate-x-full")}>
-                <div onClick={() => setOnCheckBookingInfo(current => !current)} style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className="flex px-4 py-4">
-                    <div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div>
-                    <div className="font-semibold text-lg">Detail</div>
-                </div>
-                <div>
+            <div className={"h-screen w-full fixed top-0 left-0 bg-white transition overflow-y-scroll overflow-x-hidden duration-300 " + (onCheckBookingInfo ? "translate-x-0" : "translate-x-full")}>
+                <div className="">
+                    <div onClick={() => setOnCheckBookingInfo(current => !current)} style={{ boxShadow: "5px 0px 10px 4px rgba(0, 0, 0, 0.15)" }} className="flex px-4 py-4">
+                        <div><FontAwesomeIcon className="text-2xl mr-5" icon={faChevronLeft} /></div>
+                        <div className="font-semibold text-lg">Detail</div>
+                    </div>
                     <div>
-                        <div className="px-5 pt-5 bg-white pb-3">
-                            <div className="">
-                                {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
-                                <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info</div>
-                                <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
-                                    {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
-                                    {bookingData.bookingType === "R&H" ?
-                                    <div className="">
-                                        <div>
+                        <div>
+                            <div className="px-5 pt-5 bg-white pb-3">
+                                <div className="">
+                                    {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
+                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info</div>
+                                    <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
+                                        {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
+                                        {bookingData.bookingType === "R&H" ?
+                                        <div className="">
                                             <div>
-                                                {!onEdit[0] ?
-                                                    <div className="font-semibold w-10/12">{bookingData.bookingInfo.start.place.name}</div>
-                                                    :
-                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                        <input {...register("bookingInfo.start.place.name")}  placeholder="" type="text" className="outline-none w-full" />
-                                                    </div>
-                                                }
-                                                <div className="-mt-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                                                {increment1 && Object.keys(area).map((place, index) => {
-                                                    return (
-                                                        <div key={place} className="flex items-start">
-                                                            <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 mt-1 rounded-full border-yellow-600 font-bold mr-2">
-                                                            </div>
-                                                            {!onEdit[0] ?
-                                                                <div className="">{area[place]}</div>
-                                                                :
-                                                                <div className="flex items-center w-full">
-                                                                    <div className='bg-white w-full my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                        <input {...register(`bookingInfo.visit.[${index}].place.name`)} placeholder="" type="text" className="outline-none w-full" />
+                                                <div>
+                                                    {!onEdit[0] ?
+                                                        <div className="font-semibold w-10/12">{bookingData.bookingInfo.start.place.name}</div>
+                                                        :
+                                                        <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                            <input {...register("bookingInfo.start.place.name")}  placeholder="" type="text" className="outline-none w-full" />
+                                                        </div>
+                                                    }
+                                                    <div className="-mt-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                                                    {increment1 && Object.keys(area).map((place, index) => {
+                                                        return (
+                                                            <div key={place} className="flex items-start">
+                                                                <div style={{ aspectRatio: "1" }} className="relative border-4 w-4 h-4 mt-1 rounded-full border-yellow-600 font-bold mr-2">
+                                                                </div>
+                                                                {!onEdit[0] ?
+                                                                    <div className="">{area[place]}</div>
+                                                                    :
+                                                                    <div className="flex items-center w-full">
+                                                                        <div className='bg-white w-full my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                            <input {...register(`bookingInfo.visit.[${index}].place.name`)} placeholder="" type="text" className="outline-none w-full" />
+                                                                        </div>
+                                                                        {Object.keys(area)?.length !== 1 && <div onClick={() => addAreaHandle(place, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid ml-2 place-items-center cursor-pointer"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
                                                                     </div>
-                                                                    {Object.keys(area)?.length !== 1 && <div onClick={() => addAreaHandle(place, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid ml-2 place-items-center cursor-pointer"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>}
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    {onEdit[0] && 
+                                                        <div className="ml-6 flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md mb-3 mt-1">
+                                                            <div onClick={() => addAreaHandle("", "add")} className="px-3 cursor-pointer text-sm py-1">+ Add</div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div className="-mb-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                                            </div>
+                                            {!onEdit[0] ?
+                                                <div className="font-semibold mb-3">{bookingData.bookingInfo.end.place.name}</div>
+                                                :
+                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                    <input {...register("bookingInfo.end.place.name")} placeholder="" type="text" className="outline-none w-full" />
+                                                </div>
+                                            }
+                                            <table className="">
+                                                <tbody>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Course</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2 w-full">
+                                                            <div className="">Rent & Hire</div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Type</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                bookingData.bookingInfo.type
+                                                                :
+                                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                    <select className="w-full outline-none bg-white" {...register("bookingInfo.type")}>
+                                                                        <option value="Sightseeing">Sightseeing</option>
+                                                                        <option value="Shopping">Shopping</option>
+                                                                        <option value="Business">Business</option>
+                                                                        <option value="Others">Others</option>
+                                                                    </select>
                                                                 </div>
                                                             }
-                                                        </div>
-                                                    )
-                                                })}
-                                                {onEdit[0] && 
-                                                    <div className="ml-6 flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md mb-3 mt-1">
-                                                        <div onClick={() => addAreaHandle("", "add")} className="px-3 cursor-pointer text-sm py-1">+ Add</div>
-                                                    </div>
-                                                }
-                                            </div>
-                                            <div className="-mb-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Starting</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                bookingData.bookingInfo.start.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.start.pickupTime + ", " + pickupDate
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2">
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.start.pickupTime} />
+                                                                        <input {...register("bookingInfo.start.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
+                                                                    </div>
+                                                                    <div onClick={() => {
+                                                                        let date = getValues("bookingInfo.start.pickupDate")
+                                                                        if (date !== "ASAP") {
+                                                                            date = date.split('/').reverse()
+                                                                            setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
+                                                                        }
+                                                                        setDatePicker("start.pickupDate")
+                                                                    }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.start.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Ending</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                bookingData.bookingInfo.end.pickupTime + ", " + pickupDateEnd
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2">
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.end.pickupTime} />
+                                                                        <input {...register("bookingInfo.end.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
+                                                                    </div>
+                                                                    <div onClick={() => {
+                                                                        let date = getValues("bookingInfo.end.pickupDate")
+                                                                        if (date !== "ASAP") {
+                                                                            date = date.split('/').reverse()
+                                                                            setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
+                                                                        }
+                                                                        setDatePicker("end.pickupDate")
+                                                                    }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.end.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Car Type</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                driver[0]?.vehicleInfo.carType
+                                                                :
+                                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                    <select className="w-full outline-none bg-white" {...register("bookingInfo.carType")}>
+                                                                        <option value="Economy type">Economy type</option>
+                                                                        <option value="Sedan type">Sedan type</option>
+                                                                        <option value="Family type">Family type</option>
+                                                                        <option value="Van type">Van type</option>
+                                                                    </select>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Passenger</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                `${bookingData.bookingInfo.passenger.adult} adults, ${bookingData.bookingInfo.passenger.child} children`
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2">
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.passenger.adult")} placeholder="Adult" type="number" className="outline-none w-full" />
+                                                                    </div>
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.passenger.child")} placeholder="Child" type="number" className="outline-none w-full" />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Luggage</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                `${bookingData.bookingInfo.luggage.big} big, ${bookingData.bookingInfo.luggage.medium} medium`
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2">
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.luggage.big")} placeholder="Big" type="number" className="outline-none w-full" />
+                                                                    </div>
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.luggage.medium")} placeholder="Med" type="number" className="outline-none w-full" />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">Message</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                bookingData.bookingInfo.message.en
+                                                                :
+                                                                <div className="">
+                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                                        <input {...register("bookingInfo.message.en")} placeholder="Big" type="text" className="outline-none w-full" />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        {!onEdit[0] ?
-                                            <div className="font-semibold mb-3">{bookingData.bookingInfo.end.place.name}</div>
-                                            :
-                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                <input {...register("bookingInfo.end.place.name")} placeholder="" type="text" className="outline-none w-full" />
-                                            </div>
-                                        }
-                                        <table className="">
+                                        :
+                                        <div className="">
+                                            {!onEdit[0] ?
+                                                <div className="font-semibold w-10/12">{bookingData.bookingInfo.from.name}</div>
+                                                :
+                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                    <input {...register("bookingInfo.from.name")} placeholder="" type="text" className="outline-none w-full" />
+                                                </div>
+                                            }
+                                            <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
+                                            {!onEdit[0] ?
+                                                <div className="font-semibold mb-3">{bookingData.bookingInfo.to.name}</div>
+                                                :
+                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
+                                                    <input {...register("bookingInfo.to.name")} placeholder="" type="text" className="outline-none w-full" />
+                                                </div>
+                                            }
+                                            <table className="">
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">Course</td>
-                                                    {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                    <td className="align-middle pl-2 w-full">
-                                                        <div className="">Rent & Hire</div>
+                                                    {onEdit[0] && <td className="text-xl pl-2 pb-1 align-middle">:</td>}
+                                                    <td className="align-middle pl-2">
+                                                        A to B Course
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">Type</td>
+                                                    <td className="align-middle whitespace-nowrap font-medium">Time</td>
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
                                                         {!onEdit[0] ?
-                                                            bookingData.bookingInfo.type
-                                                            :
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <select className="w-full outline-none bg-white" {...register("bookingInfo.type")}>
-                                                                    <option value="Sightseeing">Sightseeing</option>
-                                                                    <option value="Shopping">Shopping</option>
-                                                                    <option value="Business">Business</option>
-                                                                    <option value="Others">Others</option>
-                                                                </select>
-                                                            </div>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">Starting</td>
-                                                    {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                    <td className="align-middle pl-2">
-                                                        {!onEdit[0] ?
-                                                            bookingData.bookingInfo.start.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.start.pickupTime + ", " + pickupDate
+                                                            bookingData.bookingInfo.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.pickupTime + ", " + pickupDate
                                                             :
                                                             <div className="grid gap-x-2 grid-cols-2">
                                                                 <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.start.pickupTime} />
-                                                                    <input {...register("bookingInfo.start.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
+                                                                    <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.pickupTime} />
+                                                                    <input {...register("bookingInfo.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
                                                                 </div>
                                                                 <div onClick={() => {
-                                                                    let date = getValues("bookingInfo.start.pickupDate")
+                                                                    let date = getValues("bookingInfo.pickupDate")
                                                                     if (date !== "ASAP") {
                                                                         date = date.split('/').reverse()
                                                                         setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
                                                                     }
-                                                                    setDatePicker("start.pickupDate")
+                                                                    setDatePicker("pickupDate")
                                                                 }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <input {...register("bookingInfo.start.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">Ending</td>
-                                                    {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                    <td className="align-middle pl-2">
-                                                        {!onEdit[0] ?
-                                                            bookingData.bookingInfo.end.pickupTime + ", " + pickupDateEnd
-                                                            :
-                                                            <div className="grid gap-x-2 grid-cols-2">
-                                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.end.pickupTime} />
-                                                                    <input {...register("bookingInfo.end.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
-                                                                </div>
-                                                                <div onClick={() => {
-                                                                    let date = getValues("bookingInfo.end.pickupDate")
-                                                                    if (date !== "ASAP") {
-                                                                        date = date.split('/').reverse()
-                                                                        setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
-                                                                    }
-                                                                    setDatePicker("end.pickupDate")
-                                                                }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <input {...register("bookingInfo.end.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
+                                                                    <input {...register("bookingInfo.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
                                                                 </div>
                                                             </div>
                                                         }
@@ -678,256 +803,133 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                         }
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">Message</td>
-                                                    {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                    <td className="align-middle pl-2">
-                                                        {!onEdit[0] ?
-                                                            bookingData.bookingInfo.message.en
-                                                            :
-                                                            <div className="">
-                                                                <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                    <input {...register("bookingInfo.message.en")} placeholder="Big" type="text" className="outline-none w-full" />
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </td>
-                                                </tr>
                                             </tbody>
-                                        </table>
-                                    </div>
-                                    :
-                                    <div className="">
-                                        {!onEdit[0] ?
-                                            <div className="font-semibold w-10/12">{bookingData.bookingInfo.from.name}</div>
-                                            :
-                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                <input {...register("bookingInfo.from.name")} placeholder="" type="text" className="outline-none w-full" />
-                                            </div>
-                                        }
-                                        <div className="-my-1"><FontAwesomeIcon className="text-blue-900 mr-2" icon={faArrowDown} /></div>
-                                        {!onEdit[0] ?
-                                            <div className="font-semibold mb-3">{bookingData.bookingInfo.to.name}</div>
-                                            :
-                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                <input {...register("bookingInfo.to.name")} placeholder="" type="text" className="outline-none w-full" />
-                                            </div>
-                                        }
-                                        <table className="">
-                                        <tbody>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Course</td>
-                                                {onEdit[0] && <td className="text-xl pl-2 pb-1 align-middle">:</td>}
-                                                <td className="align-middle pl-2">
-                                                    A to B Course
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Time</td>
-                                                {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                <td className="align-middle pl-2">
-                                                    {!onEdit[0] ?
-                                                        bookingData.bookingInfo.pickupTime === "ASAP" ? "ASAP" : bookingData.bookingInfo.pickupTime + ", " + pickupDate
-                                                        :
-                                                        <div className="grid gap-x-2 grid-cols-2">
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <Timepicker chatroom register={register("bookingInfo.pickupTime")} title="Time" setValue={setValue} prefill={bookingData.bookingInfo.pickupTime} />
-                                                                <input {...register("bookingInfo.pickupTime")} placeholder="" type="text" className="outline-none w-full" hidden />
-                                                            </div>
-                                                            <div onClick={() => {
-                                                                let date = getValues("bookingInfo.pickupDate")
-                                                                if (date !== "ASAP") {
-                                                                    date = date.split('/').reverse()
-                                                                    setDateValue(new Date(date[0], (parseInt(date[1]) - 1).toString() , date[2]))
-                                                                }
-                                                                setDatePicker("pickupDate")
-                                                            }} className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <input {...register("bookingInfo.pickupDate")} placeholder="" type="text" className="outline-none w-full" disabled />
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Car Type</td>
-                                                {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                <td className="align-middle pl-2">
-                                                    {!onEdit[0] ?
-                                                        driver[0]?.vehicleInfo.carType
-                                                        :
-                                                        <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                            <select className="w-full outline-none bg-white" {...register("bookingInfo.carType")}>
-                                                                <option value="Economy type">Economy type</option>
-                                                                <option value="Sedan type">Sedan type</option>
-                                                                <option value="Family type">Family type</option>
-                                                                <option value="Van type">Van type</option>
-                                                            </select>
-                                                        </div>
-                                                    }
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Passenger</td>
-                                                {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                <td className="align-middle pl-2">
-                                                    {!onEdit[0] ?
-                                                        `${bookingData.bookingInfo.passenger.adult} adults, ${bookingData.bookingInfo.passenger.child} children`
-                                                        :
-                                                        <div className="grid gap-x-2 grid-cols-2">
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <input {...register("bookingInfo.passenger.adult")} placeholder="Adult" type="number" className="outline-none w-full" />
-                                                            </div>
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <input {...register("bookingInfo.passenger.child")} placeholder="Child" type="number" className="outline-none w-full" />
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-medium">Luggage</td>
-                                                {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                <td className="align-middle pl-2">
-                                                    {!onEdit[0] ?
-                                                        `${bookingData.bookingInfo.luggage.big} big, ${bookingData.bookingInfo.luggage.medium} medium`
-                                                        :
-                                                        <div className="grid gap-x-2 grid-cols-2">
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <input {...register("bookingInfo.luggage.big")} placeholder="Big" type="number" className="outline-none w-full" />
-                                                            </div>
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <input {...register("bookingInfo.luggage.medium")} placeholder="Med" type="number" className="outline-none w-full" />
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                    }
-                                    {onEdit[0] &&
-                                        <div className="grid grid-cols-2 gap-x-3 mt-3">
-                                            <div onClick={() => {
-                                                if (bookingData.bookingType === "R&H") {
-                                                    const areaTemp = {}
-                                                    bookingData.bookingInfo.visit.forEach((visit, index) => {
-                                                        areaTemp[index] = visit.place.name
-                                                    })
-                                                    setArea({...areaTemp})
-                                                }
-                                                setOnEdit([false, onEdit[1]])
-                                            }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
-                                            <button onClick={() => setSubmitType("bookingInfo")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
-                                        </div>
-                                    }
-                                </form>
-                                <div>
-                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Selected Price</div>
-                                    <div className="bg-blue-50 rounded-lg relative">
-                                        <form onSubmit={handleSubmit(submitHandle)} className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
-                                            {!onEdit[1] && userType === "driver" && <div onClick={() => setOnEdit([onEdit[0], true])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">
-                                                            Course
-                                                        </td>
-                                                        {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-3 w-7/12">
-                                                            {onEdit[1] ? 
-                                                                <div className="flex items-center w-full">
-                                                                    <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
-                                                                        <input {...register("extra.course")} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
-                                                                    </div>
-                                                                </div>
-                                                                :
-                                                                "฿" + iniPrice.course
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">
-                                                            Tollway
-                                                        </td>
-                                                        {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-3 w-7/12">
-                                                            {onEdit[1] ? 
-                                                                <div className="flex items-center w-full">
-                                                                    <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
-                                                                        <input {...register("extra.tollway")} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
-                                                                    </div>
-                                                                </div>
-                                                                :
-                                                                "฿" + iniPrice.tollway
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                    {increment && Object.keys(price).map((item, index) => {
-                                                        return (
-                                                            <tr key={item}>
-                                                                <td className="align-middle whitespace-nowrap font-medium">
-                                                                    {onEdit[1] ? 
-                                                                        <div className='bg-white my-1 px-2 py-1 transition-all rounded-md border border-gray-400'>
-                                                                            <input {...register(`extra.extra.[${index}].title`)} placeholder="" type="text" className="outline-none w-full text-sm font-medium" />
-                                                                        </div>
-                                                                        :
-                                                                        item
-                                                                    }
-                                                                </td>
-                                                                {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                                <td className="align-middle pl-3 w-7/12">
-                                                                    {onEdit[1] ? 
-                                                                        <div className="flex items-center w-full">
-                                                                            <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
-                                                                                <input {...register(`extra.extra.[${index}].price`)} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
-                                                                            </div>
-                                                                            <div onClick={() => addExtraHandle(item, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid place-items-center cursor-pointer ml-2"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>
-                                                                        </div>
-                                                                        :
-                                                                        "฿" + iniPrice.extra[index].price
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    })}
-                                                </tbody>
                                             </table>
-                                            {onEdit[1] && 
-                                                <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md mb-3 mt-1">
-                                                    <div onClick={() => addExtraHandle("", "add")} className="px-3 cursor-pointer text-sm py-1">+ Add</div>
-                                                </div>
-                                            }
-                                            {onEdit[1] &&
-                                                <div className="grid grid-cols-2 gap-x-3 mt-3">
-                                                    <div onClick={() => {
-                                                        const temp = {}
-                                                        iniPrice.extra.forEach((extra, index) => {
-                                                            temp[extra.title] = parseInt(extra.price)
+                                        </div>
+                                        }
+                                        {onEdit[0] &&
+                                            <div className="grid grid-cols-2 gap-x-3 mt-3">
+                                                <div onClick={() => {
+                                                    if (bookingData.bookingType === "R&H") {
+                                                        const areaTemp = {}
+                                                        bookingData.bookingInfo.visit.forEach((visit, index) => {
+                                                            areaTemp[index] = visit.place.name
                                                         })
-                                                        setOnEdit([onEdit[0], false])
-                                                        setPrice({...temp})
-                                                    }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
-                                                    <button onClick={() => setSubmitType("extra")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
-                                                </div>
-                                            }
-                                        </form>
-                                        <div className="absolute w-5 h-5 border bg-white border-gray-400 top-full left-0 -translate-y-1/2 -translate-x-1/2 rounded-full">
-                                            <div style={{ left: "-2px" }} className="absolute w-5 h-10 bg-white -translate-x-1/2 top-1/2 -translate-y-1/2"></div>
+                                                        setArea({...areaTemp})
+                                                    }
+                                                    setOnEdit([false, onEdit[1]])
+                                                }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
+                                                <button onClick={() => setSubmitType("bookingInfo")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
+                                            </div>
+                                        }
+                                    </form>
+                                    <div>
+                                        <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Selected Price</div>
+                                        <div className="bg-blue-50 rounded-lg relative">
+                                            <form onSubmit={handleSubmit(submitHandle)} className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
+                                                {!onEdit[1] && userType === "driver" && <div onClick={() => setOnEdit([onEdit[0], true])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td className="align-middle whitespace-nowrap font-medium">
+                                                                Course
+                                                            </td>
+                                                            {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                            <td className="align-middle pl-3 w-7/12">
+                                                                {onEdit[1] ? 
+                                                                    <div className="flex items-center w-full">
+                                                                        <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
+                                                                            <input {...register("extra.course")} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
+                                                                        </div>
+                                                                    </div>
+                                                                    :
+                                                                    "฿" + iniPrice.course
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td className="align-middle whitespace-nowrap font-medium">
+                                                                Tollway
+                                                            </td>
+                                                            {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                            <td className="align-middle pl-3 w-7/12">
+                                                                {onEdit[1] ? 
+                                                                    <div className="flex items-center w-full">
+                                                                        <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
+                                                                            <input {...register("extra.tollway")} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
+                                                                        </div>
+                                                                    </div>
+                                                                    :
+                                                                    "฿" + iniPrice.tollway
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        {increment && Object.keys(price).map((item, index) => {
+                                                            return (
+                                                                <tr key={item}>
+                                                                    <td className="align-middle whitespace-nowrap font-medium">
+                                                                        {onEdit[1] ? 
+                                                                            <div className='bg-white my-1 px-2 py-1 transition-all rounded-md border border-gray-400'>
+                                                                                <input {...register(`extra.extra.[${index}].title`)} placeholder="" type="text" className="outline-none w-full text-sm font-medium" />
+                                                                            </div>
+                                                                            :
+                                                                            item
+                                                                        }
+                                                                    </td>
+                                                                    {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                                    <td className="align-middle pl-3 w-7/12">
+                                                                        {onEdit[1] ? 
+                                                                            <div className="flex items-center w-full">
+                                                                                <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
+                                                                                    <input {...register(`extra.extra.[${index}].price`)} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
+                                                                                </div>
+                                                                                <div onClick={() => addExtraHandle(item, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid place-items-center cursor-pointer ml-2"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>
+                                                                            </div>
+                                                                            :
+                                                                            "฿" + iniPrice.extra[index].price
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                                {onEdit[1] && 
+                                                    <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md mb-3 mt-1">
+                                                        <div onClick={() => addExtraHandle("", "add")} className="px-3 cursor-pointer text-sm py-1">+ Add</div>
+                                                    </div>
+                                                }
+                                                {onEdit[1] &&
+                                                    <div className="grid grid-cols-2 gap-x-3 mt-3">
+                                                        <div onClick={() => {
+                                                            const temp = {}
+                                                            iniPrice.extra.forEach((extra, index) => {
+                                                                temp[extra.title] = parseInt(extra.price)
+                                                            })
+                                                            setOnEdit([onEdit[0], false])
+                                                            setPrice({...temp})
+                                                        }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
+                                                        <button onClick={() => setSubmitType("extra")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
+                                                    </div>
+                                                }
+                                            </form>
+                                            <div className="absolute w-5 h-5 border bg-white border-gray-400 top-full left-0 -translate-y-1/2 -translate-x-1/2 rounded-full">
+                                                <div style={{ left: "-2px" }} className="absolute w-5 h-10 bg-white -translate-x-1/2 top-1/2 -translate-y-1/2"></div>
+                                            </div>
+                                            <div className="absolute w-5 h-5 border bg-white border-gray-400 top-full right-0 -translate-y-1/2 translate-x-1/2 rounded-full">
+                                                <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
+                                            </div>
                                         </div>
-                                        <div className="absolute w-5 h-5 border bg-white border-gray-400 top-full right-0 -translate-y-1/2 translate-x-1/2 rounded-full">
-                                            <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
+                                        <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
+                                            <div className="text-lg font-semibold mr-2">Total:</div>
+                                            <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                                         </div>
+                                        {userType === "driver" &&
+                                            <div className=" mb-5 mt-3">
+                                                <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอนงาน</div>
+                                            </div>
+                                        }
                                     </div>
-                                    <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                        <div className="text-lg font-semibold mr-2">Total:</div>
-                                        <div className="text-lg font-semibold text-green-600">฿ {total}</div>
-                                    </div>
-                                    {userType === "driver" &&
-                                        <div className=" mb-5 mt-3">
-                                            <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอนงาน</div>
-                                        </div>
-                                    }
                                 </div>
                             </div>
                         </div>

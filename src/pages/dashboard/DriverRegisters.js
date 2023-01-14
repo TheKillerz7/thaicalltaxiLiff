@@ -50,9 +50,9 @@ const DriverRegisters = () => {
     }
 
     return (
-        <div className="h-full px-10 py-8">
+        <div className="h-full sm:px-10 px-5 py-8">
             <div className="text-2xl font-semibold mb-10">Registration Manager</div>
-            <div className="bg-white rounded-md py-5">
+            <div className="bg-white rounded-md py-5 overflow-x-scroll">
                 <div className="px-7 flex justify-between items-center mb-5">
                     <div className="font-medium">Registration Request</div>
                     <div className="border-2 border-gray-300 rounded-md py-1 px-3 w-3/12 flex items-center">
@@ -60,7 +60,7 @@ const DriverRegisters = () => {
                         <input placeholder="Search here..." className="outline-none w-full text-sm" type="text" />
                     </div>
                 </div>
-                <div className="">
+                <div style={{ minWidth: "1000px" }} className="overflow-x-scroll ">
                     <div className="bg-gray-50 py-2 px-7 flex">
                         <div className="text-sm font-semibold w-2/12">Name</div>
                         <div className="text-sm font-semibold w-1/12">Sex</div>
@@ -104,8 +104,8 @@ const DriverRegisters = () => {
                     </div>
                 </div> */}
             </div>
-            <div className={"fixed bg-black w-full h-screen top-0 left-0 bg-opacity-50 grid place-items-center transition " + (onDriverInfo ? "opacity-100" : "opacity-0 pointer-events-none")}>
-                <div className="relative bg-white w-5/12 rounded-md">
+            <div className={"fixed bg-black w-full h-screen overflow-y-scroll top-0 left-0 bg-opacity-50 grid place-items-center transition " + (onDriverInfo ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                <div className="relative bg-white sm:w-5/12 w-11/12 rounded-md">
                     <div style={{ backgroundColor: "#0c143d" }} className="relative rounded-md px-8 py-5">
                         <div className="text-white mb-7">Driver Info</div>
                         <div className="flex items-center mb-2">
@@ -196,7 +196,7 @@ const DriverRegisters = () => {
                         </form>
                     </div>
                     <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction === "accept" ? "opacity-100" : "opacity-0 pointer-events-none")}>
-                        <form onSubmit={handleSubmit(acceptHandle)} className="bg-white px-4 py-4 w-6/12 rounded-md">
+                        <form onSubmit={handleSubmit(acceptHandle)} className="bg-white px-4 py-4 sm:w-6/12 w-11/12 rounded-md">
                             <div className="text-lg font-semibold mb-2">Acception</div>
                             <div className="border-2 border-gray-300 mb-3 rounded-md py-1 px-3 flex items-center w-full">
                                 <input {...register("accept")} placeholder="Driver Code..." className="outline-none w-full text-sm" type="text" />
