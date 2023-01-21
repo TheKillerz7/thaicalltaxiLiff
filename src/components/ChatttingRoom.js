@@ -53,7 +53,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://0dce-2405-9800-b650-586-eca1-587e-d62c-56e9.ap.ngrok.io", connectionOptions)
+        const socket = io("https://109.106.255.114", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -144,7 +144,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://0dce-2405-9800-b650-586-eca1-587e-d62c-56e9.ap.ngrok.io", connectionOptions)
+        socket = io("https://109.106.255.114", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
