@@ -8,28 +8,21 @@ const Textinput = ({ title, register, setValue, error, reRender, onChange, id, p
     const input = useRef(null)
 
     useEffect(() => {
-        if (!input?.current?.value) return
-        setValue(register.name, input.current.value)
-    }, [reRender])
-
-    useEffect(() => {
-        console.log(error)
         if (error) return setReTitle(error)
         setReTitle("")
     }, [error])
 
     useEffect(() => {
-        console.log(register)
-        if (prefill) {
+        if (prefill && register) {
             setControlledValue ? setControlledValue(prefill) : setInputValue(prefill)
-            setValue(register.name, input.current.value)
+            setValue(register.name, prefill)
             setFilled(true)
         }
-    }, [prefill])
+    }, [prefill, register])
 
     const handleChanges = (value) => {
         onChange(value.target.value)
-        setControlledValue ? setControlledValue(value.current.value) : setInputValue(value.target.value)
+        setControlledValue ? setControlledValue(value.target.value) : setInputValue(value.target.value)
         setValue(register.name, value.target.value)
         value.target.value === "" ? setFilled(false) : setFilled(true)
     }

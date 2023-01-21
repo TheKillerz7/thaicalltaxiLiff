@@ -6,9 +6,8 @@ const Dropdown = ({ register, setValue, error, options, title, prefill, required
     const input = useRef(null)
 
     useEffect(() => {
-        setValue(register.name, options[0])
         const handleClick = (e) => {
-            if(e.path[0] !== input?.current && e.path[1] !== input?.current?.nextSibling){
+            if (!e.target.className.includes("outline-none w-full text-left h-full")) {
                 setFocus(false)
             }
         }
@@ -17,17 +16,18 @@ const Dropdown = ({ register, setValue, error, options, title, prefill, required
     }, [])
 
     useEffect(() => {
-        if (prefill) {
+        if (prefill && register) {
             setReTitle(prefill)
-            setValue(register.name, input.current.value)
+            setValue(register.name, prefill)
         }
-    }, [prefill])
+    }, [prefill, register])
 
     const handleChanges = (selected) => {
         setReTitle(selected.innerText)
         setFocus(false)
         setValue(register.name, selected.innerText)
     }
+    console.log()
 
     return(
         <div className={'relative bg-transparent px-4 pb-1 transition-all rounded-lg border-2 ' + (focus ? !error ? "border-blue-900" : "border-red-400" : "border-gray-300")}>

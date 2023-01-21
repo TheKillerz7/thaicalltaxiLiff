@@ -19,12 +19,12 @@ const Textareainput = ({ title, register, setValue, error, prefill, required }) 
     }, [])
 
     useEffect(() => {
-        if (prefill) {
+        if (prefill && register) {
             setInputValue(prefill)
-            setValue(register.name, input.current.value)
+            setValue(register.name, prefill)
             setFilled(true)
         }
-    }, [prefill])
+    }, [prefill, register])
 
     const handleChanges = (item) => {
         setValue(register.name, item.target.value)
