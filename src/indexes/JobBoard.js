@@ -202,6 +202,8 @@ const JobBoard = () => {
           setJobOpen(true)
           setJobData(jobTemp)
           setSearchParams({})
+        } else {
+          alert("งานนี้ได้หมดเวลาไปแล้ว")
         }
       }
       const currentJobsReq = (await getJobsByDriverId(userId)).data
