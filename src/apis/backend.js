@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://bellmanbackend.com"
+const baseURL = process.env.BASE_URL || "https://da6e-2405-9800-b650-586-32cb-589c-f169-5bf1.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
