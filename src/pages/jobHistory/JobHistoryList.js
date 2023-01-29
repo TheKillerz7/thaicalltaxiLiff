@@ -32,8 +32,7 @@ const JobHistoryList = ({ onClick, data }) => {
                                 <div className="font-semibold">{bookingInfo.end.place.name}</div>
                             </div>
                             <div className="flex flex-wrap">
-                                <div className="mb-2 py-1 px-2 font-medium text-sm bg-purple-900 text-white rounded-md mr-2">{job.bookingType}</div>
-                                <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-red-600" : "bg-yellow-800")}>
+                                <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-red-600" : "bg-green-700")}>
                                     {bookingInfo.start.pickupDate === "ASAP" ? "ASAP" : pickupDate}
                                 </div>
                                 {bookingInfo.start.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.start.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.start.pickupTime}</div>}
@@ -60,8 +59,7 @@ const JobHistoryList = ({ onClick, data }) => {
                                 <div className="font-semibold">{bookingInfo.to.name}</div>
                             </div>
                             <div className="flex flex-wrap">
-                                <div className="mb-2 py-1 px-2 font-medium text-sm bg-green-700 text-white rounded-md mr-2">{job.bookingType}</div>
-                                <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-red-600" : "bg-yellow-800")}>
+                                <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-red-600" : "bg-green-700")}>
                                     {bookingInfo.pickupDate === "ASAP" ? "ASAP" : pickupDate}
                                 </div>
                                 {bookingInfo.pickupDate !== "ASAP" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingInfo.pickupDate === "ASAP" ? "bg-white" : "bg-yellow-800")}>{bookingInfo.pickupTime}</div>}

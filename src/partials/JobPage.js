@@ -112,7 +112,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        {bookingData.bookingInfo.message.th && <div className="mt-1 font-medium text-lg text-yellow-600">ผู้โดยสาร: "{bookingData.bookingInfo.message.th}"</div>}
+                        {bookingData.bookingInfo.message.th && <div className="mt-1 font-semibold text-lg text-yellow-600">ผู้โดยสาร: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">

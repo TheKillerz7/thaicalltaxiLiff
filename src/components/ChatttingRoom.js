@@ -150,7 +150,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
             const room = (await getRoomByRoomId(roomId)).data[0]
             if (!room) return navigate(`/chat/${userType}/inbox`)
             const booking = (await getBookingById(room.bookingId)).data[0]
-            setMeetingService(booking.meetingService)
             const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
             prices.extra = JSON.parse(prices.extra)
             setPrices(prices)
@@ -183,9 +182,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
             messageStorage.push(message)
             setMessages([...messageStorage])
         });
-        socket.on('disconnect', () => {
-
-        });
         return () => {
             socket.disconnect()
             socket.off('message')
@@ -193,6 +189,14 @@ const ChatPage = ({ roomId, userType, userId }) => {
             socket.off('disconnect');
           };
     }, [])
+
+    // window.addEventListener("beforeunload", (event) => {
+    //     console.log("API call before page reload");
+    // });
+  
+    // window.addEventListener("unload", (event) => {
+    //     console.log("API call after page reload");
+    // });
 
     const sendMessageHandle = () => {
         if (inputValue.replace(/\s/g, '') == "") return

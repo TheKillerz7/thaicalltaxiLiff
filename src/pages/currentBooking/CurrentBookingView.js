@@ -115,7 +115,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">Your message: "{bookingData.bookingInfo.message.en}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-medium text-lg">User message: "{bookingData.bookingInfo.message.en}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
@@ -217,7 +217,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                             {prices.message?.en && 
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-semibold">
-                                                        Message
+                                                        Driver<br/>Message
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
                                                         {beforePickup && '"' + prices.message?.en + '"'}
