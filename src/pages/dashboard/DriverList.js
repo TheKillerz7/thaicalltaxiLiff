@@ -58,10 +58,10 @@ const DriverList = () => {
                         <div className="text-sm font-semibold w-1/12">Status</div>
                         <div className="text-sm font-semibold w-1/12"></div>
                     </div>
-                    {drivers.length > 0 && drivers.map(({ id, personalInfo, vehicleInfo, driverStatus, createdDate, jobAcceptance }, index) => {
+                    {drivers.length > 0 && drivers.map(({ driverCode, personalInfo, vehicleInfo, driverStatus, createdDate, jobAcceptance }, index) => {
                         return (
                             <div key={index} className={"py-2 px-7 flex items-center " + (index + 1 !== drivers.length && "border-b border-gray-200")}>
-                                <div className="text-sm w-1/12">{id}</div>
+                                <div className="text-sm w-1/12">{driverCode}</div>
                                 <div className="text-sm w-2/12">{personalInfo.name}</div>
                                 <div className="text-sm w-1/12">
                                     {personalInfo.title === "Mr." ?
