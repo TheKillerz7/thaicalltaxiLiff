@@ -198,7 +198,7 @@ const ConfirmInfoForm = ({ driverInfo, images, setStep, register, setValue, erro
         <>
           <div className="text-xl font-medium text-left mb-3">ข้อมูลยานพาหนะ</div>
           <div className={"mb-1 grid grid-cols-2 gap-x-3 " }>
-            <Dropdown onChange={() => {}} register={register("vehicleInfo.carType", { required: "Fill" })} error={errors?.vehicleInfo?.carType} required title="ประเภทของรถ" options={["Economy type", "Sedan type", "Family type", "Van type"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo?.carType} />
+            <Dropdown onChange={() => {}} register={register("vehicleInfo.carType", { required: "Fill" })} error={errors?.vehicleInfo?.carType} required title="ประเภทของรถ" options={["Economy type", "Sedan type", "Family type", "Van type", "Team leader"]} setValue={setValue} prefill={driverInfo[0]?.vehicleInfo?.carType} />
             <Textinput onChange={() => {}} register={register("vehicleInfo.carModel", { required: "Fill" })} error={errors?.vehicleInfo?.carModel} required title="ชื่อรุ่นของรถ" setValue={setValue} prefill={driverInfo[0]?.vehicleInfo?.carModel} />
           </div>
           <div onClick={() => window.location.replace("https://www.thai-taxi.com/car-type")} className='underline decoration-red-500 text-red-600 text-sm mb-5 text-left font-medium'>กดเพื่อเช็คประเภทรถ</div>
