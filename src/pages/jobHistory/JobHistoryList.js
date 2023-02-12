@@ -17,7 +17,7 @@ const JobHistoryList = ({ onClick, data }) => {
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className={"font-medium text-sm " + (job.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{job.bookingStatus.charAt(0).toUpperCase() + job.bookingStatus.slice(1)}</div>
-                                <div className="text-sm font-medium text-gray-600 ml-2">#{(job.id + 300000).toString().splice(3, 0, "-")}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
@@ -44,7 +44,7 @@ const JobHistoryList = ({ onClick, data }) => {
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className={"font-medium text-sm " + (job.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{job.bookingStatus.charAt(0).toUpperCase() + job.bookingStatus.slice(1)}</div>
-                                <div className="text-sm font-medium text-gray-600 ml-2">#{(job.id + 300000).toString().splice(3, 0, "-")}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
