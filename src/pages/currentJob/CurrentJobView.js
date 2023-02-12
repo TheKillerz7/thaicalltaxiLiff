@@ -70,7 +70,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
                             <div className="flex items-center mb-2">
-                                <div className="font-medium text-gray-600 mt-0.5">#{bookingData.bookingId}</div>
+                                <div className="font-medium text-gray-600 mt-0.5">#{(bookingData.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">

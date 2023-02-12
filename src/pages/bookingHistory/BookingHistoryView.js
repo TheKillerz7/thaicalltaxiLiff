@@ -68,7 +68,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                         <div className="mb-2">
                             <div className="flex items-center mb-2">
                                 <div className={"text-lg font-medium " + (bookingData.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{bookingData.bookingStatus.charAt(0).toUpperCase() + bookingData.bookingStatus.slice(1)}</div>
-                                <div className="font-medium text-gray-600 ml-2 mt-0.5">#{bookingData.bookingId}</div>
+                                <div className="font-medium text-gray-600 ml-2 mt-0.5">#{(bookingData.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">

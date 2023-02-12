@@ -19,7 +19,7 @@ const CurrentJobList = ({ onClick, data }) => {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
-                                <div className="text-sm font-medium text-gray-600">#{job.bookingId}</div>
+                                <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
@@ -43,7 +43,7 @@ const CurrentJobList = ({ onClick, data }) => {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
-                                <div className="text-sm font-medium text-gray-600">#{job.bookingId}</div>
+                                <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">

@@ -36,9 +36,9 @@ const DriverList = () => {
     }
 
     return (
-        <div className="h-full px-10 py-8">
+        <div className="h-full sm:px-10 px-5 py-8">
             <div className="text-2xl font-semibold mb-10">Driver Manager</div>
-            <div className="bg-white rounded-md py-5">
+            <div className="bg-white rounded-md py-5 overflow-x-scroll">
                 <div className="px-7 flex justify-between items-center mb-5">
                     <div className="font-medium">Driver List</div>
                     <div className="border-2 border-gray-300 rounded-md py-1 px-3 w-3/12 flex items-center">
@@ -46,7 +46,7 @@ const DriverList = () => {
                         <input placeholder="Search here..." className="outline-none w-full text-sm" type="text" />
                     </div>
                 </div>
-                <div className="">
+                <div style={{ minWidth: "1000px" }} className="overflow-x-scroll ">
                     <div className="bg-gray-50 py-2 px-7 flex">
                         <div className="text-sm font-semibold w-1/12">ID</div>
                         <div className="text-sm font-semibold w-2/12">Name</div>

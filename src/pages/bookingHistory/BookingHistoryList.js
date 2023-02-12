@@ -17,7 +17,7 @@ const BookingHistoryList = ({ onClick, data }) => {
                         <div key={index} onClick={(e) => onClick(e, booking) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className={"font-medium text-sm " + (booking.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{booking.bookingStatus.charAt(0).toUpperCase() + booking.bookingStatus.slice(1)}</div>
-                                <div className="text-sm font-medium text-gray-600 ml-2">#{booking.bookingId}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{(booking.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
@@ -46,7 +46,7 @@ const BookingHistoryList = ({ onClick, data }) => {
                         <div key={index} onClick={(e) => onClick(e, booking) || null} style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.15)" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className={"font-medium text-sm " + (booking.bookingStatus === "canceled" ? "text-red-600" : "text-green-600")}>{booking.bookingStatus.charAt(0).toUpperCase() + booking.bookingStatus.slice(1)}</div>
-                                <div className="text-sm font-medium text-gray-600 ml-2">#{booking.bookingId}</div>
+                                <div className="text-sm font-medium text-gray-600 ml-2">#{(booking.id + 300000).toString().splice(3, 0, "-")}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
