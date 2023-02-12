@@ -24,10 +24,16 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
     const timeArray = isOpen && (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
-    const now = moment(new Date()); //todays date
-    const end = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2], timeArray[0], timeArray[1])); // another date
-    const duration = moment.duration(now.diff(end));
-    const beforePickup = end < now ? true : duration.asMinutes() <= 5 ? true : false
+    let beforePickup
+
+    if (dateArray.length === 1) {
+        beforePickup = true
+    } else {
+        const now = moment(new Date()); //todays date
+        const end = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2], timeArray[0], timeArray[1])); // another date
+        const duration = moment.duration(now.diff(end));
+        beforePickup = end < now ? true : duration.asMinutes() <= 5 ? true : false
+    }
 
     useEffect(() => {
         const JobBoard = document.querySelector('#job')

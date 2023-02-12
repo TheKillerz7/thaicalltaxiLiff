@@ -169,7 +169,6 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                     <div className="mb-10">
                         <div>
                             <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                            {!beforePickup && <div className="text-sm text-red-500 mt-1">*Info will be available 5 mins before pickup time*</div>}
                             <div className="bg-blue-50 rounded-lg relative mt-3">
                                 <form className="h-full w-full py-4 px-4">
                                 <table>
@@ -179,7 +178,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     Driver Code
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && "#" + driver?.driverCode}
+                                                    {"#" + driver?.driverCode}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -187,7 +186,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     Car Type
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && driver?.vehicleInfo?.carType}
+                                                    {driver?.vehicleInfo?.carType}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -195,7 +194,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     Tel No.
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && driver?.personalInfo?.phone}
+                                                    {driver?.personalInfo?.phone}
                                                 </td>
                                             </tr>
                                             {prices.message?.en && 
@@ -204,7 +203,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                         Message
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
-                                                        {beforePickup && '"' + prices.message?.en + '"'}
+                                                        {'"' + prices.message?.en + '"'}
                                                     </td>
                                                 </tr>
                                             }
