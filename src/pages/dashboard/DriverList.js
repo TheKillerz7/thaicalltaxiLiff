@@ -11,7 +11,7 @@ const DriverList = () => {
     const [driverInfo, setDriverInfo] = useState([])
     const [onAction, setOnAction] = useState(false)
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm()
 
     useEffect(() => {
         const callback = async () => {
@@ -30,6 +30,20 @@ const DriverList = () => {
             alert(driverInfo[0].driverStatus === "active" ? "Ban successful" : "Unban successful")
             setOnDriverInfo(false)
             setOnAction(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const acceptHandle = async (data) => {
+        try {
+            await actionToDriver(driverInfo[0].driverId, "changeId", data.id)
+            const driversArray = await getDrivers("whereNot", {title: "driverStatus", value: "pending"})
+            setDrivers(driversArray.data)
+            alert("Change successful")
+            setOnDriverInfo(false)
+            reset({id: ""})
+            setOnAction("")
         } catch (error) {
             console.log(error)
         }
@@ -94,7 +108,7 @@ const DriverList = () => {
                         <div style={{ backgroundColor: "#0c143d" }} className="relative rounded-md px-8 py-5">
                             <div className="text-white mb-7">Driver Info</div>
                             <div className="flex items-center mb-2">
-                                <div className="text-white opacity-80 mr-2">#A2-1032</div>
+                                <div className="text-white opacity-80 mr-2">#{driverInfo[0]?.driverCode}</div>
                                 <div className={"py-1.5 px-3 text-white font-medium text-xs rounded-md " + (driverInfo[0]?.driverStatus === "active" ? "bg-green-600" : "bg-red-600")}>{driverInfo[0]?.driverStatus.charAt(0).toUpperCase() + driverInfo[0]?.driverStatus.slice(1)}</div>
                             </div>
                             <div className="text-2xl text-white">{driverInfo[0]?.personalInfo.title}{driverInfo[0]?.personalInfo.name} <span className="text-lg opacity-80 ml-1">{new Date().getFullYear() - driverInfo[0]?.personalInfo.birth} years old</span></div>
@@ -106,10 +120,6 @@ const DriverList = () => {
                                 <div className="mb-4">
                                     <div className="text-sm">Citizen ID</div>
                                     <div className="font-medium">{driverInfo[0]?.personalInfo.citizenId}</div>
-                                </div>
-                                <div className="mb-4">
-                                    <div className="text-sm">Driver License</div>
-                                    <div className="font-medium">{driverInfo[0]?.personalInfo.driverLicenseType}, {driverInfo[0]?.personalInfo.driverLicense}</div>
                                 </div>
                                 <div className="mb-4">
                                     <div className="text-sm">Contact</div>
@@ -166,14 +176,26 @@ const DriverList = () => {
                             </div>
                         </div>
                         <div className="flex justify-end items-center px-8 py-4">
-                            {/* <div className="py-2 px-5 cursor-pointer text-sm font-medium bg-gray-300 rounded-md w-max">Close</div> */}
+                            <div onClick={() => setOnAction("accept")} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-green-600 rounded-md w-max">Change ID</div>
                             {driverInfo[0]?.driverStatus === "active" ?
-                                <div onClick={() => setOnAction(true)} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Ban Driver</div>
+                                <div onClick={() => setOnAction("action")} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Ban Driver</div>
                                 :
-                                <div onClick={() => setOnAction(true)} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Unban Driver</div>
+                                <div onClick={() => setOnAction("action")} className="py-2 px-5 cursor-pointer text-sm text-white ml-3 bg-red-500 rounded-md w-max">Unban Driver</div>
                             }
                         </div>
-                        <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                        <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction === "accept" ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                            <form onSubmit={handleSubmit(acceptHandle)} className="bg-white px-4 py-4 sm:w-6/12 w-11/12 rounded-md">
+                                <div className="text-lg font-semibold mb-2">Change ID</div>
+                                <div className="border-2 border-gray-300 mb-3 rounded-md py-1 px-3 flex items-center w-full">
+                                    <input {...register("id")} placeholder="Driver Code..." className="outline-none w-full text-sm" type="text" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-2 text-center items-center">
+                                    <div onClick={() => setOnAction("")} className="py-2 px-5 cursor-pointer text-xs font-medium bg-gray-300 rounded-md">Close</div>
+                                    <button type="submit" style={{ backgroundColor: "#0c143d" }} className="py-2 px-5 cursor-pointer text-xs text-white rounded-md">Send</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div className={"absolute w-full h-full bg-black top-0 left-0 rounded-md bg-opacity-50 grid place-items-center transition " + (onAction === "action" ? "opacity-100" : "opacity-0 pointer-events-none")}>
                             <form onSubmit={handleSubmit(actionToDriverHandle)} className="bg-white px-4 py-4 w-6/12 rounded-md">
                                 {driverInfo[0]?.driverStatus === "active" ?
                                     <>

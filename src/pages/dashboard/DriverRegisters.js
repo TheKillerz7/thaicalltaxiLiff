@@ -12,7 +12,7 @@ const DriverRegisters = () => {
     const [driverInfo, setDriverInfo] = useState([])
     const [onAction, setOnAction] = useState("")
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm()
 
     useEffect(() => {
         const callback = async () => {
@@ -29,6 +29,7 @@ const DriverRegisters = () => {
             const driversArray = await getDrivers("where", {title: "driverStatus", value: "registering"})
             setDrivers(driversArray.data)
             alert("Reject successful")
+            reset({reject: ""})
             setOnDriverInfo(false)
             setOnAction(false)
         } catch (error) {
@@ -43,6 +44,7 @@ const DriverRegisters = () => {
             setDrivers(driversArray.data)
             alert("Accept successful")
             setOnDriverInfo(false)
+            reset({accept: ""})
             setOnAction("")
         } catch (error) {
             console.log(error)
