@@ -103,7 +103,7 @@ const DriverList = () => {
                         <div>1 2 3</div>
                     </div>
                 </div> */}
-                <div className={"fixed bg-black w-full h-screen top-0 left-0 bg-opacity-50 grid place-items-center transition " + (onDriverInfo ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                <div className={"fixed bg-black overflow-y-scroll py-5 w-full h-screen top-0 left-0 bg-opacity-50 grid place-items-center transition " + (onDriverInfo ? "opacity-100" : "opacity-0 pointer-events-none")}>
                     <div className="bg-white w-5/12 rounded-md relative">
                         <div style={{ backgroundColor: "#0c143d" }} className="relative rounded-md px-8 py-5">
                             <div className="text-white mb-7">Driver Info</div>
