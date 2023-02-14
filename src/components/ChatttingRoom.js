@@ -53,7 +53,7 @@ const RoomsPage = ({ userId, userType }) => {
 
     useEffect(() => {
         let rooms = []
-        const socket = io("https://d915-2405-9800-b650-586-8470-6a3b-d34-5206.ap.ngrok.io", connectionOptions)
+        const socket = io("https://thaicalltaxibackend.herokuapp.com", connectionOptions)
         socket.on('connect', async () => {
             const res = await getRoomsHandle()
             if (typeof res.data !== "string" && res.data.length > 0) {
@@ -144,7 +144,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://d915-2405-9800-b650-586-8470-6a3b-d34-5206.ap.ngrok.io", connectionOptions)
+        socket = io("https://thaicalltaxibackend.herokuapp.com", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
