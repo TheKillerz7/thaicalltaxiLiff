@@ -163,10 +163,10 @@ const AToBCourse = ({ setType, register, setValue, errors }) => {
         <div className="w-8/12 mr-2"><Datepicker error={errors?.bookingInfo?.pickupDate?.message} register={register("bookingInfo.pickupDate", { required: "Please fill this info" })} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Pickup Date" setValue={setValue} /></div>
         <div className="w-4/12"><Timepicker error={errors?.bookingInfo?.pickupDate?.message} register={register("bookingInfo.pickupTime", { required: "Please fill this info" })} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Time" setValue={setValue} /></div>
       </div>
-      {/* <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4">
         <input onClick={() => setAsap(current => !current)} id="asap" type="checkbox" className="font-semibold" />
         <label htmlFor="asap" className='underline decoration-red-500 text-red-600 text-sm ml-2 text-left font-medium'>I want now(ASAP)</label>
-      </div> */}
+      </div>
       <div className={"mb-3 " }>
         <PlaceSearch required onChange={() => {}} error={errors?.bookingInfo?.from?.message} register={register("bookingInfo.from", { required: "From" })} title="From" setValue={setValue} />
       </div>
@@ -181,7 +181,7 @@ const AToBCourse = ({ setType, register, setValue, errors }) => {
         <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.big")} title="Big luggage" setValue={setValue} />
         <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.medium")} title="Mid luggage" setValue={setValue} />
       </div>
-      {/* <div class="flex items-center mb-5"><input onChange={(e) => setValue("meetingService", e.target.value)} id="terms" type="checkbox" class="font-semibold" /><label for="terms" class="text-sm ml-2 text-left font-medium">I want<span class="ml-1 underline inline text-blue-400">Airport Meeting Service</span><span class="ml-1 inline text-red-500">+ 100B</span></label></div> */}
+      <div class="flex items-center mb-5"><input onChange={(e) => setValue("meetingService", e.target.value)} id="terms" type="checkbox" class="font-semibold" /><label for="terms" class="text-sm ml-2 text-left font-medium">I want<span class="ml-1 underline inline text-blue-400">Airport Meeting Service</span><span class="ml-1 inline text-red-500">+ 100B</span></label></div>
       <div className="mb-3"><Textareainput register={register("bookingInfo.message.en")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
   )
@@ -216,10 +216,10 @@ const RentAndHire = ({ unregister, register, setValue, increment, setIncrement, 
         <div className="w-8/12 mr-2"><Datepicker error={errors?.bookingInfo?.start?.pickupDate?.message} register={register("bookingInfo.start.pickupDate", { required: "Please fill this info" })} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Starting Date" setValue={setValue} /></div>
         <div className="w-4/12"><Timepicker error={errors?.bookingInfo?.start?.pickupTime?.message} register={register("bookingInfo.start.pickupTime", { required: "Please fill this info" })} time={time} setTime={setTime} asap={asap} setAsap={setAsap} title="Time" setValue={setValue} /></div>
       </div>
-      {/* <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4">
         <input onClick={() => setAsap(current => !current)} id="asap" type="checkbox" className="font-semibold" />
         <label htmlFor="asap" className='underline decoration-red-500 text-red-600 text-sm ml-2 text-left font-medium'>I want now(ASAP)</label>
-      </div> */}
+      </div>
       <div className={"mb-3 " }>
         <Dropdown onChange={() => {}} error={errors?.bookingInfo?.type?.message} register={register("bookingInfo.type", { required: "Please fill this info" })} title="Trip title" options={["Sightseeing (Tour)", "Shopping", "Business", "Others"]} setValue={setValue} />
       </div>

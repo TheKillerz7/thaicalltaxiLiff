@@ -144,7 +144,6 @@ const ChatPage = ({ roomId, userType, userId }) => {
     const input = useRef()
 
     useEffect(() => {
-        socket = io("https://thaicalltaxibackend.herokuapp.com", connectionOptions)
         let messageStorage = []
         const getMessage = async () => {
             const room = (await getRoomByRoomId(roomId)).data[0]
@@ -174,6 +173,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             setMessages([...messageStorage])
         }
         getMessage()
+        socket = io("https://thaicalltaxibackend.herokuapp.com", connectionOptions)
         socket.on('connect', async () => {
             console.log('connect')
             if (roomId) socket.emit("join", roomId)
