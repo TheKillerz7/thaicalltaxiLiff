@@ -42,13 +42,8 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
             setDriver(drivers)
             console.log(prices)
             if (prices) {
-                prices.extra = JSON.parse(prices.extra)
                 let totalPrice = 0
-                prices.extra.forEach((item, index) => {
-                    if (typeof item.price === "number") totalPrice += parseInt(item.price)
-                })
                 totalPrice += parseInt(prices.course)
-                totalPrice += parseInt(prices.tollway)
                 setTotal(totalPrice)
                 setPrices(prices)
             }
@@ -128,28 +123,6 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                         {"฿" + prices?.course}
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">
-                                                        Tollway
-                                                    </td>
-                                                    <td className="align-middle pl-3 w-7/12">
-                                                        {"฿" + prices?.tollway}
-                                                    </td>
-                                                </tr>
-                                                {prices?.extra?.map((extra, index) => {
-                                                    if (extra.title && extra.price) {
-                                                        return (
-                                                            <tr key={index}>
-                                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                                    {extra.title}
-                                                                </td>
-                                                                <td className="align-middle pl-3 w-7/12">
-                                                                    {"฿" + extra.price}
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    }
-                                                })}
                                             </tbody>
                                         </table>
                                     </form>

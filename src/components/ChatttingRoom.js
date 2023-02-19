@@ -353,9 +353,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         if (iniPrice.extra?.length) {
             reset({
                 extra: {
-                    course: iniPrice.course,
-                    tollway: iniPrice.tollway,
-                    extra: [...iniPrice.extra]
+                    course: iniPrice.course
                 }
             })
         }
@@ -380,28 +378,14 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
             setValue("bookingInfo.carType", driver[0].vehicleInfo.carType)
             const priceObj = {}
             let totalPrice = 0
-            if (prices.extra.length) {
-                prices.extra.forEach((extra, index) => {
-                    if (extra.title) priceObj[extra.title] = parseInt(extra.price)
-                })
-                
-                Object.keys(priceObj).forEach((item, index) => {
-                    totalPrice += priceObj[item]
-                })
-            }
             totalPrice += parseInt(prices.course)
-            totalPrice += parseInt(prices.tollway)
             setTotal(totalPrice)
             setPrice({...priceObj})
             setValue("extra", {
                 course: prices.course,
-                tollway: prices.tollway,
-                extra: (prices.extra.length && prices.extra)
             })
             setIniPrice({
-                course: prices.course,
-                tollway: prices.tollway,
-                extra: (prices.extra.length && prices.extra)
+                course: prices.course
             })
         }
         callback()
@@ -855,58 +839,8 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                 }
                                                             </td>
                                                         </tr>
-                                                        <tr>
-                                                            <td className="align-middle whitespace-nowrap font-medium">
-                                                                Tollway
-                                                            </td>
-                                                            {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                            <td className="align-middle pl-3 w-7/12">
-                                                                {onEdit[1] ? 
-                                                                    <div className="flex items-center w-full">
-                                                                        <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
-                                                                            <input {...register("extra.tollway")} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
-                                                                        </div>
-                                                                    </div>
-                                                                    :
-                                                                    "฿" + iniPrice.tollway
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                        {increment && Object.keys(price).map((item, index) => {
-                                                            return (
-                                                                <tr key={item}>
-                                                                    <td className="align-middle whitespace-nowrap font-medium">
-                                                                        {onEdit[1] ? 
-                                                                            <div className='bg-white my-1 px-2 py-1 transition-all rounded-md border border-gray-400'>
-                                                                                <input {...register(`extra.extra.[${index}].title`)} placeholder="" type="text" className="outline-none w-full text-sm font-medium" />
-                                                                            </div>
-                                                                            :
-                                                                            item
-                                                                        }
-                                                                    </td>
-                                                                    {onEdit[1] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                                    <td className="align-middle pl-3 w-7/12">
-                                                                        {onEdit[1] ? 
-                                                                            <div className="flex items-center w-full">
-                                                                                <div className='bg-white my-1 px-2 py-1 w-full transition-all rounded-md border border-gray-400'>
-                                                                                    <input {...register(`extra.extra.[${index}].price`)} placeholder="" type="number" className="outline-none w-full text-sm font-medium" />
-                                                                                </div>
-                                                                                <div onClick={() => addExtraHandle(item, "remove", index)} style={{ aspectRatio: "1" }} className="bg-blue-900 h-7 rounded-md grid place-items-center cursor-pointer ml-2"><FontAwesomeIcon className="text-sm text-white" icon={faTrash} /></div>
-                                                                            </div>
-                                                                            :
-                                                                            "฿" + iniPrice.extra[index].price
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                            )
-                                                        })}
                                                     </tbody>
                                                 </table>
-                                                {onEdit[1] && 
-                                                    <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md mb-3 mt-1">
-                                                        <div onClick={() => addExtraHandle("", "add")} className="px-3 cursor-pointer text-sm py-1">+ Add</div>
-                                                    </div>
-                                                }
                                                 {onEdit[1] &&
                                                     <div className="grid grid-cols-2 gap-x-3 mt-3">
                                                         <div onClick={() => {
