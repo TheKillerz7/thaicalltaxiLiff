@@ -335,7 +335,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const [dateValue, setDateValue] = useState(new Date())
     const [total, setTotal] = useState(0)
     const [boolean, setBoolean] = useState(false)
-    const [driver, setDriver] = useState({})
     const [increment, setIncrement] = useState(10000)
     const [increment1, setIncrement1] = useState(10000)
     const [submitType, setSubmitType] = useState("")
@@ -378,10 +377,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         }
         const callback = async () => {
             setValue("bookingInfo.carType", driver[0].vehicleInfo.carType)
-            const drivers = (await getDriverById(prices.driverId)).data[0]
-            drivers.personalInfo = JSON.parse(drivers.personalInfo)
-            drivers.vehicleInfo = JSON.parse(drivers.vehicleInfo)
-            setDriver(drivers)
             const priceObj = {}
             let totalPrice = 0
             if (prices.extra.length) {
@@ -955,7 +950,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     Driver ID
                                                                 </td>
                                                                 <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && "#" + driver?.driverCode}
+                                                                    {beforePickup && "#" + driver?.[0].driverCode}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -963,7 +958,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     Car Type
                                                                 </td>
                                                                 <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && driver?.vehicleInfo?.carType}
+                                                                    {beforePickup && driver?.[0].vehicleInfo?.carType}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -971,7 +966,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                     Tel No.
                                                                 </td>
                                                                 <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && driver?.personalInfo?.phone}
+                                                                    {beforePickup && driver?.[0].personalInfo?.phone}
                                                                 </td>
                                                             </tr>
                                                             {prices.message?.en && 
