@@ -340,6 +340,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const [submitType, setSubmitType] = useState("")
     
     const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
+    const timeArray = (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
     const pickupDate = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
     const dateArrayEnd = (bookingData?.bookingInfo.end?.pickupDate.split("/").reverse())
     const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], (parseInt(dateArrayEnd[1]) - 1).toString(), dateArrayEnd[2])).format("DD MMM YYYY")
