@@ -129,8 +129,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                     {applyProcess === "offering" ? 
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
                             <div className="text-lg font-semibold mb-2">เสนอราคา</div>
-                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคามาตรฐาน" />
-                            <div className="my-3"></div>
+                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด" />
+                            {/* <div className="my-3"></div>
                             <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
                             <div className="flex mb-2 mt-5 ">
                                 <div className="text-lg font-semibold mr-3">ราคาอื่นๆ</div>
@@ -155,7 +155,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                                     </div>
                                 )
                             })}
-                            <div className="mt-2 mb-4 font-medium text-lg">รวม: {total}</div>
+                            <div className="mt-2 mb-4 font-medium text-lg">รวม: {total}</div> */}
                             {bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP" && <div className="mb-3"><NumberInput onChange={() => {}} register={register("arrival", { required: "" })} required setValue={setValue} title="นาทีที่คุณจะถึงที่นัดหมาย" /></div>}
                             <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร" />
                             <div className="mb-9"></div>
