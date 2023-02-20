@@ -113,7 +113,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        ราคามาตรฐาน
+                                                        ราคารวมทั้งหมด
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.course}
