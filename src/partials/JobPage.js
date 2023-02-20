@@ -130,8 +130,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
                             <div className="text-lg font-semibold mb-2">เสนอราคา</div>
                             <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด" />
-                            {/* <div className="my-3"></div>
-                            <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
+                            <div className="my-3"></div>
+                            {/* <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
                             <div className="flex mb-2 mt-5 ">
                                 <div className="text-lg font-semibold mr-3">ราคาอื่นๆ</div>
                                 <div className="flex bg-blue-900 text-white text-lg font-medium w-max text-center rounded-md">
