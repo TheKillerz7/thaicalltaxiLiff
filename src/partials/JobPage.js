@@ -130,8 +130,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
                             <div className="text-lg font-semibold mb-2">เสนอราคา</div>
                             <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด" />
-                            <div className="mt-2 text-sm text-red-500">*ราคารวม: โชว์ป้าย, ทางด่วน, คำขอเพิ่มเติม และอื่นๆ</div>
-                            <div className="my-3"></div>
+                            <div className="mt-2 text-sm text-red-500">*ราคารวม: น้ำมัน, ทางด่วน, คำขอเพิ่มเติมของลูกค้า, โชว์ป้าย(สนามบิน), และอื่นๆ</div>
+                            <div className="my-4"></div>
                             {/* <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
                             <div className="flex mb-2 mt-5 ">
                                 <div className="text-lg font-semibold mr-3">ราคาอื่นๆ</div>
@@ -159,6 +159,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             <div className="mt-2 mb-4 font-medium text-lg">รวม: {total}</div> */}
                             {bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP" && <div className="mb-3"><NumberInput onChange={() => {}} register={register("arrival", { required: "" })} required setValue={setValue} title="นาทีที่คุณจะถึงที่นัดหมาย" /></div>}
                             <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร" />
+                            <div className="mt-2 text-sm text-red-500">*สำหรับหัวหน้า: โปรดเขียนประเภทรถที่ให้บริการ(Economy, Sedan, Family, Van, VIP Van)</div>
                             <div className="mb-9"></div>
                             <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "Send"}</button>
                         </form>

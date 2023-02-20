@@ -117,7 +117,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        Course
+                                                        Price:
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.course}
@@ -134,8 +134,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                     </div>
                                 </div>
                                 <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                    <div className="text-lg font-semibold mr-2">Total:</div>
-                                    <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                    <div className="mt-2 text-red-500">*Include: Gas, Toll fee (Except DMK Tollway), Your Requests</div>
                                 </div>
                             </div>
                     </div>
