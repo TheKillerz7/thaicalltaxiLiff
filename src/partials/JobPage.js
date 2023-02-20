@@ -130,7 +130,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
                             <div className="text-lg font-semibold mb-2">เสนอราคา</div>
                             <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด" />
-                            <div className="mt-2 text-sm text-red-500">*ราคารวม: ราคามาตรฐาน, ทางด่วน, คำขอเพิ่มเติม และอื่นๆ</div>
+                            <div className="mt-2 text-sm text-red-500">*ราคารวม: โชว์ป้าย, ทางด่วน, คำขอเพิ่มเติม และอื่นๆ</div>
                             <div className="my-3"></div>
                             {/* <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
                             <div className="flex mb-2 mt-5 ">
