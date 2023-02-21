@@ -866,59 +866,59 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                             <div className="text-lg font-semibold mr-2">Total:</div>
                                             <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                                         </div>
+                                        <div className="mb-5">
+                                            <div>
+                                                <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
+                                                {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can see it 5 mins before pickup time*</div>}
+                                                <div className="bg-blue-50 rounded-lg relative mt-3">
+                                                    <form className="h-full w-full py-4 px-4">
+                                                    <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td className="align-middle whitespace-nowrap font-semibold">
+                                                                        Driver ID
+                                                                    </td>
+                                                                    <td className="align-middle pl-3 w-7/12">
+                                                                        {beforePickup && "#" + driver?.[0].driverCode}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="align-middle whitespace-nowrap font-semibold">
+                                                                        Car Type
+                                                                    </td>
+                                                                    <td className="align-middle pl-3 w-7/12">
+                                                                        {beforePickup && driver?.[0].vehicleInfo?.carType}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className="align-middle whitespace-nowrap font-semibold">
+                                                                        Tel No.
+                                                                    </td>
+                                                                    <td className="align-middle pl-3 w-7/12">
+                                                                        {beforePickup && driver?.[0].personalInfo?.phone}
+                                                                    </td>
+                                                                </tr>
+                                                                {prices.message?.en && 
+                                                                    <tr>
+                                                                        <td className="align-middle whitespace-nowrap font-semibold">
+                                                                            Driver<br/>Message
+                                                                        </td>
+                                                                        <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
+                                                                            {beforePickup && '"' + prices.message?.en + '"'}
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                         {userType === "driver" &&
                                             <div className=" mb-5 mt-3">
                                                 <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอนงาน</div>
                                             </div>
                                         }
-                                    </div>
-                                    <div className="mb-10">
-                                        <div>
-                                            <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                                            {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can see it 5 mins before pickup time*</div>}
-                                            <div className="bg-blue-50 rounded-lg relative mt-3">
-                                                <form className="h-full w-full py-4 px-4">
-                                                <table>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                                    Driver ID
-                                                                </td>
-                                                                <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && "#" + driver?.[0].driverCode}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                                    Car Type
-                                                                </td>
-                                                                <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && driver?.[0].vehicleInfo?.carType}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                                    Tel No.
-                                                                </td>
-                                                                <td className="align-middle pl-3 w-7/12">
-                                                                    {beforePickup && driver?.[0].personalInfo?.phone}
-                                                                </td>
-                                                            </tr>
-                                                            {prices.message?.en && 
-                                                                <tr>
-                                                                    <td className="align-middle whitespace-nowrap font-semibold">
-                                                                        Driver<br/>Message
-                                                                    </td>
-                                                                    <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
-                                                                        {beforePickup && '"' + prices.message?.en + '"'}
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                    </table>
-                                                </form>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
