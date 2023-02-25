@@ -264,9 +264,9 @@ const JobBoard = () => {
       <div id="job" className="relative pt-10 grid w-full">
         <div className="text-3xl font-semibold text-center mb-8">บอร์ดงาน</div>
         <div className="px-3 flex justify-between mb-5">
-            <div className="w-full mr-2 w-full border-2 border-gray-300 h-full rounded-md px-3 flex items-center">
-                <FontAwesomeIcon className="text-blue-900 mr-2" icon={faMagnifyingGlass} />
-                <input onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหา" className="w-full outline-none" />
+            <div onClick={() => window.location.replace("https://www.thai-taxi.com/standard-price")} className="w-full mr-2 w-full h-full rounded-md px-3 flex items-center" style="box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15)">
+              <FontAwesomeIcon className="text-blue-900 mr-2" icon={faMagnifyingGlass} />
+              <div className="font-medium text-blue-900">กดเพื่อเช็คราคามาตรฐาน</div>
             </div>
             <div onClick={() => setOnFilter(true)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 mr-2 grid place-items-center"><FontAwesomeIcon icon={faLocationDot} /></div>
             <div onClick={() => setReload(!reload)} style={{ aspectRatio: "1" }} className="text-blue-900 bg-blue-100 p-2 rounded-md h-9 grid place-items-center"><FontAwesomeIcon icon={faRotateRight} /></div>
