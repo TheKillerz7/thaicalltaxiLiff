@@ -40,7 +40,7 @@ const Datepicker = ({ asap, error, register, setValue, title }) => {
                 <div className='w-10/12 grid place-items-center'>
                     <DatePicker
                         minDate={new Date()}
-                        maxDate={new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 3)}
+                        maxDate={new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30)}
                         value={time}
                         onChange={handleChange}
                         className="w-full"
