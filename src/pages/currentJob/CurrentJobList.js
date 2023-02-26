@@ -9,7 +9,7 @@ const CurrentJobList = ({ onClick, data }) => {
         button: ["#4e6cc2", "#c2b64e", "#6dbd48", "#4e6cc2"]
     }
 
-    const jobs = [...Array(4)].map((count, index) => {
+    const jobs = [...Array(31)].map((count, index) => {
         const bookings = data.map((job, i) => {
             const bookingInfo = typeof job.bookingInfo === "string" ? JSON.parse(job.bookingInfo) : job.bookingInfo
             const date = job.bookingInfo.start?.pickupDate?.split("/")?.[0] || job.bookingInfo.pickupDate?.split("/")?.[0]
@@ -17,7 +17,7 @@ const CurrentJobList = ({ onClick, data }) => {
             if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
                 if (job.bookingType === "R&H") {
                     return (
-                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
+                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: index >= 3 ? colors.job[index] : "gray" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
@@ -41,7 +41,7 @@ const CurrentJobList = ({ onClick, data }) => {
                     )
                 } else {
                     return (
-                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: colors.job[index] }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
+                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: index >= 3 ? colors.job[index] : "gray" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
@@ -67,16 +67,15 @@ const CurrentJobList = ({ onClick, data }) => {
             }
           }).filter(item => item && item)
 
-        return (
-            <div key={index} className="px-1 mb-8">
-                <div style={{ backgroundColor: colors.date[index] }} className="px-3 py-2 mb-3 text-lg font-medium rounded-md text-white">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
-                {bookings.length <= 0 ? <div  style={{ backgroundColor: colors.job[index] }} className="px-3 py-2 text-lg font-medium inline-block rounded-md">ไม่มีงานในวันที่นี้</div>
-                    :
-                    bookings
-                }
-                <div></div>
-            </div>
-        )
+        if (bookings.length <= 0) {
+            return (
+                <div key={index} className="px-1 mb-8">
+                    <div style={{ backgroundColor: index >= 3 ? colors.date[index] : "gray" }} className="px-3 py-2 mb-3 text-lg font-medium rounded-md text-white">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
+                        {bookings}
+                    <div></div>
+                </div>
+            )
+        }
     })
 
     return (
