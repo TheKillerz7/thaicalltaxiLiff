@@ -67,7 +67,7 @@ const CurrentJobList = ({ onClick, data }) => {
             }
           }).filter(item => item && item)
 
-        if (bookings.length <= 0) {
+        if (bookings.length >= 0) {
             return (
                 <div key={index} className="px-1 mb-8">
                     <div style={{ backgroundColor: index >= 3 ? colors.date[index] : "gray" }} className="px-3 py-2 mb-3 text-lg font-medium rounded-md text-white">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
