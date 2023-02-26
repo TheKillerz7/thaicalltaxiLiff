@@ -79,11 +79,12 @@ const CurrentJobList = ({ onClick, data }) => {
                 </div>
             )
         }
-    })
+    }).filter(item => item && item)
 
     return (
         <div className="px-3 w-screen">
-            {jobs.length <= 0 ? <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job right now.</div>
+            {jobs.length <= 0 ? 
+                <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job right now.</div>
                 :
                 jobs
             }
