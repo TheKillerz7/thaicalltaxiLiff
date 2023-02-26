@@ -14,8 +14,7 @@ const CurrentJobList = ({ onClick, data }) => {
         const bookings = data.map((job, i) => {
             const bookingInfo = typeof job.bookingInfo === "string" ? JSON.parse(job.bookingInfo) : job.bookingInfo
             const date = job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate
-            console.log(date)
-            console.log(moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD/MM/YYYY"))
+
             if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD/MM/YYYY") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
                 if (job.bookingType === "R&H") {
                     return (
@@ -84,7 +83,7 @@ const CurrentJobList = ({ onClick, data }) => {
     return (
         <div className="px-3 w-screen">
             {jobs.length <= 0 ? 
-                <div className="text-center pt-10 text-xl font-medium">Sorry, there's no job right now.</div>
+                <div className="text-center pt-10 text-xl font-medium">คุณยังไม่มีงานในตอนนี้</div>
                 :
                 jobs
             }
