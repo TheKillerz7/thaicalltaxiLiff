@@ -13,9 +13,9 @@ const CurrentJobList = ({ onClick, data }) => {
     const jobs = [...Array(31)].map((count, index) => {
         const bookings = data.map((job, i) => {
             const bookingInfo = typeof job.bookingInfo === "string" ? JSON.parse(job.bookingInfo) : job.bookingInfo
-            const date = job.bookingInfo.start?.pickupDate?.split("/")?.[0] || job.bookingInfo.pickupDate?.split("/")?.[0]
+            const date = job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate
             
-            if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
+            if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD/MM/YYYY") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
                 if (job.bookingType === "R&H") {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: dateCount <= 3 ? colors.job[index] : "gray" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
