@@ -146,7 +146,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
     useEffect(() => {
         let messageStorage = []
         const getMessage = async () => {
-            const room = (await getRoomByRoomId(roomId)).data[0]
+            const room = (await getRoomByRoomId(roomId)).data
             if (!room) return navigate(`/chat/${userType}/inbox`)
             const booking = (await getBookingById(room.bookingId)).data[0]
             const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
