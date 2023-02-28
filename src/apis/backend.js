@@ -104,7 +104,7 @@ export const createDriver = (data) => {
     return axios.post(`${baseURL}/driver`, data)
 }
 
-export const startJob = (bookingId, userId) => {
+export const finishJob = (bookingId, userId) => {
     return axios.post(`${baseURL}/driver/start`, {bookingId, userId})
 }
 

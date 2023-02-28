@@ -106,7 +106,7 @@ const RoomsPage = ({ userId, userType }) => {
                                         <div className="flex w-full overflow-hidden">
                                             <div style={{ aspectRatio: "1" }} className="bg-blue-900 rounded-full h-12 mr-4"></div>
                                             <div className="overflow-hidden">
-                                                <div className="font-medium">{room.pickupTime === "ASAP" ? room.pickupDate : room.pickupTime + ", " + room.pickupDate}</div>
+                                                <div className="font-medium">{room.pickupTime === "ASAP" ? room.pickupDate : room.pickupTime + ", " + room.pickupDate + " #" + room.bookingCode}</div>
                                                 <div className="flex">
                                                     {!messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden">{messages?.latestMessage?.message}</div>}
                                                     {messages.unreadMessages.length > 0 && <div style={{ maxWidth: "15ch" }} className="font-semibold text-ellipsis whitespace-nowrap overflow-hidden">{messages.unreadMessages.length > 1 ? messages.unreadMessages.length + " new messages" : messages.unreadMessages[0].message}</div>}
@@ -163,7 +163,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             } else {
                 startingDate = booking.bookingInfo.start?.pickupDate.split("/").reverse() || booking.bookingInfo.pickupDate.split("/").reverse()
                 pickupDateStart = moment(new Date(startingDate[0], (parseInt(startingDate[1]) - 1).toString(), startingDate[2])).format("DD MMM")
-                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.pickupTime}, ${pickupDateStart}`)
+                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.pickupTime}, ${pickupDateStart} #${room.bookingCode}`)
             }
             setBookingData(booking)
             await readChatMessages(roomId, userType)
@@ -844,12 +844,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 {onEdit[1] &&
                                                     <div className="grid grid-cols-2 gap-x-3 mt-3">
                                                         <div onClick={() => {
-                                                            const temp = {}
-                                                            iniPrice.extra.forEach((extra, index) => {
-                                                                temp[extra.title] = parseInt(extra.price)
-                                                            })
                                                             setOnEdit([onEdit[0], false])
-                                                            setPrice({...temp})
                                                         }} className="bg-gray-200 cursor-pointer rounded-md py-2 text-center text-sm font-medium">Cancel</div>
                                                         <button onClick={() => setSubmitType("extra")} type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium text-sm">Submit</button>
                                                     </div>

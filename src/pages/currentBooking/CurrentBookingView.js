@@ -155,7 +155,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                     </div>
                                 </div>
                                 <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                    <div className="mt-2 text-red-500">*Include: Gas, Toll fee (Except DMK Tollway), Your Requests</div>
+                                    <div className="mt-2 text-red-500">*Include: Gas, Your Requests, Toll (Except DMK Tollway)</div>
                                 </div>
                             </div>
                     </div>

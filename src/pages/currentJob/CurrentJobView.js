@@ -2,7 +2,7 @@ import { faArrowDown, faArrowLeft, faBriefcase, faTags, faUser } from "@fortawes
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { enableBodyScroll } from 'body-scroll-lock';
-import { getDriverById, getSelectedRegisterByBookingId, startJob } from "../../apis/backend";
+import { finishJob, getDriverById, getSelectedRegisterByBookingId } from "../../apis/backend";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
@@ -44,9 +44,9 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
         callback()
     }, [isOpen])
 
-    const startJobHandle = async () => {
+    const finishJobHandle = async () => {
         try {
-            await startJob(bookingData.bookingId, userId)
+            await finishJob(bookingData.bookingId, userId)
             liff.closeWindow()
         } catch (error) {
             console.log(error)
@@ -152,10 +152,10 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                     </div>
                     <div className="grid grid-cols-2 gap-x-3">
                         <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
-                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">เริ่มงาน</div>
+                        <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">สิ้นสุดงาน</div>
                     </div>
                 </div>
-                {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} startJobHandle={startJobHandle} />}
+                {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} finishJobHandle={finishJobHandle} />}
             </div>}
         </div>
     )
@@ -163,7 +163,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
 
 export default CurrentJobView
 
-const ApplicationConfirmation = ({ applyProcess, setApplyProcess, startJobHandle }) => {
+const ApplicationConfirmation = ({ applyProcess, setApplyProcess, finishJobHandle }) => {
     return (
         <div className={"fixed top-0 left-0 flex flex-col items-center justify-center bg-black bg-opacity-40 w-full h-screen transition " + (applyProcess ? "opacity-100" : "opacity-0 pointer-events-none")}>
             {applyProcess === "confirmation" &&
@@ -171,12 +171,12 @@ const ApplicationConfirmation = ({ applyProcess, setApplyProcess, startJobHandle
                     <div className="bg-white w-10/12 mx-auto rounded-t-md py-6 px-5">
                         <div className="text-xl font-semibold mb-3">คุณแน่ใจแล้วใช่ไหม?</div>
                         <div>
-                            หากเริ่มงานแล้วคุณจะไม่สามารถรับงานใหม่ได้จนกว่างานจะเสร็จ
+                            หากสิ้นสุดงานแล้วงานจะถูกบันทึกว่าคุณเป็นผู้สิ้นสุดงาน
                         </div>
                     </div>
                     <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
                         <div onClick={() => setApplyProcess("")} className="cursor-pointer text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">ไม่</div>
-                        <div onClick={startJobHandle} className="cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">ใช่</div>
+                        <div onClick={finishJobHandle} className="cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">ใช่</div>
                     </div>
                 </>
             }
