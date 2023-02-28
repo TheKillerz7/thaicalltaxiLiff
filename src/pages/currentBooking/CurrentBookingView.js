@@ -43,7 +43,6 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
             const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
             const drivers = (await getDriverById(prices.driverId)).data[0]
             drivers.personalInfo = JSON.parse(drivers.personalInfo)
-            console.log(drivers)
             drivers.vehicleInfo = JSON.parse(drivers.vehicleInfo)
             prices.message = JSON.parse(prices.message)
             setDriver(drivers)
@@ -194,15 +193,24 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     </td>
                                                 </tr>
                                             }
-                                            {/* {
+                                            {
 
-                                            } */}
+                                            }
                                             <tr>
                                                 <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Tel No.
+                                                    Urgent Contact
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && driver?.personalInfo?.phone}
+                                                    {beforePickup && (
+                                                        <div>
+                                                            <div>Tel No: {driver?.personalInfo?.phone}</div>
+                                                            {driver?.personalInfo?.contact.map((item, index) => {
+                                                                return (
+                                                                    <div>{item.title}: {item.id}</div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    )}
                                                 </td>
                                             </tr>
                                         </tbody>
