@@ -163,7 +163,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             } else {
                 startingDate = booking.bookingInfo.start?.pickupDate.split("/").reverse() || booking.bookingInfo.pickupDate.split("/").reverse()
                 pickupDateStart = moment(new Date(startingDate[0], (parseInt(startingDate[1]) - 1).toString(), startingDate[2])).format("DD MMM")
-                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.pickupTime}, ${pickupDateStart} #${room.bookingCode}`)
+                setRoomName(`${booking.bookingInfo.start?.pickupTime || booking.bookingInfo.pickupTime}, ${pickupDateStart}`)
             }
             setBookingData(booking)
             await readChatMessages(roomId, userType)
@@ -490,7 +490,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                             <div className="px-5 pt-5 bg-white pb-3">
                                 <div className="">
                                     {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
-                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info</div>
+                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
                                     <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
                                         {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
                                         {bookingData.bookingType === "R&H" ?
