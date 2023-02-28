@@ -197,16 +197,16 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
 
                                             }
                                             <tr>
-                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Urgent Contact
+                                                <td className="align-top whitespace-nowrap font-semibold">
+                                                    Contact
                                                 </td>
-                                                <td className="align-middle pl-3 w-7/12">
+                                                <td className="align-top pl-3 w-7/12">
                                                     {beforePickup && (
                                                         <div>
-                                                            <div>Tel No: {driver?.personalInfo?.phone}</div>
+                                                            <div><span className="font-medium">Tel No: </span>{driver?.personalInfo?.phone}</div>
                                                             {driver?.personalInfo?.contact.map((item, index) => {
                                                                 return (
-                                                                    <div>{item.title}: {item.id}</div>
+                                                                    <div><span className="font-medium">{item.title}: </span>{item.id}</div>
                                                                 )
                                                             })}
                                                         </div>
