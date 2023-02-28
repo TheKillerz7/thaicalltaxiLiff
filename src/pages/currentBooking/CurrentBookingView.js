@@ -43,6 +43,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
             const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
             const drivers = (await getDriverById(prices.driverId)).data[0]
             drivers.personalInfo = JSON.parse(drivers.personalInfo)
+            console.log(drivers)
             drivers.vehicleInfo = JSON.parse(drivers.vehicleInfo)
             prices.message = JSON.parse(prices.message)
             setDriver(drivers)
@@ -183,6 +184,19 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     {beforePickup && driver?.vehicleInfo?.carType}
                                                 </td>
                                             </tr>
+                                            {prices.message?.en && 
+                                                <tr>
+                                                    <td className="align-middle whitespace-nowrap font-semibold">
+                                                        Driver Msg.
+                                                    </td>
+                                                    <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
+                                                        {beforePickup && '"' + prices.message?.en + '"'}
+                                                    </td>
+                                                </tr>
+                                            }
+                                            {/* {
+
+                                            } */}
                                             <tr>
                                                 <td className="align-middle whitespace-nowrap font-semibold">
                                                     Tel No.
@@ -191,16 +205,6 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     {beforePickup && driver?.personalInfo?.phone}
                                                 </td>
                                             </tr>
-                                            {prices.message?.en && 
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-semibold">
-                                                        Driver<br/>Message
-                                                    </td>
-                                                    <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
-                                                        {beforePickup && '"' + prices.message?.en + '"'}
-                                                    </td>
-                                                </tr>
-                                            }
                                         </tbody>
                                     </table>
                                 </form>
