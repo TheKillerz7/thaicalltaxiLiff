@@ -105,7 +105,7 @@ export const createDriver = (data) => {
 }
 
 export const finishJob = (bookingId, userId) => {
-    return axios.post(`${baseURL}/driver/start`, {bookingId, userId})
+    return axios.post(`${baseURL}/driver/finish`, {bookingId, userId})
 }
 
 //patch
