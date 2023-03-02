@@ -59,15 +59,21 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
     }
 
     const onSubmit = async (data) => {
-        data.bookingId = bookingData.bookingId
-        data.driverId = userId
-        if (data.message.th) {
-            const translated = await translations(data.message.th, "en")
-            data.message.en = he.decode(translated.data.data.translations[0].translatedText)
+        setLoading(true)
+        try {
+            data.bookingId = bookingData.bookingId
+            data.driverId = userId
+            if (data.message.th) {
+                const translated = await translations(data.message.th, "en")
+                data.message.en = he.decode(translated.data.data.translations[0].translatedText)
+            }
+            const res = await driverRegisterToBooking(data)
+            alert(res.data)
+            setLoading(false)
+            liff.closeWindow()
+        } catch (error) {
+            console.log(error)
         }
-        const res = await driverRegisterToBooking(data)
-        alert(res.data)
-        liff.closeWindow()
     }
 
     return (
@@ -161,7 +167,7 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร" />
                             {/* <div className="mt-2 text-sm text-red-500">*สำหรับหัวหน้า: โปรดเขียนประเภทรถที่ให้บริการ(Economy, Sedan, Family, Van, VIP Van)</div> */}
                             <div className="mb-9"></div>
-                            <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "Send"}</button>
+                            <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "ส่ง"}</button>
                         </form>
                         :
                         <div className="mb-10">

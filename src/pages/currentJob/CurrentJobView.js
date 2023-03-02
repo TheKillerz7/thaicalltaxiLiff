@@ -45,8 +45,11 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
     }, [isOpen])
 
     const finishJobHandle = async () => {
+        setLoading(true)
         try {
             await finishJob(bookingData.bookingId, userId)
+            alert("จบงานสำเร็จแล้ว")
+            setLoading(false)
             liff.closeWindow()
         } catch (error) {
             console.log(error)
@@ -155,7 +158,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                         <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">สิ้นสุดงาน</div>
                     </div>
                 </div>
-                {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} finishJobHandle={finishJobHandle} />}
+                {applyProcess !== "offering" && <ApplicationConfirmation loading={loading} applyProcess={applyProcess} setApplyProcess={setApplyProcess} finishJobHandle={finishJobHandle} />}
             </div>}
         </div>
     )
@@ -163,7 +166,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
 
 export default CurrentJobView
 
-const ApplicationConfirmation = ({ applyProcess, setApplyProcess, finishJobHandle }) => {
+const ApplicationConfirmation = ({ applyProcess, setApplyProcess, finishJobHandle,loading }) => {
     return (
         <div className={"fixed top-0 left-0 flex flex-col items-center justify-center bg-black bg-opacity-40 w-full h-screen transition " + (applyProcess ? "opacity-100" : "opacity-0 pointer-events-none")}>
             {applyProcess === "confirmation" &&
@@ -176,7 +179,7 @@ const ApplicationConfirmation = ({ applyProcess, setApplyProcess, finishJobHandl
                     </div>
                     <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
                         <div onClick={() => setApplyProcess("")} className="cursor-pointer text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">ไม่</div>
-                        <div onClick={finishJobHandle} className="cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4">ใช่</div>
+                        <div onClick={finishJobHandle} className={"cursor-pointer text-white border border-blue-900 bg-blue-900 rounded-md py-1 px-4 " + (loading && "opacity-70 pointer-events-none")}>ใช่</div>
                     </div>
                 </>
             }
