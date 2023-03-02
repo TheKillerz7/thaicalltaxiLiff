@@ -69,7 +69,7 @@ export const getDriverImage = (driverId) => {
 }
 
 export const getRatingByBookingId = (bookingId) => {
-    return axios.get(`${baseURL}/rating/${bookingId}`)
+    return axios.get(`${baseURL}/user/rating/${bookingId}`)
 }
 
 //post
