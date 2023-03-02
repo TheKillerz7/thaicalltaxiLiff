@@ -68,6 +68,10 @@ export const getDriverImage = (driverId) => {
     return axios.get(`${baseURL}/driver/image/${driverId}`)
 }
 
+export const getRatingByBookingId = (bookingId) => {
+    return axios.get(`${baseURL}/rating/${bookingId}`)
+}
+
 //post
 export const driverRegisterToBooking = (data) => {
     return axios.post(`${baseURL}/driver/jobBoard`, data)

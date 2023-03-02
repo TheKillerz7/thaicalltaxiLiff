@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import liff from '@line/liff';
 import Textareainput from "../components/Textareainput";
-import { ratingDriver } from "../apis/backend";
+import { getRatingByBookingId, ratingDriver } from "../apis/backend";
 
 const RateDriver = () => {
   const [loading, setLoading] = useState(false)
@@ -32,6 +32,14 @@ const RateDriver = () => {
     initLine();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const callback = async () => {
+      const rating = await getRatingByBookingId(params.get("bookingId"))
+      console.log(rating)
+    }
+    callback()
+  }, [])
 
   const onSubmit = async (data) => {
     setLoading(true)
