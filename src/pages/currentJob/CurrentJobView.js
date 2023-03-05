@@ -154,7 +154,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-x-3">
-                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
+                        <Link to={`/chat/driver/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
                         <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">สิ้นสุดงาน</div>
                     </div>
                 </div>
