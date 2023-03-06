@@ -36,7 +36,8 @@ const RateDriver = () => {
     const params = new URLSearchParams(window.location.search)
     const callback = async () => {
       const rating = await getRatingByBookingId(params.get("bookingId"))
-      if (!rating.length) {
+      console.log(rating)
+      if (rating.data.length) {
         alert("You've already rated your driver.")
         liff.closeWindow()
       }
