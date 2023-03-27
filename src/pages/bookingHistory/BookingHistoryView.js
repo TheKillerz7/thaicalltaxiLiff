@@ -161,14 +161,6 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     {driver?.vehicleInfo?.carType}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Tel No.
-                                                </td>
-                                                <td className="align-middle pl-3 w-7/12">
-                                                    {driver?.personalInfo?.phone}
-                                                </td>
-                                            </tr>
                                             {prices.message?.en && 
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-semibold">

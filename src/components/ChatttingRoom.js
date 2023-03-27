@@ -150,10 +150,10 @@ const ChatPage = ({ roomId, userType, userId }) => {
             if (!room) return navigate(`/chat/${userType}/inbox`)
             const booking = (await getBookingById(room.bookingId)).data[0]
             const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
-            prices.extra = JSON.parse(prices.extra)
             setPrices(prices)
             const driver = (await getDriverById(prices.driverId)).data
             driver[0].vehicleInfo = JSON.parse(driver[0].vehicleInfo)
+            driver[0].personalInfo = JSON.parse(driver[0].personalInfo)
             setDriver(driver)
             booking.bookingInfo = JSON.parse(booking.bookingInfo)
             let startingDate = []
@@ -745,18 +745,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                     <td className="align-middle whitespace-nowrap font-medium">Car Type</td>
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
-                                                        {!onEdit[0] ?
-                                                            driver[0]?.vehicleInfo.carType
-                                                            :
-                                                            <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                <select className="w-full outline-none bg-white" {...register("bookingInfo.carType")}>
-                                                                    <option value="Economy type">Economy type</option>
-                                                                    <option value="Sedan type">Sedan type</option>
-                                                                    <option value="Family type">Family type</option>
-                                                                    <option value="Van type">Van type</option>
-                                                                </select>
-                                                            </div>
-                                                        }
+                                                        {bookingData.bookingInfo.preferedCarType}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -885,14 +874,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         {beforePickup && driver?.[0].vehicleInfo?.carType}
                                                                     </td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <td className="align-middle whitespace-nowrap font-semibold">
-                                                                        Tel No.
-                                                                    </td>
-                                                                    <td className="align-middle pl-3 w-7/12">
-                                                                        {beforePickup && driver?.[0].personalInfo?.phone}
-                                                                    </td>
-                                                                </tr>
                                                                 {prices.message?.en && 
                                                                     <tr>
                                                                         <td className="align-middle whitespace-nowrap font-semibold">
@@ -903,6 +884,23 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         </td>
                                                                     </tr>
                                                                 }
+                                                                <tr>
+                                                                    <td className="align-top whitespace-nowrap font-semibold">
+                                                                        Contact
+                                                                    </td>
+                                                                    <td className="align-top pl-3 w-7/12">
+                                                                        {beforePickup && (
+                                                                            <div>
+                                                                                <div><span className="font-medium">Tel No: </span>{driver?.[0].personalInfo?.phone}</div>
+                                                                                {driver?.[0].personalInfo?.contact.map((item, index) => {
+                                                                                    return (
+                                                                                        <div><span className="font-medium">{item.title}: </span>{item.id}</div>
+                                                                                    )
+                                                                                })}
+                                                                            </div>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </form>
