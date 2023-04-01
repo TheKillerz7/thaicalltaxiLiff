@@ -182,7 +182,7 @@ const AToBCourse = ({ setType, register, setValue, errors }) => {
         <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.medium")} title="Mid luggage" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} error={errors?.bookingInfo?.preferedCarType} register={register("bookingInfo.preferedCarType", { required: "Please fill this info" })} title="Car Type" options={["Economy or bigger", "Sedan or bigger", "Family car or bigger", "Van", "VIP Van"]} setValue={setValue} />
+        <Dropdown onChange={() => {}} error={errors?.bookingInfo?.preferedCarType} register={register("bookingInfo.preferedCarType", { required: "Please fill this info" })} title="Car Type" options={["Economy or bigger", "Sedan or bigger", "Family car or bigger", "Van", "VIP Van", "Others (Note my message)"]} setValue={setValue} />
       </div>
       <div className="mb-3"><Textareainput register={register("bookingInfo.message.en")} title="Additional Order and Message" setValue={setValue} /></div>
     </div>
@@ -253,7 +253,7 @@ const RentAndHire = ({ unregister, register, setValue, increment, setIncrement, 
         <Numberinput onChange={() => {}} register={register("bookingInfo.luggage.medium")} title="Mid luggage" setValue={setValue} />
       </div>
       <div className={"mb-3 " }>
-        <Dropdown onChange={() => {}} error={errors?.bookingInfo?.preferedCarType} register={register("bookingInfo.preferedCarType", { required: "Please fill this info" })} title="Car Type" options={["Economy or bigger", "Sedan or bigger", "Family car or bigger", "Van", "VIP Van"]} setValue={setValue} />
+        <Dropdown onChange={() => {}} error={errors?.bookingInfo?.preferedCarType} register={register("bookingInfo.preferedCarType", { required: "Please fill this info" })} title="Car Type" options={["Economy or bigger", "Sedan or bigger", "Family car or bigger", "Van", "VIP Van", "Others (Note my message)"]} setValue={setValue} />
       </div>
       {/* <div class="flex items-center mb-5"><input id="terms" type="checkbox" class="font-semibold" /><label for="terms" class="text-sm ml-2 text-left font-medium">I want<span class="ml-1 underline inline text-blue-400">Airport Meeting Service</span><span class="ml-1 inline text-red-500">+ 100B</span></label></div> */}
       <div className="mb-3"><Textareainput register={register("bookingInfo.message.en")} title="Additional Order and Message" setValue={setValue} /></div>

@@ -68,7 +68,6 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                 data.message.en = he.decode(translated.data.data.translations[0].translatedText)
             }
             const res = await driverRegisterToBooking(data)
-            alert(res.data)
             setLoading(false)
             liff.closeWindow()
         } catch (error) {
@@ -108,7 +107,6 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             <div className="text-xl font-semibold">{bookingData.bookingInfo.end?.place.name || bookingData.bookingInfo.to.name}</div>
                         </div>
                         <div className="flex flex-wrap">
-                            <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + (bookingData.bookingType === "A2B" ? "bg-green-700" : "bg-yellow-600")}>{bookingData.bookingType}</div>
                             <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 " + ((bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "bg-red-600" : "bg-green-700")}>
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
@@ -135,8 +133,8 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                     </div>
                     {applyProcess === "offering" ? 
                         <form onSubmit={handleSubmit(onSubmit)} className="bg-white mb-10">
-                            <div className="text-lg font-semibold mb-2">เสนอราคา</div>
-                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด" />
+                            <div className="text-lg font-semibold mb-2">เสนอราคา(Offer)</div>
+                            <NumberInput onChange={(value) => setPrices([parseInt(value), prices[1], prices[2]])} register={register("course", { required: "" })} required setValue={setValue} title="ราคารวมทั้งหมด(Price)" />
                             <div className="mt-2 text-sm"><span className="font-medium">*ราคารวม:</span> น้ำมัน, คำขอเพิ่มเติมของลูกค้า,<br/>ทางด่วน (ยกเว้น DMK Tollway), และอื่นๆ</div>
                             <div className="my-4"></div>
                             {/* <NumberInput onChange={(value) => setPrices([prices[0], parseInt(value), prices[2]])} register={register("tollway", { required: "" })} required setValue={setValue} title="ค่าทางด่วน" />
@@ -165,40 +163,13 @@ const JobPage = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen
                             })}
                             <div className="mt-2 mb-4 font-medium text-lg">รวม: {total}</div> */}
                             {bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP" && <div className="mb-3"><NumberInput onChange={() => {}} register={register("arrival", { required: "" })} required setValue={setValue} title="นาทีที่คุณจะถึงที่นัดหมาย" /></div>}
-                            <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร" />
+                            <Textareainput onChange={() => {}} register={register("message.th")} setValue={setValue} title="ข้อความถึงผู้โดยสาร(Message)" />
                             {/* <div className="mt-2 text-sm text-red-500">*สำหรับหัวหน้า: โปรดเขียนประเภทรถที่ให้บริการ(Economy, Sedan, Family, Van, VIP Van)</div> */}
                             <div className="mb-9"></div>
                             <button type="submit" className={"cursor-pointer bg-blue-900 rounded-lg text-white font-medium text-lg w-full py-2 grid place-items-center " + (loading && "pointer-events-none opacity-80")}>{loading ? "Loading..." : "ส่ง"}</button>
                         </form>
                         :
-                        <div className="mb-10">
-                            <div className="text-xl font-semibold mb-3">
-                                <FontAwesomeIcon className="text-blue-900 mr-2" icon={faCalendarCheck} />
-                                งานปัจจุบันของคุณ
-                            </div>
-                            <div>
-                                {[...Array(3)].map((count, index) => {
-                                    return (
-                                        <div key={index} className="px-3 py-3 bg-blue-50 rounded-md mb-3">
-                                            <div className="font-semibold text-lg mb-2">{moment(new Date().getTime() + (24 * 60 * 60 * 1000 * index)).format("DD MMM")}</div>
-                                            {/* {currentJobs.length > 0 ? currentJobs.map((job, index) => {
-                                                console.log(job)
-                                                return (
-                                                    <div key={index} className="mb-2 px-3 py-2 rounded-md bg-blue-100">
-                                                        <div className="font-medium">{job.pickupTime}</div>
-                                                        <div>{job.start?.place.name || job.from.name}</div>
-                                                        <div className="-my-1.5"><FontAwesomeIcon className="text-blue-900 mx-1" icon={faArrowDown} /></div>
-                                                        <div>{job.end?.place.name || job.to.name}</div>
-                                                    </div>
-                                                )
-                                            }) 
-                                            : "No job on this day"} */}
-                                            ยังไม่มีงานในวันที่นี้
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
+                        <div className=""></div>
                     }
                     {applyProcess !== "offering" && <div onClick={() => setApplyProcess("offering")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium text-lg w-full py-2 grid place-items-center mb-10">เสนอราคาเลย</div>}
                 </div>

@@ -150,6 +150,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             if (!room) return navigate(`/chat/${userType}/inbox`)
             const booking = (await getBookingById(room.bookingId)).data[0]
             const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
+            prices.message = JSON.parse(prices.message)
             setPrices(prices)
             const driver = (await getDriverById(prices.driverId)).data
             driver[0].vehicleInfo = JSON.parse(driver[0].vehicleInfo)
@@ -671,21 +672,32 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                             }
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">Message</td>
-                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-2">
-                                                            {!onEdit[0] ?
-                                                                bookingData.bookingInfo.message.en
-                                                                :
-                                                                <div className="">
-                                                                    <div className='bg-white my-1 px-2 text-sm py-1 transition-all rounded-md border border-gray-400'>
-                                                                        <input {...register("bookingInfo.message.en")} placeholder="Big" type="text" className="outline-none w-full" />
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        </td>
-                                                    </tr>
+                                                    {bookingData.bookingInfo.message.en && (
+                                                        <tr>
+                                                            <td className="align-middle whitespace-nowrap font-medium">User Msg.</td>
+                                                            {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                            <td className="align-middle pl-2">
+                                                                {!onEdit[0] ?
+                                                                    bookingData.bookingInfo.message.en
+                                                                    :
+                                                                    <div className="grid gap-x-2 grid-cols-2"></div>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    {prices.message.en && (
+                                                        <tr>
+                                                            <td className="align-middle whitespace-nowrap font-medium">OP Msg.</td>
+                                                            {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                            <td className="align-middle pl-2">
+                                                                {!onEdit[0] ?
+                                                                    prices.message.en
+                                                                    :
+                                                                    <div className="grid gap-x-2 grid-cols-2"></div>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -784,6 +796,32 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                         }
                                                     </td>
                                                 </tr>
+                                                {bookingData.bookingInfo.message.en && (
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">User Msg.</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                bookingData.bookingInfo.message.en
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2"></div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                                {prices.message.en && (
+                                                    <tr>
+                                                        <td className="align-middle whitespace-nowrap font-medium">OP Msg.</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
+                                                        <td className="align-middle pl-2">
+                                                            {!onEdit[0] ?
+                                                                prices.message.en
+                                                                :
+                                                                <div className="grid gap-x-2 grid-cols-2"></div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )}
                                             </tbody>
                                             </table>
                                         </div>
@@ -805,7 +843,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                         }
                                     </form>
                                     <div>
-                                        <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Selected Price</div>
+                                        <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Price</div>
                                         <div className="bg-blue-50 rounded-lg relative">
                                             <form onSubmit={handleSubmit(submitHandle)} className="border-b-2 border-gray-400 h-full w-full border-dashed py-4 px-4">
                                                 {!onEdit[1] && userType === "driver" && <div onClick={() => setOnEdit([onEdit[0], true])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
@@ -866,14 +904,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         {beforePickup && "#" + driver?.[0].driverCode}
                                                                     </td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <td className="align-middle whitespace-nowrap font-semibold">
-                                                                        Car Type
-                                                                    </td>
-                                                                    <td className="align-middle pl-3 w-7/12">
-                                                                        {beforePickup && driver?.[0].vehicleInfo?.carType}
-                                                                    </td>
-                                                                </tr>
                                                                 {prices.message?.en && 
                                                                     <tr>
                                                                         <td className="align-middle whitespace-nowrap font-semibold">
@@ -909,7 +939,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                         </div>
                                         {userType === "driver" &&
                                             <div className=" mb-5 mt-3">
-                                                <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอนงาน</div>
+                                                <div onClick={() => setOnTransfer(true)} className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer Job</div>
                                             </div>
                                         }
                                     </div>
@@ -953,12 +983,12 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer, userId }) => {
     return (
         <div onSubmit={handleSubmit(onSubmit)} className={"bg-black px-5 bg-opacity-30 mb-10 h-screen w-full grid place-items-center top-0 left-0 fixed bg-white transition duration-300 " + (onTransfer ? "opacity-100" : "opacity-0 pointer-events-none")}>
             <form className="bg-white rounded-md py-3 px-3 w-full">
-                <div className="text-lg font-semibold mb-2">การโอนงาน</div>
-                <div><Textinput onChange={() => {}} error={errors?.driver?.message} register={register(`driver`, { required: "โปรดใส่รหัสคนขับรถ" })} required setValue={setValue} title="รหัสคนขับรถ" /></div>
-                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="ข้อความให้คนขับรถคนใหม่" /></div>
+                <div className="text-lg font-semibold mb-2">Job Transfer</div>
+                <div><Textinput onChange={() => {}} error={errors?.driver?.message} register={register(`driver`, { required: "Driver ID" })} required setValue={setValue} title="รหัสคนขับรถ" /></div>
+                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="Message to new driver" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
-                    <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">ยกเลิก</div>
-                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">โอน</button>
+                    <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">Cancel</div>
+                    <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</button>
                 </div>
             </form>
         </div>
