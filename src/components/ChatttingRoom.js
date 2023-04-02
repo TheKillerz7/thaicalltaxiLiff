@@ -150,6 +150,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
             if (!room) return navigate(`/chat/${userType}/inbox`)
             const booking = (await getBookingById(room.bookingId)).data[0]
             const prices = (await getSelectedRegisterByBookingId(booking.bookingId)).data[0]
+            console.log(prices)
             prices.message = JSON.parse(prices.message)
             setPrices(prices)
             const driver = (await getDriverById(prices.driverId)).data
