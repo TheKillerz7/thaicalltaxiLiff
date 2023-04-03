@@ -799,9 +799,9 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 </tr>
                                                 {bookingData.bookingInfo.message.en && (
                                                     <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">User Msg.</td>
-                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-2">
+                                                        <td className="align-top whitespace-nowrap font-medium">User Msg.</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-top">:</td>}
+                                                        <td className="align-top pl-2">
                                                             {!onEdit[0] ?
                                                                 bookingData.bookingInfo.message.en
                                                                 :
@@ -812,9 +812,9 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 )}
                                                 {prices.message.en && (
                                                     <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">OP Msg.</td>
-                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-2">
+                                                        <td className="align-top whitespace-nowrap font-medium">OP Msg.</td>
+                                                        {onEdit[0] && <td className="text-xl pl-2 align-top">:</td>}
+                                                        <td className="align-top pl-2">
                                                             {!onEdit[0] ?
                                                                 prices.message.en
                                                                 :
@@ -905,16 +905,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         {beforePickup && "#" + driver?.[0].driverCode}
                                                                     </td>
                                                                 </tr>
-                                                                {prices.message?.en && 
-                                                                    <tr>
-                                                                        <td className="align-middle whitespace-nowrap font-semibold">
-                                                                            Driver<br/>Message
-                                                                        </td>
-                                                                        <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
-                                                                            {beforePickup && '"' + prices.message?.en + '"'}
-                                                                        </td>
-                                                                    </tr>
-                                                                }
                                                                 <tr>
                                                                     <td className="align-top whitespace-nowrap font-semibold">
                                                                         Contact
