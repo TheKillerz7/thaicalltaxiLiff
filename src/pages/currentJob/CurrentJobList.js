@@ -18,7 +18,7 @@ const CurrentJobList = ({ onClick, data }) => {
             if (moment(new Date().getTime() + (24 * 60 * 60 * 1000 * (index - 2))).format("DD/MM/YYYY") === date || ((job.bookingInfo.start?.pickupDate || job.bookingInfo.pickupDate === "ASAP") && index === 0)) {             
                 if (job.bookingType === "R&H") {
                     return (
-                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: dateCount <= 3 ? colors.job[index] : "#ebebeb" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
+                        <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: index <= 3 ? colors.job[index] : "#ebebeb" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
                                 <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
