@@ -22,6 +22,11 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     const timeArray = isOpen && (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
+    let pickupEndDate
+    if (bookingData.bookingType === "R&H") {
+        const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
+        pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
+    }
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
     const now = moment(new Date()); //todays date
@@ -98,10 +103,15 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
                             {!(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.start?.pickupTime || bookingData.bookingInfo.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.ending.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{pickupEndDate}</div>}
+                        </div>
+                        <div className="flex flex-wrap">
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.adult}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.child}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
-                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>
                         </div>
                         {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">Your message: "{bookingData.bookingInfo.message.en}"</div>}
                     </div>
@@ -116,7 +126,7 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        Price:
+                                                        Course:
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.course}
@@ -132,8 +142,12 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                         <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
                                     </div>
                                 </div>
-                                <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                    <div className="mt-2 text-red-500">*Include: Gas, Toll fee (Except DMK Tollway), Your Requests</div>
+                                <div className="bg-blue-50 rounded-md py-3 px-4 mb-5">
+                                    <div className="flex">
+                                        <div className="text-lg font-semibold mr-2">Total:</div>
+                                        <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                    </div>
+                                    <div className="mt-2 text-sm"><span className="font-medium">*Include:</span> Gas, User's Extra Orders,<br/>Toll (Except DMK Tollway)</div>
                                 </div>
                             </div>
                     </div>

@@ -16,6 +16,11 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     const timeArray = isOpen && (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
+    let pickupEndDate
+    if (bookingData.bookingType === "R&H") {
+        const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
+        pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
+    }
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
     const now = moment(new Date()); //todays date
@@ -67,7 +72,7 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
                             <div className="flex items-center mb-2">
-                                <div className="font-medium text-gray-600 mt-0.5">#{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
+                                <div className="font-medium text-gray-600 mt-0.5">Booking Code: #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">
@@ -102,10 +107,15 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
                             {!(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.start?.pickupTime || bookingData.bookingInfo.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.ending.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{pickupEndDate}</div>}
+                        </div>
+                        <div className="flex flex-wrap">
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.adult}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.child}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
-                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>
                         </div>
                         {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
                     </div>
@@ -150,10 +160,17 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                 <div className="text-lg font-semibold mr-2">รวม:</div>
                                 <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                             </div>
+                            <div className="bg-blue-50 rounded-md py-3 px-4 mb-5">
+                                <div className="flex">
+                                    <div className="text-lg font-semibold mr-2">ราคารวม:</div>
+                                    <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                </div>
+                                <div className="mt-2 text-sm"><span className="font-medium">*รวม:</span> แก๊ส, คำขอเพิ่มเติมของลูกค้า,<br/>ทางด่วน (ยกเว้น DMK Tollway)</div>
+                            </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-x-3">
-                        <Link to={`/chat/driver/inbox`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
+                        <Link to={`/chat/driver/inbox?roomId=${bookingData.roomId}`}><div className="cursor-pointer bg-gray-200 rounded-md font-medium w-full py-2 grid place-items-center mb-10">ไปห้องแชท</div></Link>
                         <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">สิ้นสุดงาน</div>
                     </div>
                 </div>

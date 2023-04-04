@@ -235,7 +235,7 @@ const ChatPage = ({ roomId, userType, userId }) => {
                     </div>
                     :
                     <div>
-                        {userType === "user" && <div className="border border-gray-500 px-5 py-4 rounded-md bg-gray-50 mb-5 w-10/12 mx-auto"><span className="font-semibold">Driver may provide:</span><br/>1. Same car type as you chosse<br/>2. Similar car type<br/>3. Bigger car type</div>}
+                        {userType === "user" && <div className="border border-gray-500 px-5 py-4 rounded-md bg-gray-50 mb-5 w-10/12 mx-auto"><span className="font-semibold">Driver may provide:</span><br/>1. Same car type as you choose<br/>2. Similar car type<br/>3. Bigger car type</div>}
                         {messages.map((message, index) => {
                             let messageSide = message.senderType === userType ? "right" : "left"
 
@@ -342,7 +342,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
     const [submitType, setSubmitType] = useState("")
     
     const dateArray = (bookingData?.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const timeArray = (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
     const pickupDate = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
     const dateArrayEnd = (bookingData?.bookingInfo.end?.pickupDate.split("/").reverse())
     const pickupDateEnd = dateArrayEnd && moment(new Date(dateArrayEnd[0], (parseInt(dateArrayEnd[1]) - 1).toString(), dateArrayEnd[2])).format("DD MMM YYYY")
@@ -453,17 +452,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
         }
     }
 
-    let beforePickup
-
-    if (dateArray.length === 1) {
-        beforePickup = true
-    } else {
-        const now = moment(new Date()); //todays date
-        const end = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2], timeArray[0], timeArray[1])); // another date
-        const duration = moment.duration(now.diff(end));
-        beforePickup = end < now ? true : duration.asMinutes() <= 5 ? true : false
-    }
-
     return (
         <div>
             <div onClick={(e) => {
@@ -492,7 +480,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                             <div className="px-5 pt-5 bg-white pb-3">
                                 <div className="">
                                     {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
-                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Info #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
+                                    <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Code: #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
                                     <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
                                         {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
                                         {bookingData.bookingType === "R&H" ?
@@ -542,13 +530,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                             }
                                             <table className="">
                                                 <tbody>
-                                                    <tr>
-                                                        <td className="align-middle whitespace-nowrap font-medium">Course</td>
-                                                        {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
-                                                        <td className="align-middle pl-2 w-full">
-                                                            <div className="">Rent & Hire</div>
-                                                        </td>
-                                                    </tr>
                                                     <tr>
                                                         <td className="align-middle whitespace-nowrap font-medium">Type</td>
                                                         {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
@@ -722,13 +703,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                             <table className="">
                                             <tbody>
                                                 <tr>
-                                                    <td className="align-middle whitespace-nowrap font-medium">Course</td>
-                                                    {onEdit[0] && <td className="text-xl pl-2 pb-1 align-middle">:</td>}
-                                                    <td className="align-middle pl-2">
-                                                        A to B Course
-                                                    </td>
-                                                </tr>
-                                                <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">Time</td>
                                                     {onEdit[0] && <td className="text-xl pl-2 align-middle">:</td>}
                                                     <td className="align-middle pl-2">
@@ -885,14 +859,17 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                 <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
                                             </div>
                                         </div>
-                                        <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                            <div className="text-lg font-semibold mr-2">Total:</div>
-                                            <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                        <div className="bg-blue-50 rounded-md py-3 px-4 mb-5">
+                                            <div className="flex">
+                                                <div className="text-lg font-semibold mr-2">Total:</div>
+                                                <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                            </div>
+                                            <div className="mt-2 text-sm"><span className="font-medium">*Include:</span> Gas, User's Extra Orders,<br/>Toll (Except DMK Tollway)</div>
                                         </div>
                                         <div className="mb-5">
                                             <div>
                                                 <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                                                {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can see it 5 mins before pickup time*</div>}
+                                                {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
                                                 <div className="bg-blue-50 rounded-lg relative mt-3">
                                                     <form className="h-full w-full py-4 px-4">
                                                     <table>
@@ -902,7 +879,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         Driver ID
                                                                     </td>
                                                                     <td className="align-middle pl-3 w-7/12">
-                                                                        {beforePickup && "#" + driver?.[0].driverCode}
+                                                                        {"#" + driver?.[0].driverCode}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -910,7 +887,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                                                         Contact
                                                                     </td>
                                                                     <td className="align-top pl-3 w-7/12">
-                                                                        {beforePickup && (
+                                                                        {prices.newMessage && (
                                                                             <div>
                                                                                 <div><span className="font-medium">Tel No: </span>{driver?.[0].personalInfo?.phone}</div>
                                                                                 {driver?.[0].personalInfo?.contact.map((item, index) => {
@@ -976,7 +953,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer, userId }) => {
             <form className="bg-white rounded-md py-3 px-3 w-full">
                 <div className="text-lg font-semibold mb-2">Job Transfer</div>
                 <div><Textinput onChange={() => {}} error={errors?.driver?.message} register={register(`driver`, { required: "Driver ID" })} required setValue={setValue} title="รหัสคนขับรถ" /></div>
-                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="Message to new driver" /></div>
+                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="Message to new driver" prefill="hasMessage" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
                     <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">Cancel</div>
                     <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</button>

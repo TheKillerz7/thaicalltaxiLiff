@@ -5,7 +5,7 @@ import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'bo
 import NumberInput from "../../components/Numberinput"
 import { useForm } from "react-hook-form";
 import Textinput from "../../components/Textinput";
-import { cancelBooking, driverRegisterToBooking, getDriverById, getSelectedRegisterByBookingId } from "../../apis/backend";
+import { cancelBooking, driverRegisterToBooking, getDriverById, getRoomByRoomId, getRoomsByUserId, getSelectedRegisterByBookingId } from "../../apis/backend";
 import moment from "moment";
 import Textareainput from "../../components/Textareainput";
 import he from "he"
@@ -14,14 +14,19 @@ import { Link } from "react-router-dom";
 
 const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId, setJobOpen }) => {
     const [applyProcess, setApplyProcess] = useState("")
-    const [price, setPrice] = useState({})
     const [prices, setPrices] = useState({})
     const [driver, setDriver] = useState({})
+    const [roomId, setRoomId] = useState("")
     const [loading, setLoading] = useState(false)
     const [total, setTotal] = useState(0)
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     const timeArray = isOpen && (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
+    let pickupEndDate
+    if (bookingData.bookingType === "R&H") {
+        const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
+        pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
+    }
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
     let beforePickup
@@ -41,6 +46,8 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
         setApplyProcess("")
         const callback = async () => {
             const prices = (await getSelectedRegisterByBookingId(bookingData.bookingId)).data[0]
+            const room = (await getRoomsByUserId(userId)).data[0]
+            setRoomId(room.roomId)
             const drivers = (await getDriverById(prices.driverId)).data[0]
             drivers.personalInfo = JSON.parse(drivers.personalInfo)
             drivers.vehicleInfo = JSON.parse(drivers.vehicleInfo)
@@ -57,10 +64,17 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
     }, [isOpen])
 
     const handleCancelBooking = async () => {
-        await cancelBooking(bookingData.bookingId, userId)
-        alert("Booking has been canceled.")
-        setJobOpen(false)
-        setApplyProcess("")
+        setLoading(true)
+        try {
+            await cancelBooking(bookingData.bookingId, userId)
+            alert("Booking has been canceled.")
+            setJobOpen(false)
+            setApplyProcess("")
+            setLoading(false)
+        } catch (error) {
+            
+        }
+        
     }
 
     return (
@@ -74,7 +88,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                     <div className="px-5 pt-5 bg-white pb-3">
                         <div className="mb-2">
                             <div className="flex items-center mb-2">
-                                <div className="font-medium text-gray-600 mt-0.5">#{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
+                                <div className="font-medium text-gray-600 mt-0.5">Booking Code: #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1.5">
                                 <div className="w-5 mr-2">
@@ -109,10 +123,15 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
                             {!(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.start?.pickupTime || bookingData.bookingInfo.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.ending.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{pickupEndDate}</div>}
+                        </div>
+                        <div className="flex flex-wrap">
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.adult}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.child}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
-                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
+                            <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>
                         </div>
                         {bookingData.bookingInfo.message.en && <div className="mt-1 font-medium text-lg">User message: "{bookingData.bookingInfo.message.en}"</div>}
                     </div>
@@ -137,7 +156,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                             <tbody>
                                                 <tr>
                                                     <td className="align-middle whitespace-nowrap font-medium">
-                                                        Price:
+                                                        Course:
                                                     </td>
                                                     <td className="align-middle pl-3 w-7/12">
                                                         {"฿" + prices?.course}
@@ -153,15 +172,19 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                         <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
                                     </div>
                                 </div>
-                                <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                    <div className="mt-2 text-red-500">*Include: Gas, Your Requests, Toll (Except DMK Tollway)</div>
+                                <div className="bg-blue-50 rounded-md py-3 px-4 mb-5">
+                                    <div className="flex">
+                                        <div className="text-lg font-semibold mr-2">Total:</div>
+                                        <div className="text-lg font-semibold text-green-600">฿ {total}</div>
+                                    </div>
+                                    <div className="mt-2 text-sm"><span className="font-medium">*Include:</span> Gas, User's Extra Orders,<br/>Toll (Except DMK Tollway)</div>
                                 </div>
                             </div>
                     </div>
                     <div className="mb-10">
                         <div>
                             <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                            {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can see it 5 mins before pickup time*</div>}
+                            {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
                             <div className="bg-blue-50 rounded-lg relative mt-3">
                                 <form className="h-full w-full py-4 px-4">
                                 <table>
@@ -174,27 +197,6 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     {beforePickup && "#" + driver?.driverCode}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td className="align-middle whitespace-nowrap font-semibold">
-                                                    Car Type
-                                                </td>
-                                                <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && driver?.vehicleInfo?.carType}
-                                                </td>
-                                            </tr>
-                                            {prices.message?.en && 
-                                                <tr>
-                                                    <td className="align-middle whitespace-nowrap font-semibold">
-                                                        Driver Msg.
-                                                    </td>
-                                                    <td className="align-middle pl-3 w-7/12 text-yellow-600 font-medium">
-                                                        {beforePickup && '"' + prices.message?.en + '"'}
-                                                    </td>
-                                                </tr>
-                                            }
-                                            {
-
-                                            }
                                             <tr>
                                                 <td className="align-top whitespace-nowrap font-semibold">
                                                     Contact
@@ -220,10 +222,10 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                     </div>
                     <div className="grid grid-cols-2 gap-x-3">
                         <div onClick={() => setApplyProcess("confirmation")} className="cursor-pointer bg-red-600 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Cancel Booking</div>
-                        <Link to={`/chat/user/inbox`}><div className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Chatroom</div></Link>
+                        <Link to={`/chat/user/inbox?roomId=${roomId}`}><div className="cursor-pointer bg-blue-900 rounded-md text-white font-medium w-full py-2 grid place-items-center mb-10">Chatroom</div></Link>
                     </div>
                 </div>
-                {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} setApplyProcess={setApplyProcess} handleCancelBooking={handleCancelBooking} />}
+                {applyProcess !== "offering" && <ApplicationConfirmation applyProcess={applyProcess} loading={loading} setApplyProcess={setApplyProcess} handleCancelBooking={handleCancelBooking} />}
             </div>}
         </div>
     )
@@ -231,7 +233,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
 
 export default CurrentBookingView
 
-const ApplicationConfirmation = ({ applyProcess, setApplyProcess, handleCancelBooking }) => {
+const ApplicationConfirmation = ({ applyProcess, setApplyProcess, handleCancelBooking, loading }) => {
     return (
         <div className={"fixed top-0 left-0 flex flex-col items-center justify-center bg-black bg-opacity-40 w-full h-screen transition " + (applyProcess ? "opacity-100" : "opacity-0 pointer-events-none")}>
             {applyProcess === "confirmation" &&
@@ -244,7 +246,7 @@ const ApplicationConfirmation = ({ applyProcess, setApplyProcess, handleCancelBo
                     </div>
                     <div className="bg-gray-100 w-10/12 flex items-center justify-end mx-auto rounded-b-md py-3 px-5">
                         <div onClick={() => setApplyProcess("")} className="cursor-pointer text-gray-500 border border-gray-500 rounded-md py-1 px-4 mr-3">No</div>
-                        <div onClick={handleCancelBooking} className="cursor-pointer text-white border border-red-600 bg-red-600 rounded-md py-1 px-4">Yes</div>
+                        <div onClick={handleCancelBooking} className={"cursor-pointer text-white border border-red-600 bg-red-600 rounded-md py-1 px-4 " + (loading && "pointer-events-none opacity-80")}>Yes</div>
                     </div>
                 </>
             }

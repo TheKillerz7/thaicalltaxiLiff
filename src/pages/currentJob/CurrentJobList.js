@@ -20,7 +20,7 @@ const CurrentJobList = ({ onClick, data }) => {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: index <= 3 ? colors.job[index] : "#ebebeb" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
-                                <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
+                                <div className="text-sm font-medium text-gray-600">Booking Code: #{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
@@ -44,7 +44,7 @@ const CurrentJobList = ({ onClick, data }) => {
                     return (
                         <div key={index} onClick={(e) => onClick(e, job) || null} style={{ backgroundColor: index <= 3 ? colors.job[index] : "#ebebeb" }} className="px-5 pt-3 pb-1 mb-5 rounded-lg">
                             <div className="flex items-center mb-2">
-                                <div className="text-sm font-medium text-gray-600">#{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
+                                <div className="text-sm font-medium text-gray-600">Booking Code: #{(job.id + 300000).toString().substring(0, 3) + "-" + (job.id + 300000).toString().substring(3)}</div>
                             </div>
                             <div className="flex mb-1">
                                 <div className="w-5 mr-2">
