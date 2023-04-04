@@ -869,7 +869,7 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                                         <div className="mb-5">
                                             <div>
                                                 <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                                                {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
+                                                {!prices.newMessage && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
                                                 <div className="bg-blue-50 rounded-lg relative mt-3">
                                                     <form className="h-full w-full py-4 px-4">
                                                     <table>
