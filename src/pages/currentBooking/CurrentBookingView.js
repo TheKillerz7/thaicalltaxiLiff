@@ -21,24 +21,12 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
     const [total, setTotal] = useState(0)
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-    const timeArray = isOpen && (bookingData.bookingInfo.start?.pickupTime.split(":").reverse() || bookingData.bookingInfo.pickupTime.split(":"))
     let pickupEndDate
     if (bookingData.bookingType === "R&H") {
         const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
         pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
     }
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
-
-    let beforePickup
-
-    if (dateArray.length === 1) {
-        beforePickup = true
-    } else {
-        const now = moment(new Date()); //todays date
-        const end = moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2], timeArray[0], timeArray[1])); // another date
-        const duration = moment.duration(now.diff(end));
-        beforePickup = end < now ? true : duration.asMinutes() <= 5 ? true : false
-    }
 
     useEffect(() => {
         const JobBoard = document.querySelector('#job')
@@ -184,7 +172,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                     <div className="mb-10">
                         <div>
                             <div className="text-xl text-left font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faTags} /></span>Driver Info</div>
-                            {!beforePickup && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
+                            {!prices.newMessage && <div className="text-sm text-red-500 mt-1">*You can check this info before pickup*</div>}
                             <div className="bg-blue-50 rounded-lg relative mt-3">
                                 <form className="h-full w-full py-4 px-4">
                                 <table>
@@ -194,7 +182,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     Driver ID
                                                 </td>
                                                 <td className="align-middle pl-3 w-7/12">
-                                                    {beforePickup && "#" + driver?.driverCode}
+                                                    {"#" + driver?.driverCode}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -202,7 +190,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                                     Contact
                                                 </td>
                                                 <td className="align-top pl-3 w-7/12">
-                                                    {beforePickup && (
+                                                    {prices.newMessage && (
                                                         <div>
                                                             <div><span className="font-medium">Tel No: </span>{driver?.personalInfo?.phone}</div>
                                                             {driver?.personalInfo?.contact.map((item, index) => {
