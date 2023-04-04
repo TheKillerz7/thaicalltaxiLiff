@@ -479,7 +479,6 @@ const BookingDetail = ({ onCheckBookingInfo, setOnCheckBookingInfo, bookingData,
                         <div>
                             <div className="px-5 pt-5 bg-white pb-3">
                                 <div className="">
-                                    {prices?.newMessage && <div className="font-semibold text-xl mb-5">Message: <span className="text-yellow-600">"{prices.newMessage}"</span></div>}
                                     <div className="text-xl text-left mb-3 font-medium"><span><FontAwesomeIcon className="text-blue-800 mr-3" icon={faBook} /></span>Booking Code: #{(bookingData.id + 300000).toString().substring(0, 3) + "-" + (bookingData.id + 300000).toString().substring(3)}</div>
                                     <form onSubmit={handleSubmit(submitHandle)} className="bg-blue-50 rounded-lg py-4 px-4 mb-5 relative">
                                         {!onEdit[0] && userType === "driver" && <div onClick={() => setOnEdit([true, onEdit[1]])} style={{ aspectRatio: "1" }} className="rounded-md cursor-pointer w-min grid place-items-center bg-orange-600 p-2 absolute right-3"><FontAwesomeIcon className="text-white text-sm" icon={faPencil} /></div>}
@@ -953,7 +952,7 @@ const TransferJob = ({ bookingData, onTransfer, setOnTransfer, userId }) => {
             <form className="bg-white rounded-md py-3 px-3 w-full">
                 <div className="text-lg font-semibold mb-2">Job Transfer</div>
                 <div><Textinput onChange={() => {}} error={errors?.driver?.message} register={register(`driver`, { required: "Driver ID" })} required setValue={setValue} title="รหัสคนขับรถ" /></div>
-                <div className="mt-2"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="Message to new driver" prefill="hasMessage" /></div>
+                <div className="mt-2 hidden"><Textinput onChange={() => {}} register={register(`newMessage`)} setValue={setValue} title="Message to new driver" prefill="hasMessage" /></div>
                 <div className="grid grid-cols-2 gap-x-3 mt-3">
                     <div onClick={() => setOnTransfer(false)} className="bg-gray-300 cursor-pointer text-gray-800 rounded-md py-2 text-center font-semibold">Cancel</div>
                     <button type="submit" className="bg-blue-900 cursor-pointer text-white rounded-md py-2 text-center font-medium">Transfer</button>
