@@ -115,9 +115,9 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-900 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faUser} />{bookingData.bookingInfo.passenger.child}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.big}</div>
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
-                            <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>
+                            {bookingData.bookingInfo.preferedCarType && <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>}
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ลูกค้า: "{bookingData.bookingInfo.message.th}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">User Msg: "{bookingData.bookingInfo.message.en}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
@@ -155,10 +155,6 @@ const CurrentJobView = ({ bookingData, currentJobs, isOpen, onClick, userId, lif
                                 <div className="absolute w-5 h-5 border bg-white border-gray-400 top-full right-0 -translate-y-1/2 translate-x-1/2 rounded-full">
                                     <div className="absolute w-5 h-10 bg-white translate-x-1/2 top-1/2 -translate-y-1/2"></div>
                                 </div>
-                            </div>
-                            <div className="flex bg-blue-50 rounded-md py-3 px-4 mb-5">
-                                <div className="text-lg font-semibold mr-2">รวม:</div>
-                                <div className="text-lg font-semibold text-green-600">฿ {total}</div>
                             </div>
                             <div className="bg-blue-50 rounded-md py-3 px-4 mb-5">
                                 <div className="flex">
