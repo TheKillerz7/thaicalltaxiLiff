@@ -19,9 +19,9 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM YYYY")
     let pickupEndDate
-    if (bookingData.bookingType === "R&H") {
-        const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-        pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
+    if (isOpen && bookingData.bookingType === "R&H") {
+        const endDateArray =  bookingData.bookingInfo.end.pickupDate.split("/").reverse()
+        pickupEndDate = moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
     }
 
     useEffect(() => {
@@ -99,7 +99,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
                             {!(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.start?.pickupTime || bookingData.bookingInfo.pickupTime}</div>}
-                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.ending.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.end.pickupTime}</div>}
                             {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{pickupEndDate}</div>}
                         </div>
                         <div className="flex flex-wrap">
@@ -109,7 +109,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                             {bookingData.bookingInfo.preferedCarType && <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>}
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">ผู่โดยสาร: "{bookingData.bookingInfo.message.th}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">User Msg: "{bookingData.bookingInfo.message.en}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">

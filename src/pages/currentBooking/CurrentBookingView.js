@@ -22,9 +22,9 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
 
     const dateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
     let pickupEndDate
-    if (bookingData.bookingType === "R&H") {
-        const endDateArray = isOpen && (bookingData.bookingInfo.start?.pickupDate.split("/").reverse() || bookingData.bookingInfo.pickupDate.split("/").reverse())
-        pickupEndDate = isOpen && moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
+    if (isOpen && bookingData.bookingType === "R&H") {
+        const endDateArray =  bookingData.bookingInfo.end.pickupDate.split("/").reverse()
+        pickupEndDate = moment(new Date(endDateArray[0], (parseInt(endDateArray[1]) - 1).toString(), endDateArray[2])).format("DD MMM")
     }
     const pickupDate = isOpen && moment(new Date(dateArray[0], (parseInt(dateArray[1]) - 1).toString(), dateArray[2])).format("DD MMM")
 
@@ -111,7 +111,7 @@ const CurrentBookingView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                                 {(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") ? "ASAP" : pickupDate}
                             </div>
                             {!(bookingData.bookingInfo.start?.pickupTime === "ASAP" || bookingData.bookingInfo.pickupTime === "ASAP") && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.start?.pickupTime || bookingData.bookingInfo.pickupTime}</div>}
-                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.ending.pickupTime}</div>}
+                            {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{bookingData.bookingInfo.end.pickupTime}</div>}
                             {bookingData.bookingType === "R&H" && <div className={"mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-yellow-800"}>{pickupEndDate}</div>}
                         </div>
                         <div className="flex flex-wrap">

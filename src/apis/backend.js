@@ -6,6 +6,10 @@ export const getBookingByStatusWithoutDriverId = (status, driverId) => {
     return axios.get(`${baseURL}/driver/jobBoard/${status}/${driverId}`)
 }
 
+export const getAllBooking = (id) => {
+    return axios.get(`${baseURL}/booking`)
+}
+
 export const getBookingById = (id) => {
     return axios.get(`${baseURL}/booking/id/${id}`)
 }
