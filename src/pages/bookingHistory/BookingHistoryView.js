@@ -107,8 +107,8 @@ const BookingHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId,
                             <div className="mb-2 py-1 px-2 font-medium text-sm bg-blue-800 bg-opacity-80 text-white rounded-md mr-2"><FontAwesomeIcon style={{ fontSize: "0.7rem" }} className="text-white mr-1" icon={faBriefcase} />{bookingData.bookingInfo.luggage.medium}</div>
                             {bookingData.bookingInfo.preferedCarType && <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>}
                         </div>
-                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg text-yellow-600">Your message: "{bookingData.bookingInfo.message.en}"</div>}
-                        {prices?.message?.en && <div className="mt-2 font-semibold text-lg text-yellow-600">OP Msg: "{prices.message.en}"</div>}
+                        {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg">Your message: "{bookingData.bookingInfo.message.en}"</div>}
+                        {prices?.message?.en && <div className="mt-2 font-semibold text-lg">OP Msg: "{prices.message.en}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
