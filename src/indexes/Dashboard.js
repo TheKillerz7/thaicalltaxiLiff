@@ -34,7 +34,7 @@ const Dashboard = () => {
                 <div className="px-5">
                     <div className="text-white mb-3">Booking Management</div>
                     <div className="text-blue-200 text-sm grid gap-y-2">
-                        <Link to="/dashboard/bookingList"><div className={"transition cursor-pointer font-medium " + (page === "driverList" ? "text-white rounded-md" : "hover:text-gray-100 text-gray-400")}>Booking List</div></Link>
+                        <Link to="/dashboard/bookingList"><div className={"transition cursor-pointer font-medium " + (page === "bookingList" ? "text-white rounded-md" : "hover:text-gray-100 text-gray-400")}>Booking List</div></Link>
                     </div>
                 </div>
             </div>

@@ -110,7 +110,7 @@ const JobHistoryView = ({ bookingData, currentJobs, isOpen, onClick, userId, set
                             {bookingData.bookingInfo.preferedCarType && <div className="mb-2 py-1 px-2 font-medium text-sm text-white rounded-md mr-2 bg-green-700">{bookingData.bookingInfo.preferedCarType !== "VIP Van" ? Array.from(bookingData.bookingInfo.preferedCarType)[0] + "+" : "VV+"}</div>}
                         </div>
                         {bookingData.bookingInfo.message.en && <div className="mt-1 font-semibold text-lg">User Msg: "{bookingData.bookingInfo.message.en}"</div>}
-                        {prices?.message?.en && <div className="mt-2 font-semibold text-lg">OP Msg: "{prices.message.en}"</div>}
+                        {prices?.message?.en && <div className="mt-2 text-lg">OP Msg: "{prices.message.en}"</div>}
                     </div>
                 </div>
                 <div className="px-5 mt-3">
