@@ -1,6 +1,6 @@
 import axios from "axios";
 const baseURL =
-  process.env.BASE_URL || "https://thaicalltaxibackend.herokuapp.como";
+  process.env.BASE_URL || "https://thaicalltaxibackend.herokuapp.com";
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
