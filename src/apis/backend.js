@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseURL = process.env.BASE_URL || "https://thaicalltaxibackend.herokuapp.com"
+const baseURL = process.env.BASE_URL || "https://7692-110-170-174-202.ap.ngrok.io"
 
 //get
 export const getBookingByStatusWithoutDriverId = (status, driverId) => {
