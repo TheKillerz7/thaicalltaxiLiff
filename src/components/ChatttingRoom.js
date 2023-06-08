@@ -81,7 +81,7 @@ const RoomsPage = ({ userId, userType }) => {
   useEffect(() => {
     let rooms = [];
     const socket = io(
-      "https://7692-110-170-174-202.ap.ngrok.io",
+      "https://thaicalltaxibackend.herokuapp.como",
       connectionOptions
     );
     socket.on("connect", async () => {
@@ -278,7 +278,10 @@ const ChatPage = ({ roomId, userType, userId }) => {
       setMessages([...messageStorage]);
     };
     getMessage();
-    socket = io("https://7692-110-170-174-202.ap.ngrok.io", connectionOptions);
+    socket = io(
+      "https://thaicalltaxibackend.herokuapp.como",
+      connectionOptions
+    );
     socket.on("connect", async () => {
       console.log("connect");
       if (roomId) socket.emit("join", roomId);
